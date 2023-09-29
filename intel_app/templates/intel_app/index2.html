@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Bootstrap Example</title>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <style>
         body {
   font-family: Montserrat, sans-serif;
@@ -28,11 +29,14 @@
  color: #ffffff;
 }
 .navbar-expand-lg {
-  background-color: #785bf8;
+  background-color: #007bff!important
 }
 
 .navbar-nav .nav-item:hover {
-  background-color: #785bf8;
+  background-color: #007bff!important
+}
+.navbar-expand-lg .navbar-nav .nav-link {
+  color: #ffffff;
 }
 *,
 *::before,
@@ -82,7 +86,7 @@
   justify-content: center;
 }
 
-</style>
+    </style>
 </head>
 <body>
 
@@ -90,22 +94,16 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand" href="#"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-md-auto gap-2">
-                <li class="nav-item rounded">
-                    <a class="nav-link active" aria-current="page" href="#"><i class="bi bi-house-fill me-2"></i>Home</a>
-                </li>
-                <li class="nav-item rounded">
-                    <a class="nav-link" href="#"><i class="bi bi-people-fill me-2"></i>About</a>
-                </li>
-                <li class="nav-item rounded">
-                    <a class="nav-link" href="#"><i class="bi bi-telephone-fill me-2"></i>Contact</a>
-                </li>
                 <li class="nav-item dropdown rounded">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-fill me-2"></i>Profile</a>
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-fill me-2"></i>Profile</a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="#">Account</a></li>
                         <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -121,147 +119,186 @@
 </nav>
 <br>
 <main>
-        <!-- Service 4 - Bootstrap Brain Component -->
-<section>
-    <div class="container" style="max-width:100%;">
-    <div class="alert alert-primary" role="alert">
-  A simple primary alert—check it out!
-</div>
-    </div>
-<br>
-  <div class="container overflow-hidden">
-    <div class="row gy-4 gy-xl-0">
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 border-bottom border-primary shadow-sm">
-          <div class="card-body text-center p-4 p-xxl-5">
-             <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56" fill="currentColor" viewBox="0 0 512 512">
-                  <path d="M177.9 494.1c-18.7 18.7-49.1 18.7-67.9 0L17.9 401.9c-18.7-18.7-18.7-49.1 0-67.9l50.7-50.7 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 50.7-50.7c18.7-18.7 49.1-18.7 67.9 0l92.1 92.1c18.7 18.7 18.7 49.1 0 67.9L177.9 494.1z"/>
-              </svg>
-            <h4 class="mb-4">Key Message</h4>
-            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-            <a href="#!" class="fw-bold text-decoration-none link-primary">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
-              </svg>
-            </a>
-          </div>
+    <!-- Service 4 - Bootstrap Brain Component -->
+    <section>
+        <div class="container">
+            <div class="alert alert-primary" role="alert">
+                A simple primary alert—check it out!
+            </div>
         </div>
-      </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 border-bottom border-primary shadow-sm">
-          <div class="card-body text-center p-4 p-xxl-5">
-            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56" fill="currentColor" viewBox="0 0 384 512">
-                <path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z"/>
-            </svg>
-            <h4 class="mb-4">Schedule - MSPO</h4>
-            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-            <a href="#!" class="fw-bold text-decoration-none link-primary">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
-              </svg>
-            </a>
-          </div>
+        <br>
+        <div class="container overflow-hidden">
+                    <form class="form-inline" style="width:250px;float:right;">
+            <input class="form-control mr-sm-2" id="filter" type="search" placeholder="Search" aria-label="Search"
+                   autocomplete="off">
+        </form>
+            <h3>Application Gallery</h3>
+            <br>
+
+            <div id="mycard" class="row py-2">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56"
+                                 fill="currentColor" viewBox="0 0 512 512">
+                                <path d="M177.9 494.1c-18.7 18.7-49.1 18.7-67.9 0L17.9 401.9c-18.7-18.7-18.7-49.1 0-67.9l50.7-50.7 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 50.7-50.7c18.7-18.7 49.1-18.7 67.9 0l92.1 92.1c18.7 18.7 18.7 49.1 0 67.9L177.9 494.1z"/>
+                            </svg>
+                            <h4 class="mb-4">Key Message</h4>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a href="#!" class="fw-bold text-decoration-none link-primary">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56"
+                                 fill="currentColor" viewBox="0 0 384 512">
+                                <path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z"/>
+                            </svg>
+                            <h4 class="mb-4">Schedule - MSPO</h4>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a href="#!" class="fw-bold text-decoration-none link-primary">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56"
+                                 fill="currentColor" viewBox="0 0 576 512">
+                                <path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/>
+                            </svg>
+                            <h4 class="mb-4">Risks</h4>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a href="#!" class="fw-bold text-decoration-none link-primary">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor"
+                                 class="bi bi-mouse text-primary mb-4" viewBox="0 0 16 16">
+                                <path d="M8 3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 3zm4 8a4 4 0 0 1-8 0V5a4 4 0 1 1 8 0v6zM8 0a5 5 0 0 0-5 5v6a5 5 0 0 0 10 0V5a5 5 0 0 0-5-5z"/>
+                            </svg>
+                            <h4 class="mb-4">Opens</h4>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a href="#!" class="fw-bold text-decoration-none link-primary">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56"
+                                 fill="currentColor" viewBox="0 0 512 512">
+                                <path d="M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM48 368v32c0 8.8 7.2 16 16 16H96c8.8 0 16-7.2 16-16V368c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16zm368-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V368c0-8.8-7.2-16-16-16H416zM48 240v32c0 8.8 7.2 16 16 16H96c8.8 0 16-7.2 16-16V240c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16zm368-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V240c0-8.8-7.2-16-16-16H416zM48 112v32c0 8.8 7.2 16 16 16H96c8.8 0 16-7.2 16-16V112c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16zM416 96c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V112c0-8.8-7.2-16-16-16H416zM160 128v64c0 17.7 14.3 32 32 32H320c17.7 0 32-14.3 32-32V128c0-17.7-14.3-32-32-32H192c-17.7 0-32 14.3-32 32zm32 160c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32H320c17.7 0 32-14.3 32-32V320c0-17.7-14.3-32-32-32H192z"/>
+                            </svg>
+                            <h4 class="mb-4">Links</h4>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandiht lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a href="#!" class="fw-bold text-decoration-none link-primary">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor"
+                                 class="bi bi-phone-flip text-primary mb-4" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M11 1H5a1 1 0 0 0-1 1v6a.5.5 0 0 1-1 0V2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6a.5.5 0 0 1-1 0V2a1 1 0 0 0-1-1Zm1 13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a.5.5 0 0 0-1 0v2a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2a.5.5 0 0 0-1 0v2ZM1.713 7.954a.5.5 0 1 0-.419-.908c-.347.16-.654.348-.882.57C.184 7.842 0 8.139 0 8.5c0 .546.408.94.823 1.201.44.278 1.043.51 1.745.696C3.978 10.773 5.898 11 8 11c.099 0 .197 0 .294-.002l-1.148 1.148a.5.5 0 0 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2a.5.5 0 1 0-.708.708l1.145 1.144L8 10c-2.04 0-3.87-.221-5.174-.569-.656-.175-1.151-.374-1.47-.575C1.012 8.639 1 8.506 1 8.5c0-.003 0-.059.112-.17.115-.112.31-.242.6-.376Zm12.993-.908a.5.5 0 0 0-.419.908c.292.134.486.264.6.377.113.11.113.166.113.169 0 .003 0 .065-.13.187-.132.122-.352.26-.677.4-.645.28-1.596.523-2.763.687a.5.5 0 0 0 .14.99c1.212-.17 2.26-.43 3.02-.758.38-.164.713-.357.96-.587.246-.229.45-.537.45-.919 0-.362-.184-.66-.412-.883-.228-.223-.535-.411-.882-.571ZM7.5 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1Z"/>
+                            </svg>
+                            <h4 class="mb-4">BBox</h4>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a href="#!" class="fw-bold text-decoration-none link-primary">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card border-0 border-bottom border-primary shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor"
+                                 class="bi bi-heart-pulse text-primary mb-4" viewBox="0 0 16 16">
+                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053.918 3.995.78 5.323 1.508 7H.43c-2.128-5.697 4.165-8.83 7.394-5.857.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17c3.23-2.974 9.522.159 7.394 5.856h-1.078c.728-1.677.59-3.005.108-3.947C13.486.878 10.4.28 8.717 2.01L8 2.748ZM2.212 10h1.315C4.593 11.183 6.05 12.458 8 13.795c1.949-1.337 3.407-2.612 4.473-3.795h1.315c-1.265 1.566-3.14 3.25-5.788 5-2.648-1.75-4.523-3.434-5.788-5Z"/>
+                                <path d="M10.464 3.314a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.5a.5.5 0 0 0 0 1H4a.5.5 0 0 0 .416-.223l1.473-2.209 1.647 4.118a.5.5 0 0 0 .945-.049l1.598-5.593 1.457 3.642A.5.5 0 0 0 12 9h3.5a.5.5 0 0 0 0-1h-3.162l-1.874-4.686Z"/>
+                            </svg>
+                            <h4 class="mb-4">Details</h4>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a href="#!" class="fw-bold text-decoration-none link-primary">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-arrow-right-short" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                          d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 border-bottom border-primary shadow-sm">
-          <div class="card-body text-center p-4 p-xxl-5">
-             <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56" fill="currentColor" viewBox="0 0 576 512">
-                <path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/>
-            </svg>
-            <h4 class="mb-4">Risks</h4>
-            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-            <a href="#!" class="fw-bold text-decoration-none link-primary">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 border-bottom border-primary shadow-sm">
-          <div class="card-body text-center p-4 p-xxl-5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="bi bi-mouse text-primary mb-4" viewBox="0 0 16 16">
-              <path d="M8 3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 3zm4 8a4 4 0 0 1-8 0V5a4 4 0 1 1 8 0v6zM8 0a5 5 0 0 0-5 5v6a5 5 0 0 0 10 0V5a5 5 0 0 0-5-5z" />
-            </svg>
-            <h4 class="mb-4">Opens</h4>
-            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-            <a href="#!" class="fw-bold text-decoration-none link-primary">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-      <br><br>
-      <div class="row gy-4 gy-xl-0">
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 border-bottom border-primary shadow-sm">
-          <div class="card-body text-center p-4 p-xxl-5">
-             <svg xmlns="http://www.w3.org/2000/svg" class="text-primary mb-4" width="56" height="56" fill="currentColor" viewBox="0 0 512 512">
-                <path d="M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM48 368v32c0 8.8 7.2 16 16 16H96c8.8 0 16-7.2 16-16V368c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16zm368-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V368c0-8.8-7.2-16-16-16H416zM48 240v32c0 8.8 7.2 16 16 16H96c8.8 0 16-7.2 16-16V240c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16zm368-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V240c0-8.8-7.2-16-16-16H416zM48 112v32c0 8.8 7.2 16 16 16H96c8.8 0 16-7.2 16-16V112c0-8.8-7.2-16-16-16H64c-8.8 0-16 7.2-16 16zM416 96c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V112c0-8.8-7.2-16-16-16H416zM160 128v64c0 17.7 14.3 32 32 32H320c17.7 0 32-14.3 32-32V128c0-17.7-14.3-32-32-32H192c-17.7 0-32 14.3-32 32zm32 160c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32H320c17.7 0 32-14.3 32-32V320c0-17.7-14.3-32-32-32H192z"/>
-             </svg>
-            <h4 class="mb-4">Links</h4>
-            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandiht lacinia, nisi velit posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-            <a href="#!" class="fw-bold text-decoration-none link-primary">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 border-bottom border-primary shadow-sm">
-          <div class="card-body text-center p-4 p-xxl-5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="bi bi-phone-flip text-primary mb-4" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M11 1H5a1 1 0 0 0-1 1v6a.5.5 0 0 1-1 0V2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6a.5.5 0 0 1-1 0V2a1 1 0 0 0-1-1Zm1 13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a.5.5 0 0 0-1 0v2a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2a.5.5 0 0 0-1 0v2ZM1.713 7.954a.5.5 0 1 0-.419-.908c-.347.16-.654.348-.882.57C.184 7.842 0 8.139 0 8.5c0 .546.408.94.823 1.201.44.278 1.043.51 1.745.696C3.978 10.773 5.898 11 8 11c.099 0 .197 0 .294-.002l-1.148 1.148a.5.5 0 0 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2a.5.5 0 1 0-.708.708l1.145 1.144L8 10c-2.04 0-3.87-.221-5.174-.569-.656-.175-1.151-.374-1.47-.575C1.012 8.639 1 8.506 1 8.5c0-.003 0-.059.112-.17.115-.112.31-.242.6-.376Zm12.993-.908a.5.5 0 0 0-.419.908c.292.134.486.264.6.377.113.11.113.166.113.169 0 .003 0 .065-.13.187-.132.122-.352.26-.677.4-.645.28-1.596.523-2.763.687a.5.5 0 0 0 .14.99c1.212-.17 2.26-.43 3.02-.758.38-.164.713-.357.96-.587.246-.229.45-.537.45-.919 0-.362-.184-.66-.412-.883-.228-.223-.535-.411-.882-.571ZM7.5 2a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1Z" />
-            </svg>
-            <h4 class="mb-4">BBox</h4>
-            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-            <a href="#!" class="fw-bold text-decoration-none link-primary">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 border-bottom border-primary shadow-sm">
-          <div class="card-body text-center p-4 p-xxl-5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor" class="bi bi-heart-pulse text-primary mb-4" viewBox="0 0 16 16">
-              <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053.918 3.995.78 5.323 1.508 7H.43c-2.128-5.697 4.165-8.83 7.394-5.857.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17c3.23-2.974 9.522.159 7.394 5.856h-1.078c.728-1.677.59-3.005.108-3.947C13.486.878 10.4.28 8.717 2.01L8 2.748ZM2.212 10h1.315C4.593 11.183 6.05 12.458 8 13.795c1.949-1.337 3.407-2.612 4.473-3.795h1.315c-1.265 1.566-3.14 3.25-5.788 5-2.648-1.75-4.523-3.434-5.788-5Z" />
-              <path d="M10.464 3.314a.5.5 0 0 0-.945.049L7.921 8.956 6.464 5.314a.5.5 0 0 0-.88-.091L3.732 8H.5a.5.5 0 0 0 0 1H4a.5.5 0 0 0 .416-.223l1.473-2.209 1.647 4.118a.5.5 0 0 0 .945-.049l1.598-5.593 1.457 3.642A.5.5 0 0 0 12 9h3.5a.5.5 0 0 0 0-1h-3.162l-1.874-4.686Z" />
-            </svg>
-            <h4 class="mb-4">Details</h4>
-            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-            <a href="#!" class="fw-bold text-decoration-none link-primary">
-              Learn More
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-short" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-    <br>
-    <br>
-</section>
+    </section>
 </main>
-
-
+<br><br>
+<script>
+    $("#filter").on("keyup", function() {
+   var value = $(this).val().toLowerCase();
+   $("#mycard > div").filter(function() {
+     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+   });
+ });
+</script>
 
 <!-- End Example Code -->
 </body>
