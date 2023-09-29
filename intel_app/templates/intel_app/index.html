@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard </title>
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon.png">
+    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/fontawesome-free-5.15.1/css/all.min.css' %}" rel="stylesheet">
+</head>
+<body>
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <a href="index.html" class="brand-logo">
+                <img class="logo-abbr" src="./images/logo.png" alt="">
+                <img class="logo-compact" src="./images/logo-text.png" alt="">
+                <img class="brand-title" src="./images/logo-text.png" alt="">
+            </a>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                        </div>
+
+                        <ul class="navbar-nav header-right">
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="fas fa-user"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="./app-profile.html" class="dropdown-item">
+                                        <i class="icon-user"></i>
+                                        <span class="ml-2">Profile </span>
+                                    </a>
+                                    <a href="./email-inbox.html" class="dropdown-item">
+                                        <i class="icon-envelope-open"></i>
+                                        <span class="ml-2">Inbox </span>
+                                    </a>
+                                    <a href="./page-login.html" class="dropdown-item">
+                                        <i class="icon-key"></i>
+                                        <span class="ml-2">Logout </span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <div class="container-fluid">
+                <div class="row page-titles mx-0">
+                    <div class="col-sm-6 p-md-0">
+                        <div class="welcome-text">
+                            <h4>Hi, welcome back!</h4>
+                            <p class="mb-0">Your business dashboard template</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">Layout</li>
+                            <li class="breadcrumb-item active">Blank</a></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-facebook">
+                                        <span class="s-icon"><i class="fab fa-facebook"></i></span>
+                                    </div>
+                                    <div class="row">
+                                         <div class="col-12">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-linkedin">
+                                        <span class="s-icon"><i class="fab fa-linkedin"></i></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-googleplus">
+                                        <span class="s-icon"><i class="fab fa-google-plus"></i></span>
+                                    </div>
+                                    <div class="row">
+                                         <div class="col-12">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-twitter">
+                                        <span class="s-icon"><i class="fab fa-twitter"></i></span>
+                                    </div>
+                                    <div class="row">
+                                         <div class="col-12">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+    <script src="{% static 'intel_app/vendor/global/global.min.js' %}"></script>
+    <script src="{% static 'intel_app/js/quixnav-init.js' %}"></script>
+    <script src="{% static 'intel_app/js/custom.min.js' %}"></script>
+</body>
+
+</html>
