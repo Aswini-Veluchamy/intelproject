@@ -1,0 +1,1 @@
+DEFAULT_PASSWORDS = ['Admin#123']
