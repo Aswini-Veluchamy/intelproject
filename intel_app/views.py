@@ -60,6 +60,11 @@ def home(request):
     print(request.session['meta_data'])
     return render(request, 'intel_app/index.html')
 
+@csrf_exempt
 def key_message(request):
-    print(request.session['meta_data'])
-    return render(request, 'intel_app/key_message.html')
+    if request.method == "POST":
+        hiddenInput = request.POST['hiddenInput']
+        print(hiddenInput)
+        return HttpResponseRedirect(reverse("home"))
+    else:
+        return render(request, 'intel_app/key_message.html')
