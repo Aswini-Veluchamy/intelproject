@@ -4,7 +4,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 
+from .models import KeyMessage
+
 from .config import DEFAULT_PASSWORDS
+
 
 @csrf_exempt
 def user_login(request):
@@ -60,11 +63,18 @@ def home(request):
     # print(request.session['meta_data'])
     return render(request, 'intel_app/index.html')
 
+
 @csrf_exempt
 def key_message(request):
     if request.method == "POST":
-        hiddenInput = request.POST['hiddenInput']
-        print(hiddenInput)
-        return HttpResponseRedirect(reverse("home"))
+        message = request.POST['hiddenInput']
+        ''' storing data into database'''
+        key_message_table = KeyMessage.objects.create(
+            message=message
+        )
+        key_message_table.save()
+        return HttpResponseRedirect(reverse("key_message"))
     else:
-        return render(request, 'intel_app/key_message.html')
+        key_mess_data = KeyMessage.objects.all()
+        print(key_mess_data)
+        return render(request, 'intel_app/key_message.html', {'data': key_mess_data})

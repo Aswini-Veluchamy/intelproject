@@ -56,10 +56,12 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for i in data %}
                 <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
+                    <td>{{ i.id }}</td>
+                    <td>test_user</td>
+                    <td>{{ i.message }}</td>
+                {% endfor %}
                 </tr>
                 </tbody>
             </table>
