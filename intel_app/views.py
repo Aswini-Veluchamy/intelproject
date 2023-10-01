@@ -57,7 +57,7 @@ def forgot_password(request):
 
 
 def home(request):
-    print(request.session['meta_data'])
+    # print(request.session['meta_data'])
     return render(request, 'intel_app/index.html')
 
 @csrf_exempt
