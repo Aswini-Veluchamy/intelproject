@@ -6,7 +6,6 @@ from django.contrib.auth import authenticate, login, logout
 
 from .config import DEFAULT_PASSWORDS
 
-
 @csrf_exempt
 def user_login(request):
     context = {}
@@ -60,3 +59,7 @@ def forgot_password(request):
 def home(request):
     print(request.session['meta_data'])
     return render(request, 'intel_app/index.html')
+
+def key_message(request):
+    print(request.session['meta_data'])
+    return render(request, 'intel_app/key_message.html')

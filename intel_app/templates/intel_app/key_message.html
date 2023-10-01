@@ -1,0 +1,68 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Key Message</title>
+    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'intel_app/fontawesome-free-6.4.2/css/all.min.css' %}"/>
+    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
+    <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+</head>
+<body>
+
+<!-- Example Code -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand">
+            <img src="{% static 'intel_app/img/logo.png' %}" style="width:40px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-md-auto gap-2">
+                <li class="nav-item dropdown rounded">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-user"></i>
+                        <span>{{request.user.username}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<main>
+    <!-- Service 4 - Bootstrap Brain Component -->
+    <section>
+        <div class="container"><!--style="max-width:100%;"-->
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Message ID</th>
+                    <th>User</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>
