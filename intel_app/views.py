@@ -1,10 +1,11 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 
 from .models import KeyMessage
+from .forms import PostForm
 
 from .config import DEFAULT_PASSWORDS
 
@@ -78,3 +79,27 @@ def key_message(request):
         key_mess_data = KeyMessage.objects.all()
         print(key_mess_data)
         return render(request, 'intel_app/key_message.html', {'data': key_mess_data})
+
+
+@csrf_exempt
+def key_message_test(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('New Forum Successfully Added')
+    else:
+        form = PostForm()
+        context = {
+            'form': form
+        }
+
+    return render(request, 'intel_app/key_message_test.html', context)
+
+def post_list(request):
+    post_view = KeyMessage.objects.all()
+    for i in post_view:
+        print(i.body)
+    return render(request, 'intel_app/post_list.html', {'post': post_view})
+
+

@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .models import KeyMessage
 
-# Register your models here.
+admin.site.register(KeyMessage)
