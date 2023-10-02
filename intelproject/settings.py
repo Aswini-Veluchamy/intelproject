@@ -83,7 +83,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'root1234',
         'HOST': 'localhost',
-        'PORT': '3406',
+        'PORT': '3306',
     }
 }
 
@@ -154,8 +154,9 @@ QUILL_CONFIGS = {
             'syntax': True,
             'toolbar': [
                 [
-                    {'header': []},
-                    {'align': []},
+                    {'header': [1, 2, 3, 4, 5, 6,  'false']},
+                    {'script': 'sub'}, {'script': 'super'},
+                    {'list': 'ordered'}, {'list': 'bullet'},
                     'bold', 'italic', 'underline', 'strike', 'blockquote',
                     {'color': []},
                     {'background': []},

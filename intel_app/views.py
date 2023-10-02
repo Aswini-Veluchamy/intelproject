@@ -98,8 +98,4 @@ def key_message_test(request):
 
 def post_list(request):
     post_view = KeyMessage.objects.all()
-    for i in post_view:
-        print(i.body)
     return render(request, 'intel_app/post_list.html', {'post': post_view})
-
-
