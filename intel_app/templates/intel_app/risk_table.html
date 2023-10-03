@@ -47,24 +47,28 @@
         <div class="container"><!--style="max-width:100%;"-->
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="float:right;">
-                Create
+                Add Problem
             </button>
             <br><br>
             <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th>Message ID</th>
-                    <th>User</th>
-                    <th>Message</th>
+                    <th>Problem Statement</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Comments</th>
+                    <th>Created At</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for i in data %}
                 <tr>
-                    <td>{{ i.id }}</td>
-                    <td>{{ request.user.username }}</td>
-                   <td>{{ i.message | safe }}</td>
-                {% endfor %}
+                    <td>{{ i.problem_statement }}</td>
+                    <td>{{ i.status }}</td>
+                    <td>{{ i.owner }}</td>
+                    <td>{{ i.comments }}</td>
+                    <td>{{ i.created_at }}</td>
+                    {% endfor %}
                 </tr>
                 </tbody>
             </table>
@@ -83,10 +87,35 @@
                 <!-- Create the editor container -->
                 <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
-                    <!--<input type="text" value="" />-->
-                    <div id="editor" style="height: 275px;"></div>
-                    <input type="hidden" name="hiddenInput" id="hiddenInput">
-                    <div id="counter">Limited to 375 characters</div>
+                    <div class="mb-3">
+                        <label class="form-label" for="problem_statement">Name</label>
+                        <input class="form-control" id="problem_statement" name="problem_statement" type="text" placeholder="Enter Problem Statement" required="required" />
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-check-input" type="radio" name="status" id="status1" required="required" value="Yes">
+                        <label class="form-check-label" for="status1">
+                            Y
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <input class="form-check-input" type="radio" name="status" id="status2" required="required" value="No">
+                        <label class="form-check-label" for="status2">
+                            R
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="owner">Owner</label>
+                        <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner" required="required" />
+                    </div>
+                    <!-- Message input -->
+                    <div class="mb-3">
+                        <label class="form-label" for="comments">Message</label>
+                        <textarea class="form-control" id="comments" name="comments" placeholder="Enter Comments" rows="3" required="required"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="created_at">Created At</label>
+                        <input class="form-control" id="created_at" name="created_at" type="date" placeholder="created_at" required="required" />
+                    </div>
                     <p>{{error}}</p>
                     <button type="submit" id="btn" class="btn btn-primary">Submit</button>
                 </form>
@@ -99,49 +128,6 @@
 <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-
-<!-- Initialize Quill editor -->
-<script>
-    var toolbarOptions = [
-      ['bold', 'italic', 'underline'],        // toggled buttons
-      ['blockquote'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-      [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
-      [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-      [{ 'align': [] }],
-      ['clean']                                         // remove formatting button
-    ];
-    var quill = new Quill('#editor', {
-      modules: {
-        toolbar: toolbarOptions
-      },
-      theme: 'snow' });
-</script>
-<script>
-    var limit = 375;
-    quill.on('text-change', function (delta, old, source) {
-      if (quill.getLength() >= limit) {
-        quill.deleteText(limit, quill.getLength());
-      }
-    });
-</script>
-
-<script>
-$('#btn').on('click', () => {
-    // Get HTML content
-    var html = quill.root.innerHTML;
-
-    // Copy HTML content in hidden form
-    $('#hiddenInput').val( html )
-
-    // Post form
-    myForm.submit();
-})
-</script>
 </body>
 </head>
 </html>

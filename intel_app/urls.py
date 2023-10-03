@@ -9,5 +9,5 @@ urlpatterns = [
     path('key_message/', views.key_message, name='key_message'),
     path('key_message_test/', views.key_message_test, name='key_message_test'),
     path('post_view/', views.post_list, name='post_view'),
-
+    path('risk/', views.risk, name='risk'),
 ]

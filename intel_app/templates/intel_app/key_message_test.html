@@ -1,18 +1,100 @@
-<!DOCTYPE html>
+<!doctype html>
+{% load static %}
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     {{form.media}}
-    <title> My Forum Post</title>
-</head>
+    <title>Key Message</title>
+    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
 <body>
-    <form method="post">
-        {% csrf_token %}
-        {{form.as_p}}
 
-        <input type="submit" value="Submit">
-    </form>
+<!-- Example Code -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand">
+            <img src="{% static 'intel_app/img/logo.png' %}" style="width:40px;">
+        </a>
+        <a class="nav-link ho" href="{% url 'home' %}"><i class="fa fa-home"></i> Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-md-auto gap-2">
+                <li class="nav-item dropdown rounded">
+                    <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-user"></i>
+                        <span>{{request.user.username}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<main>
+    <!-- Service 4 - Bootstrap Brain Component -->
+    <section>
+        <div class="container"><!--style="max-width:100%;"-->
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="float:right;">
+                Create
+            </button>
+            <br><br>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Message ID</th>
+                    <th>Message</th>
+                    <th>Created At</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in post %}
+                <tr>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.body.html | safe }}</td>
+                    <td>{{ i.created_at }}</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Key Message</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Create the editor container -->
+                <form method="post">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include the Quill library -->
+<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 </body>
+</head>
 </html>

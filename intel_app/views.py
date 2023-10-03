@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 
-from .models import KeyMessage
+from .models import KeyMessage, KeyMessageTable, RiskTable
 from .forms import PostForm
 
 from .config import DEFAULT_PASSWORDS
@@ -70,14 +70,13 @@ def key_message(request):
     if request.method == "POST":
         message = request.POST['hiddenInput']
         ''' storing data into database'''
-        key_message_table = KeyMessage.objects.create(
+        key_message_table = KeyMessageTable.objects.create(
             message=message
         )
         key_message_table.save()
         return HttpResponseRedirect(reverse("key_message"))
     else:
-        key_mess_data = KeyMessage.objects.all()
-        print(key_mess_data)
+        key_mess_data = KeyMessageTable.objects.all()
         return render(request, 'intel_app/key_message.html', {'data': key_mess_data})
 
 
@@ -87,15 +86,34 @@ def key_message_test(request):
         form = PostForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponse('New Forum Successfully Added')
+        return HttpResponseRedirect(reverse("key_message_test"))
     else:
         form = PostForm()
-        context = {
-            'form': form
-        }
-
-    return render(request, 'intel_app/key_message_test.html', context)
+        post_view = KeyMessage.objects.all()
+        return render(request, 'intel_app/key_message_test.html', {'post': post_view, 'form': form})
 
 def post_list(request):
     post_view = KeyMessage.objects.all()
     return render(request, 'intel_app/post_list.html', {'post': post_view})
+
+@csrf_exempt
+def risk(request):
+    if request.method == "POST":
+        problem_statement = request.POST['problem_statement']
+        status = request.POST['status']
+        owner = request.POST['owner']
+        comments = request.POST['comments']
+        created_at = request.POST['created_at']
+        ''' storing data into database'''
+        risk_data = RiskTable.objects.create(
+            problem_statement=problem_statement,
+            status=status,
+            owner=owner,
+            comments=comments,
+            created_at=created_at
+        )
+        risk_data.save()
+        return HttpResponseRedirect(reverse("risk"))
+    else:
+        risk_data = RiskTable.objects.all()
+        return render(request, 'intel_app/risk_table.html', {'data': risk_data})

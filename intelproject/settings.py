@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'intel_app',
+    'fontawesomefree',
     'django_quill',
 ]
 

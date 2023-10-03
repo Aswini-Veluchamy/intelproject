@@ -15,6 +15,9 @@ body {
 .nav-link {
  color: #ffffff;
 }
+.ho {
+ color: #ffffff !important;
+}
 .navbar-expand-lg {
   background-color: #007bff!important
 }
