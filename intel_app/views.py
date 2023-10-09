@@ -31,7 +31,7 @@ def user_login(request):
                     if user not tagged to the any project render error message to UI
                     else render to the respective home page 
                 '''
-                project = user.groups.all()[0].name
+                project = list(user.groups.all().values_list('name', flat=True))
             else:
                 context['error'] = f"Please tag the project : {username}"
                 return render(request, "intel_app/login.html", context)
@@ -69,15 +69,20 @@ def home(request):
 def key_message(request):
     if request.method == "POST":
         message = request.POST['hiddenInput']
+        project = request.POST['project']
         ''' storing data into database'''
         key_message_table = KeyMessageTable.objects.create(
-            message=message
+            message=message,
+            project=project,
+            user=request.session['meta_data'].get('user_id')
         )
         key_message_table.save()
         return HttpResponseRedirect(reverse("key_message"))
     else:
+        project = request.session['meta_data'].get('project')
         key_mess_data = KeyMessageTable.objects.all()
-        return render(request, 'intel_app/key_message.html', {'data': key_mess_data})
+        print(project)
+        return render(request, 'intel_app/key_message.html', {'data': key_mess_data, 'project': project})
 
 
 @csrf_exempt
@@ -92,9 +97,11 @@ def key_message_test(request):
         post_view = KeyMessage.objects.all()
         return render(request, 'intel_app/key_message_test.html', {'post': post_view, 'form': form})
 
+
 def post_list(request):
     post_view = KeyMessage.objects.all()
     return render(request, 'intel_app/post_list.html', {'post': post_view})
+
 
 @csrf_exempt
 def risk(request):
