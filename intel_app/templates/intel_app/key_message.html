@@ -17,15 +17,20 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand">
-            <img src="{% static 'intel_app/img/logo.png' %}" style="width:40px;">
+            <span>Intel</span>
         </a>
-        <a class="nav-link ho" href="{% url 'home' %}"><i class="fa fa-home"></i> Home</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-md-auto gap-2">
+                <li class="nav-item rounded">
+                    <a class="nav-link ho" href="{% url 'home' %}">
+                    <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
                 <li class="nav-item dropdown rounded">
                     <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
@@ -56,6 +61,7 @@
                     <th>Message ID</th>
                     <th>User</th>
                     <th>Message</th>
+                    <th>Project</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,8 +69,9 @@
                 <tr>
                     <td>{{ i.id }}</td>
                     <td>{{ request.user.username }}</td>
-                   <td>{{ i.message | safe }}</td>
-                {% endfor %}
+                    <td>{{ i.message | safe }}</td>
+                    <td>{{ i.project }}</td>
+                    {% endfor %}
                 </tr>
                 </tbody>
             </table>
@@ -84,6 +91,14 @@
                 <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
                     <!--<input type="text" value="" />-->
+                    <label class="form-label">Select Project: </label>
+                    <select class="form-select" name="project" id='project'>
+                        <option value="" disabled="disabled" selected="selected">Projects</option>
+                        {% for i in project %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
                     <div id="editor" style="height: 275px;"></div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
                     <div id="counter">Limited to 375 characters</div>
@@ -131,16 +146,16 @@
 </script>
 
 <script>
-$('#btn').on('click', () => {
-    // Get HTML content
-    var html = quill.root.innerHTML;
+    $('#btn').on('click', () => {
+        // Get HTML content
+        var html = quill.root.innerHTML;
 
-    // Copy HTML content in hidden form
-    $('#hiddenInput').val( html )
+        // Copy HTML content in hidden form
+        $('#hiddenInput').val( html )
 
-    // Post form
-    myForm.submit();
-})
+        // Post form
+        myForm.submit();
+    })
 </script>
 </body>
 </head>
