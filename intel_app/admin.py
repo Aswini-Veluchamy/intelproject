@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import KeyMessage
+from .models import KeyMessageTable
 
-admin.site.register(KeyMessage)
+admin.site.register(KeyMessageTable)

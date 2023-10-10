@@ -61,7 +61,6 @@ def forgot_password(request):
 
 
 def home(request):
-    # print(request.session['meta_data'])
     return render(request, 'intel_app/index.html')
 
 
@@ -81,7 +80,6 @@ def key_message(request):
     else:
         project = request.session['meta_data'].get('project')
         key_mess_data = KeyMessageTable.objects.all()
-        print(project)
         return render(request, 'intel_app/key_message.html', {'data': key_mess_data, 'project': project})
 
 
