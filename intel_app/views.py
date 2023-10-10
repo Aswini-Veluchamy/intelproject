@@ -9,6 +9,8 @@ from .forms import PostForm
 
 from .config import DEFAULT_PASSWORDS
 
+from .db_connection import load_key_message_data
+
 
 @csrf_exempt
 def user_login(request):
@@ -69,13 +71,16 @@ def key_message(request):
     if request.method == "POST":
         message = request.POST['hiddenInput']
         project = request.POST['project']
+        user = request.session['meta_data'].get('user_id')
         ''' storing data into database'''
         key_message_table = KeyMessageTable.objects.create(
             message=message,
             project=project,
-            user=request.session['meta_data'].get('user_id')
+            user=user
         )
         key_message_table.save()
+        # loading data to sql database
+        load_key_message_data([(user, message, project)])
         return HttpResponseRedirect(reverse("key_message"))
     else:
         project = request.session['meta_data'].get('project')
@@ -87,8 +92,8 @@ def key_message(request):
 def key_message_test(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
-        if form.is_valid():
-            form.save()
+        # if form.is_valid():
+        #     form.save()
         return HttpResponseRedirect(reverse("key_message_test"))
     else:
         form = PostForm()
