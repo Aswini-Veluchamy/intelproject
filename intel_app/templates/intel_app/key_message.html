@@ -92,13 +92,14 @@
                     {% csrf_token %}
                     <!--<input type="text" value="" />-->
                     <label class="form-label">Select Project: </label>
-                    <select class="form-select" name="project" id='project'>
+                    <select class="form-select" name="project" id='project' required="required">
                         <option value="" disabled="disabled" selected="selected">Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
                         {% endfor %}
                     </select>
                     <br>
+                    <label class="form-label">Key Message: </label>
                     <div id="editor" style="height: 275px;"></div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
                     <div id="counter">Limited to 375 characters</div>
@@ -147,11 +148,14 @@
 
 <script>
     $('#btn').on('click', () => {
+
         // Get HTML content
         var html = quill.root.innerHTML;
 
         // Copy HTML content in hidden form
         $('#hiddenInput').val( html )
+
+        e.preventDefault();
 
         // Post form
         myForm.submit();
