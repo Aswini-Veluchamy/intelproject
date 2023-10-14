@@ -84,7 +84,7 @@
                 <thead>
                 <tr>
                     <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
-                    <th nowrap data-sortable="true" class="status">Status</th>
+                    <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">Status</th>
                     <th nowrap data-sortable="true" class="owner">Owner</th>
                     <th nowrap data-sortable="true" class="message">Message</th>
                     <th nowrap data-sortable="true" class="eta" data-field="eta">ETA</th>
@@ -132,12 +132,16 @@
                             <div class="col-sm-6">
                                 <label class="form-label">Status</label>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="customRadioInline1" name="status" class="custom-control-input" required="required">
-                                    <label class="custom-control-label" for="customRadioInline1">Y</label>
+                                    <input type="radio" id="customRadioInline1" name="status" class="custom-control-input" value="R" required="required">
+                                    <label class="custom-control-label" for="customRadioInline1">R</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="customRadioInline2" name="status" class="custom-control-input" required="required">
-                                    <label class="custom-control-label" for="customRadioInline2">R</label>
+                                    <input type="radio" id="customRadioInline2" name="status" class="custom-control-input" value="G" required="required">
+                                    <label class="custom-control-label" for="customRadioInline2">G</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="customRadioInline3" name="status" class="custom-control-input" value="B" required="required">
+                                    <label class="custom-control-label" for="customRadioInline3">B</label>
                                 </div>
                             </div>
                         </div>
@@ -209,6 +213,16 @@
 <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+<script>
+  function nameFormatter(value, row) {
+    var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
+    row.status === 'G'  ? 'fa-circle fa-sm text-success' :
+    row.status === 'B'  ? 'fa-circle fa-sm text-primary' :
+    'fa-circle fa-sm text-info'
+    return '<i class="fa ' + icon + '"></i> ' + value
+  }
+
+</script>
 </body>
 </head>
 </html>
