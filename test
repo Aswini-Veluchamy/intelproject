@@ -4,9 +4,11 @@ table - folder
 
 html
 key message
+key message edit
 risk table
 index
 
 models.py
 views.py
+urls.py
 ****************************************
