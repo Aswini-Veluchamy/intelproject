@@ -131,3 +131,7 @@ def risk(request):
     else:
         risk_data = RiskTable.objects.all()
         return render(request, 'intel_app/risk_table.html', {'data': risk_data})
+
+@csrf_exempt
+def key_edit_message(request,pk):
+    return render(request, 'intel_app/key_edit_message.html')

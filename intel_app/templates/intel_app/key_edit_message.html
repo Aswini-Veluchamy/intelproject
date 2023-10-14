@@ -11,9 +11,6 @@
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
     <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
 <body>
 
 <!-- Example Code -->
@@ -53,71 +50,7 @@
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
         <div class="container"><!--style="max-width:100%;"-->
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="float:right;">
-                Create
-            </button>
-            <br><br>
-            <table class="table table-bordered table-striped" id="example"
-                   data-toggle="table"
-                   data-pagination="true"
-                   data-search="true"
-                   data-search-align="left"
-                   data-show-columns="true"
-                   data-show-toggle="false"
-                   data-show-columns-toggle-all="true"
-                   data-show-export="true"
-                   data-export-data-type="all"
-                   data-response-handler="responseHandler"
-                   data-show-fullscreen="true"
-                   data-show-pagination-switch="true"
-                   data-height="510"
-                   data-sort-name="created_at"
-                   data-sort-order="desc"
-                   data-pagination-pre-text="Previous"
-                   data-pagination-next-text="Next"
-                   data-pagination-h-align="left"
-                   data-pagination-detail-h-align="right"
-                   data-page-size="6"
-                   data-page-list="[20, 30, 40, 50, All]"
-                   data-buttons-class="primary">
-                <thead>
-                <tr>
-                    <th nowrap data-sortable="true" class="message_id">Message ID</th>
-                    <th nowrap data-sortable="true" class="user">User</th>
-                    <th nowrap data-sortable="true" class="message">Message</th>
-                    <th nowrap data-sortable="true" class="project">Project</th>
-                    <th nowrap class="created_at" data-field="created_at" data-sortable="true">Created at</th>
-                    <th nowrap data-sortable="true"></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in data %}
-                <tr>
-                    <td nowrap class="message_id">{{ i.request_id }}</td>
-                    <td nowrap class="user">{{ request.user.username }}</td>
-                    <td nowrap class="message">{{ i.message | safe }}</td>
-                    <td nowrap class="project">{{ i.project }}</td>
-                    <td nowrap class="project">{{ i.created_at|date:'Y-m-d H:i:s' }}</td>
-                    <td><button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal1" title="Edit Message"><a style="text-decoration:none;color:#fff;" href="{% url 'key_edit_message' pk=i.request_id %}"><i class="fas fa-edit"></i>&nbsp;Edit</a></button></td>
-                    {% endfor %}
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-</main>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Key Message</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Create the editor container -->
-                <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
+            <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
                     <!--<input type="text" value="" />-->
                     <label class="form-label">Select Project: </label>
@@ -135,28 +68,16 @@
                     <p>{{error}}</p>
                     <button type="submit" id="btn" class="btn btn-primary">Submit</button>
                 </form>
-            </div>
         </div>
-    </div>
-</div>
+    </section>
+</main>
+
 
 <!-- Include the Quill library -->
-<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/quill.js' %}"></script>
-<script src="{% static 'intel_app/table/popper.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
-<script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
-<script>
-    $('#example').bootstrapTable({
-    exportOptions: {
-        fileName: 'Key Message'
-    }
-});
-</script>
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 
 <!-- Initialize Quill editor -->
 <script>
