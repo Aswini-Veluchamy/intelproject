@@ -1,16 +1,17 @@
 body {
   font-family: Montserrat, sans-serif;
+  background-color: #dfefff !important;
 }
 
 .navbar-expand-lg {
-  background-color: #007bff!important;
+  background-color: #007bff !important;
 }
 
 .navbar-brand {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  color: #ffffff!important;
+  color: #ffffff !important;
 }
 
 .navbar-nav .nav-item:hover {
@@ -18,56 +19,164 @@ body {
 }
 
 .ho {
- color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 p {
-    font-size: 14px;
+  font-size: 14px;
 }
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
-
 .card {
-  background-color: #FFF;
-  box-shadow: 0 5px 18px 3px rgba(0, 0, 0, 0.1) !important;
+  display: flex;
+  margin-bottom: 30px;
+  width: 100%;
 }
-.card-body .card-title {
-  font-family: 'Lato', sans-serif;
+.card .card-icon-top {
+  font-size: 4.5rem;
+  margin-top: 3rem;
+}
+.card .card-tags {
+  color: #097d6c;
+  display: inline-block;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  font-size: 24px;
-  color: #121212;
+  margin-bottom: 1rem;
 }
-
-.card-text {
- font-family: 'Lato', sans-serif;
- font-weight: 400;
- font-size: 15px;
- letter-spacing: 0.3px;
- color: #4E4E4E;
-
+.card .card-tags:before {
+  content: "";
+  background-color: #097d6c;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: 100%;
+  display: inline-block;
+  margin-right: 0.5rem;
 }
-
-.card:hover {
- box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1),
-             0 10px 8px rgba(0, 0, 0, 0.015);
+.card .card-date {
+  display: inline-block;
+  padding-bottom: 1rem;
 }
-.card-body .card-title {
-  font-family: 'Lato', sans-serif;
+.card .card-title {
+  color: #212529;
+  display: block;
+  //font-weight: 400;
   font-weight: 700;
-  letter-spacing: 0.3px;
-  font-size: 24px;
-  color: #121212;
+  font-size: 1.5rem;
+  line-height: 1.33333;
+  margin-bottom: 1rem;
 }
-.card .container {
-  width: 88%;
-  background: #F0EEF8;
-  border-radius: 30px;
-  height: 140px;
+.card .card-title:last-child {
+  margin-bottom: 0;
+}
+.card .card-label {
+  color: #212529;
+  display: block;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.33333;
+  font-weight: 700;
+}
+.card .card-body {
+  padding: 2rem 2rem 2rem 2rem;
+  align-self: center;
+  width: 100%;
+}
+.card .card-body .popover-wrapper.right {
+  position: absolute;
+  right: 0;
+}
+.card .card-metadata {
+  min-width: 10rem;
+}
+.card .card-footer {
+  border-top: none;
+  padding: 0 2rem 2rem 2rem;
+  background-color: inherit;
   display: flex;
   align-items: center;
-  justify-content: center;
+}
+.card .card-footer .vfi {
+  color: #097d6c;
+  font-size: 2.5rem;
+  padding-left: 0.5rem;
+}
+.card .vfi {
+  color: #097d6c;
+}
+.card > a {
+  border-bottom: none;
+  color: #637381;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card > a:hover,
+.card > a:active {
+  color: #fff;
+  background: #097d6c;
+  text-decoration: none;
+}
+.card > a:hover .card-title,
+.card > a:hover .card-icon-top,
+.card > a:hover .card-footer .vfi,
+.card > a:hover .card-tags,
+.card > a:active .card-title,
+.card > a:active .card-icon-top,
+.card > a:active .card-footer .vfi,
+.card > a:active .card-tags {
+  color: #fff;
+}
+.card > a:hover .text-muted,
+.card > a:active .text-muted {
+  color: #fff !important;
+}
+.card > a:hover .card-tags:before,
+.card > a:active .card-tags:before {
+  background-color: #fff;
+}
+
+.card2 {
+  background-color: #ffffff;
+  border-radius: 4px;
+  -webkit-transition: all 100ms ease-in-out;
+  transition: all 100ms ease-in-out;
+  border: none;
+  -webkit-box-shadow: 0 1px 7px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 7px rgba(0, 0, 0, 0.05);
+}
+.card2:hover {
+  transform: scale(1.04);
+  border: none;
+}
+.card2 > a:hover,
+.card2 > a:active {
+  color: inherit;
+  background: #fff;
+  text-decoration: none;
+}
+.card2 > a:hover .card-icon-top,
+.card2 > a:hover .card-footer .vfi,
+.card2 > a:hover .card-tags,
+.card2 > a:active .card-icon-top,
+.card2 > a:active .card-footer .vfi,
+.card2 > a:active .card-tags {
+  color: inherit;
+}
+.card2 > a:hover .card-title,
+.card2 > a:active .card-title {
+  color: #097d6c;
+}
+.card2 > a:hover .text-muted,
+.card2 > a:active .text-muted {
+  color: #fff !important;
+}
+.card2 > a:hover .card-tags:before,
+.card2 > a:active .card-tags:before {
+  background-color: #fff;
+}
+.form-label {
+  font-weight: 600;
 }

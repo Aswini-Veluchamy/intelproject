@@ -3,14 +3,17 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Key Message</title>
+    <title>Risks</title>
     <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
     <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
 <body>
 
 <!-- Example Code -->
@@ -27,7 +30,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <li class="nav-item rounded">
                     <a class="nav-link ho" href="{% url 'home' %}">
-                    <i class="fa fa-home"></i>
+                        <i class="fa fa-home"></i>
                         <span>Home</span>
                     </a>
                 </li>
@@ -55,24 +58,52 @@
                 Add Problem
             </button>
             <br><br>
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped" id="example"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true"
+                   data-search-align="left"
+                   data-show-columns="true"
+                   data-show-toggle="false"
+                   data-show-columns-toggle-all="true"
+                   data-show-export="true"
+                   data-export-data-type="all"
+                   data-response-handler="responseHandler"
+                   data-show-fullscreen="true"
+                   data-show-pagination-switch="true"
+                   data-height="510"
+                   data-sort-name="eta"
+                   data-sort-order="desc"
+                   data-pagination-pre-text="Previous"
+                   data-pagination-next-text="Next"
+                   data-pagination-h-align="left"
+                   data-pagination-detail-h-align="right"
+                   data-page-size="6"
+                   data-page-list="[20, 30, 40, 50, All]"
+                   data-buttons-class="primary">
                 <thead>
                 <tr>
-                    <th>Problem Statement</th>
-                    <th>Status</th>
-                    <th>Owner</th>
-                    <th>Comments</th>
-                    <th>Created At</th>
+                    <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
+                    <th nowrap data-sortable="true" class="status">Status</th>
+                    <th nowrap data-sortable="true" class="owner">Owner</th>
+                    <th nowrap data-sortable="true" class="message">Message</th>
+                    <th nowrap data-sortable="true" class="eta" data-field="eta">ETA</th>
+                    <th nowrap data-sortable="true" class="risk">Risk</th>
+                    <th nowrap data-sortable="true" class="severity">Severity</th>
+                    <th nowrap data-sortable="true" class="impact">Impact</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for i in data %}
                 <tr>
-                    <td>{{ i.problem_statement }}</td>
-                    <td>{{ i.status }}</td>
-                    <td>{{ i.owner }}</td>
-                    <td>{{ i.comments }}</td>
-                    <td>{{ i.created_at }}</td>
+                    <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
+                    <td nowrap class="status">{{ i.status }}</td>
+                    <td nowrap class="owner">{{ i.owner }}</td>
+                    <td nowrap class="message">{{ i.message }}</td>
+                    <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
+                    <td nowrap class="risk">{{ i.risk }}</td>
+                    <td nowrap class="severity">{{ i.severity }}</td>
+                    <td nowrap class="impact">{{ i.impact }}</td>
                     {% endfor %}
                 </tr>
                 </tbody>
@@ -85,42 +116,81 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Key Message</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Risks</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Create the editor container -->
                 <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label" for="problem_statement">Name</label>
-                        <input class="form-control" id="problem_statement" name="problem_statement" type="text" placeholder="Enter Problem Statement" required="required" />
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="problem_statement">Name</label>
+                                <textarea class="form-control" id="problem_statement" name="problem_statement" placeholder="Enter Problem Statement" cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Status</label>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="customRadioInline1" name="status" class="custom-control-input" required="required">
+                                    <label class="custom-control-label" for="customRadioInline1">Y</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="customRadioInline2" name="status" class="custom-control-input" required="required">
+                                    <label class="custom-control-label" for="customRadioInline2">R</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <input class="form-check-input" type="radio" name="status" id="status1" required="required" value="Yes">
-                        <label class="form-check-label" for="status1">
-                            Y
-                        </label>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="owner">Owner</label>
+                                <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner" required="required" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="message">Message</label>
+                                <textarea class="form-control" id="message" name="message" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <input class="form-check-input" type="radio" name="status" id="status2" required="required" value="No">
-                        <label class="form-check-label" for="status2">
-                            R
-                        </label>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="eta">ETA</label>
+                                <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at" required="required" />
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="risk">Risk Intiated</label>
+                                <input class="form-control" id="risk" name="risk" type="text" placeholder="Enter Risk" required="required" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="owner">Owner</label>
-                        <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner" required="required" />
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="severity">Severity</label>
+                                <select class="form-select" name="severity" id='severity' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Severity</option>
+                                    <option value="Mgt">Mgt</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="impact">Impact</label>
+                                <select class="form-select" name="impact" id='impact' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Impact</option>
+                                    <option value="PPA">PPA</option>
+                                    <option value="Functionality">Functionality</option>
+                                    <option value="Quality">Quality</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Message input -->
-                    <div class="mb-3">
-                        <label class="form-label" for="comments">Message</label>
-                        <textarea class="form-control" id="comments" name="comments" placeholder="Enter Comments" rows="3" required="required"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="created_at">Created At</label>
-                        <input class="form-control" id="created_at" name="created_at" type="date" placeholder="created_at" required="required" />
-                    </div>
+                    <br>
                     <p>{{error}}</p>
                     <button type="submit" id="btn" class="btn btn-primary">Submit</button>
                 </form>
@@ -130,9 +200,15 @@
 </div>
 
 <!-- Include the Quill library -->
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+<script src="{% static 'intel_app/js/quill.js' %}"></script>
+<script src="{% static 'intel_app/table/popper.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
+<script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 </body>
 </head>
 </html>

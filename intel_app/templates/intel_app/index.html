@@ -13,34 +13,35 @@
     <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-    <style>
-        .arrow {
-            margin: 1em 0;
+<style>
+.btn {
+  transition: all 0.4s;
+}
 
-            &::after {
-                display: inline-block;
-                padding-left: 8px;
-                content: "\0279E"; // arrow right unicode
-                -webkit-transition: transform 0.3s ease-out;
-                -moz-transition: transform 0.3s ease-out;
-                -ms-transition: transform 0.3s ease-out;
-                -o-transition: transform 0.3s ease-out;
-                transition: transform 0.3s ease-out;
-            }
+.btn span {
+  display: inline-block;
+  position: relative;
+  transition: 0.4s;
+}
 
-            &:hover {
+.btn span:after {
+  content: "\00bb";
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -1.375rem;
+  transition: 0.4s;
+}
 
-                &::after {
-                    -webkit-transform: translateX(4px);
-                    -moz-transform: translateX(4px);
-                    -ms-transform: translateX(4px);
-                    -o-transform: translateX(4px);
-                    transform: translateX(4px);
-                }
-            }
-        }
+.btn:hover span {
+  padding-right: 2rem;
+}
 
-    </style>
+.btn:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+</style>
 </head>
 <body>
 
@@ -81,8 +82,9 @@
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
         <div class="container"><!--style="max-width:100%;"-->
-            <div class="alert alert-primary" role="alert">
-                A simple primary alert—check it out!
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Welcome!</strong> A simple primary alert—check it out!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
         <br>
@@ -96,80 +98,94 @@
 
             <div id="mycard" class="row py-2">
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
-                    <div class="card border-0 border-bottom shadow-sm">
+                    <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
                             <i class="fa-solid fa-key fa-2xl text-warning mb-4"></i><br><br>
                             <h5 class="mb-4">Key Message</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-sm btn-warning button arrow" href="{% url 'key_message' %}" role="button">Add</a>
+                            <a class="btn btn-md btn-warning button arrow" href="{% url 'key_message' %}" role="button">
+                                <span>Add</span>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
-                    <div class="card border-0 border-bottom shadow-sm">
+                    <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
                             <i class="fa-solid fa-calendar-days fa-2xl text-secondary mb-4"></i><br><br>
                             <h5 class="mb-4">Schedule - MSPO</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-sm btn-secondary button arrow" href="#" role="button">Add</a>
+                            <a class="btn btn-md btn-secondary button arrow" href="#" role="button">
+                                <span>Add</span>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
-                    <div class="card border-0 border-bottom shadow-sm">
+                    <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
                             <i class="fa-solid fa-file fa-2xl text-info mb-4"></i><br><br>
                             <h5 class="mb-4">Risks</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-sm btn-info button arrow" href="{% url 'risk' %}" role="button">Add</a>
+                            <a class="btn btn-md btn-info button arrow" href="{% url 'risk' %}" role="button">
+                                <span>Add</span>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
-                    <div class="card border-0 border-bottom shadow-sm">
+                    <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
                             <i class="fa-solid fa-plus fa-2xl text-danger mb-4"></i><br><br>
                             <h5 class="mb-4">Adds</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-sm btn-danger button arrow" href="#" role="button">Add</a>
+                            <a class="btn btn-md btn-danger button arrow" href="#" role="button">
+                                <span>Add</span>
+                            </a>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
-                    <div class="card border-0 border-bottom shadow-sm">
+                    <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
                             <i class="fa-solid fa-link fa-2xl text-success mb-4"></i><br><br>
                             <h5 class="mb-4">Links</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandiht lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-sm btn-success button arrow" href="#" role="button">Add</a>
+                            <a class="btn btn-md btn-success button arrow" href="#" role="button">
+                                <span>Add</span>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
-                    <div class="card border-0 border-bottom shadow-sm">
+                    <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
                             <i class="fa-solid fa-box-open fa-2xl text-primary mb-4"></i><br><br>
                             <h5 class="mb-4">BBox</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-sm btn-primary button arrow" href="#" role="button">Add</a>
+                            <a class="btn btn-md btn-primary button arrow" href="#" role="button">
+                                <span>Add</span>
+                            </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
-                    <div class="card border-0 border-bottom shadow-sm">
+                    <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
                             <i class="fa-solid fa-circle-info fa-2xl text-dark mb-4"></i><br><br>
                             <h5 class="mb-4">Details</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-sm btn-dark button arrow" href="#" role="button">Add</a>
+                            <a class="btn btn-md btn-dark button arrow" href="#" role="button">
+                                <span>Add</span>
+                            </a>
                         </div>
                     </div>
                 </div>

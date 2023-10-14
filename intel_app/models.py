@@ -18,9 +18,11 @@ class KeyMessage(models.Model):
 
 class KeyMessageTable(models.Model):
     ''' created database fields'''
+    request_id = models.CharField(max_length=128)
     message = models.CharField(max_length=200)
     user = models.CharField(max_length=200)
     project = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.message
@@ -31,12 +33,14 @@ class KeyMessageTable(models.Model):
 
 class RiskTable(models.Model):
     ''' created database fields'''
-    problem_statement = models.CharField(max_length=200)
+    problem_statement = models.CharField(max_length=250)
     status = models.CharField(max_length=200)
     owner = models.CharField(max_length=200)
-    comments = models.CharField(max_length=200)
-    created_at = models.DateTimeField(auto_now_add=True)
-
+    message = models.CharField(max_length=250)
+    eta = models.DateTimeField()
+    risk = models.CharField(max_length=200)
+    severity = models.CharField(max_length=200)
+    impact = models.CharField(max_length=200)
     def __str__(self):
         return self.owner
 

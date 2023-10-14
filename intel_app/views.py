@@ -3,13 +3,12 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-
+from datetime import datetime
+import time
 from .models import KeyMessage, KeyMessageTable, RiskTable
 from .forms import PostForm
 
 from .config import DEFAULT_PASSWORDS
-
-from .db_connection import load_key_message_data
 
 
 @csrf_exempt
@@ -71,16 +70,15 @@ def key_message(request):
     if request.method == "POST":
         message = request.POST['hiddenInput']
         project = request.POST['project']
-        user = request.session['meta_data'].get('user_id')
         ''' storing data into database'''
+        request_id = project[0:3] + "_" + str(int(time.time() * 1000))
         key_message_table = KeyMessageTable.objects.create(
+            request_id=request_id,
             message=message,
             project=project,
-            user=user
+            user=request.session['meta_data'].get('user_id')
         )
         key_message_table.save()
-        # loading data to sql database
-        load_key_message_data([(user, message, project)])
         return HttpResponseRedirect(reverse("key_message"))
     else:
         project = request.session['meta_data'].get('project')
@@ -92,8 +90,8 @@ def key_message(request):
 def key_message_test(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
-        # if form.is_valid():
-        #     form.save()
+        if form.is_valid():
+            form.save()
         return HttpResponseRedirect(reverse("key_message_test"))
     else:
         form = PostForm()
@@ -112,15 +110,21 @@ def risk(request):
         problem_statement = request.POST['problem_statement']
         status = request.POST['status']
         owner = request.POST['owner']
-        comments = request.POST['comments']
-        created_at = request.POST['created_at']
+        message = request.POST['message']
+        eta = request.POST['eta']
+        risk = request.POST['risk']
+        severity = request.POST['severity']
+        impact = request.POST['impact']
         ''' storing data into database'''
         risk_data = RiskTable.objects.create(
             problem_statement=problem_statement,
             status=status,
             owner=owner,
-            comments=comments,
-            created_at=created_at
+            message=message,
+            eta=eta,
+            risk=risk,
+            severity=severity,
+            impact=impact
         )
         risk_data.save()
         return HttpResponseRedirect(reverse("risk"))
