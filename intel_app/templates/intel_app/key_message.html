@@ -94,12 +94,12 @@
                 <tbody>
                 {% for i in data %}
                 <tr>
-                    <td nowrap class="message_id">{{ i.request_id }}</td>
+                    <td nowrap class="message_id">{{ i.message_id }}</td>
                     <td nowrap class="user">{{ request.user.username }}</td>
                     <td nowrap class="message">{{ i.message | safe }}</td>
                     <td nowrap class="project">{{ i.project }}</td>
                     <td nowrap class="project">{{ i.created_at|date:'Y-m-d H:i:s' }}</td>
-                    <td><button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal1" title="Edit Message"><a style="text-decoration:none;color:#fff;" href="{% url 'key_edit_message' pk=i.request_id %}"><i class="fas fa-edit"></i>&nbsp;Edit</a></button></td>
+                    <td><button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal1" title="Edit Message"><a style="text-decoration:none;color:#fff;" href="{% url 'key_edit_message' pk=i.id %}"><i class="fas fa-edit"></i>&nbsp;Edit</a></button></td>
                     {% endfor %}
                 </tr>
                 </tbody>

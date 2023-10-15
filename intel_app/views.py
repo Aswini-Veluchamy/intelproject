@@ -10,6 +10,8 @@ from .forms import PostForm
 
 from .config import DEFAULT_PASSWORDS
 
+from .db_connection import load_key_message_data
+
 
 @csrf_exempt
 def user_login(request):
@@ -70,15 +72,19 @@ def key_message(request):
     if request.method == "POST":
         message = request.POST['hiddenInput']
         project = request.POST['project']
+        user = request.session['meta_data'].get('user_id')
         ''' storing data into database'''
-        request_id = project[0:3] + "_" + str(int(time.time() * 1000))
+        message_id = str(int(time.time() * 1000)) + '_' + user
         key_message_table = KeyMessageTable.objects.create(
-            request_id=request_id,
+            message_id=message_id,
             message=message,
             project=project,
             user=request.session['meta_data'].get('user_id')
         )
         key_message_table.save()
+        # load key message to external database
+        load_key_message_data([(message_id, user, message, project)])
+        print('data loaded')
         return HttpResponseRedirect(reverse("key_message"))
     else:
         project = request.session['meta_data'].get('project')
@@ -132,6 +138,17 @@ def risk(request):
         risk_data = RiskTable.objects.all()
         return render(request, 'intel_app/risk_table.html', {'data': risk_data})
 
+
 @csrf_exempt
-def key_edit_message(request,pk):
-    return render(request, 'intel_app/key_edit_message.html')
+def key_edit_message(request, pk):
+    if request.method == "POST":
+        message = request.POST['hiddenInput']
+        print(message)
+        # tab = KeyMessageTable.objects.filter(pk=pk)
+        # tab.update(message=message)
+        # update the values in database
+
+        return HttpResponseRedirect(reverse("key_message"))
+    else:
+        data = KeyMessageTable.objects.filter(pk=pk)
+        return render(request, 'intel_app/key_edit_message.html', {'data': data})

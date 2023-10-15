@@ -56,8 +56,8 @@
                     <label class="form-label">Select Project: </label>
                     <select class="form-select" name="project" id='project' required="required">
                         <option value="" disabled="disabled" selected="selected">Projects</option>
-                        {% for i in project %}
-                        <option value="{{i}}">{{i}}</option>
+                        {% for i in data %}
+                        <option value="{{i.project}}">{{i.project}}</option>
                         {% endfor %}
                     </select>
                     <br>

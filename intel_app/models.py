@@ -18,7 +18,7 @@ class KeyMessage(models.Model):
 
 class KeyMessageTable(models.Model):
     ''' created database fields'''
-    request_id = models.CharField(max_length=128)
+    message_id = models.CharField(max_length=128)
     message = models.CharField(max_length=200)
     user = models.CharField(max_length=200)
     project = models.CharField(max_length=200)
