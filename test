@@ -13,6 +13,11 @@ views.py
 urls.py
 ****************************************
 
+
+'''
+ pip install mysql-connector-python
+'''
+
 db setings
 
 DATABASES = {

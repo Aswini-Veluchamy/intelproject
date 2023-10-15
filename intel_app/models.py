@@ -41,6 +41,8 @@ class RiskTable(models.Model):
     risk = models.CharField(max_length=200)
     severity = models.CharField(max_length=200)
     impact = models.CharField(max_length=200)
+    risk_id = models.CharField(max_length=100)
+
     def __str__(self):
         return self.owner
 

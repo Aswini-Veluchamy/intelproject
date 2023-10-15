@@ -11,6 +11,7 @@ from .forms import PostForm
 from .config import DEFAULT_PASSWORDS
 
 from .db_connection import load_key_message_data
+from .db_connection import update_key_message_data
 
 
 @csrf_exempt
@@ -73,8 +74,8 @@ def key_message(request):
         message = request.POST['hiddenInput']
         project = request.POST['project']
         user = request.session['meta_data'].get('user_id')
-        ''' storing data into database'''
         message_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
         key_message_table = KeyMessageTable.objects.create(
             message_id=message_id,
             message=message,
@@ -84,7 +85,6 @@ def key_message(request):
         key_message_table.save()
         # load key message to external database
         load_key_message_data([(message_id, user, message, project)])
-        print('data loaded')
         return HttpResponseRedirect(reverse("key_message"))
     else:
         project = request.session['meta_data'].get('project')
@@ -111,7 +111,7 @@ def post_list(request):
 
 
 @csrf_exempt
-def risk(request):
+def risks(request):
     if request.method == "POST":
         problem_statement = request.POST['problem_statement']
         status = request.POST['status']
@@ -121,6 +121,9 @@ def risk(request):
         risk = request.POST['risk']
         severity = request.POST['severity']
         impact = request.POST['impact']
+
+        user = request.session['meta_data'].get('user_id')
+        risk_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         risk_data = RiskTable.objects.create(
             problem_statement=problem_statement,
@@ -130,7 +133,8 @@ def risk(request):
             eta=eta,
             risk=risk,
             severity=severity,
-            impact=impact
+            impact=impact,
+            risk_id=risk_id
         )
         risk_data.save()
         return HttpResponseRedirect(reverse("risk"))
@@ -143,11 +147,11 @@ def risk(request):
 def key_edit_message(request, pk):
     if request.method == "POST":
         message = request.POST['hiddenInput']
-        print(message)
-        # tab = KeyMessageTable.objects.filter(pk=pk)
-        # tab.update(message=message)
-        # update the values in database
-
+        tab = KeyMessageTable.objects.filter(pk=pk)
+        # update the values in external database
+        update_key_message_data([(tab[0].message_id, message)])
+        # update the values local database
+        tab.update(message=message)
         return HttpResponseRedirect(reverse("key_message"))
     else:
         data = KeyMessageTable.objects.filter(pk=pk)
