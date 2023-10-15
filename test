@@ -21,3 +21,11 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+CREATE TABLE key_message(
+ message_id VARCHAR(50) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ message MEDIUMTEXT NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
