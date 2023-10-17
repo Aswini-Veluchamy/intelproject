@@ -101,7 +101,7 @@
                     <td nowrap class="owner">{{ i.owner }}</td>
                     <td nowrap class="message">{{ i.message }}</td>
                     <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
-                    <td nowrap class="risk">{{ i.risk }}</td>
+                    <td nowrap class="risk">{{ i.risk | date:'Y-m-d' }}</td>
                     <td nowrap class="severity">{{ i.severity }}</td>
                     <td nowrap class="impact">{{ i.impact }}</td>
                     {% endfor %}
@@ -168,7 +168,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label" for="risk">Risk Intiated</label>
-                                <input class="form-control" id="risk" name="risk" type="text" placeholder="Enter Risk" required="required" />
+                                <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk" required="required" />
                             </div>
                         </div>
                     </div>
@@ -178,7 +178,7 @@
                             <div class="col-sm-6">
                                 <label class="form-label" for="severity">Severity</label>
                                 <select class="form-select" name="severity" id='severity' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Severity</option>
+                                    <option value="" disabled="disabled" selected="selected">Select Severity</option>
                                     <option value="Mgt">Mgt</option>
                                     <option value=""></option>
                                 </select>
@@ -186,7 +186,7 @@
                             <div class="col-sm-6">
                                 <label class="form-label" for="impact">Impact</label>
                                 <select class="form-select" name="impact" id='impact' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Impact</option>
+                                    <option value="" disabled="disabled" selected="selected">Select Impact</option>
                                     <option value="PPA">PPA</option>
                                     <option value="Functionality">Functionality</option>
                                     <option value="Quality">Quality</option>

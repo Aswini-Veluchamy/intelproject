@@ -43,3 +43,10 @@ CREATE TABLE key_message(
  project VARCHAR(20) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+*******************************************************************************************
+
+Date - Modified - 17-10-23
+index
+key_message
+key_edit_message
+risk_table

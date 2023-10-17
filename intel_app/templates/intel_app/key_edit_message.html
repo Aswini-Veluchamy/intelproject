@@ -11,7 +11,7 @@
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
     <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
-<body>
+<body style="background-color:#ffffff!important;">
 
 <!-- Example Code -->
 <nav class="navbar navbar-expand-lg">
@@ -54,11 +54,7 @@
                     {% csrf_token %}
                     <!--<input type="text" value="" />-->
                     <label class="form-label">Select Project: </label>
-                    <select class="form-select" name="project" id='project' required="required">
-                        {% for i in data %}
-                        <option value="{{i.project}}" selected="selected">{{i.project}}</option>
-                        {% endfor %}
-                    </select>
+                    <input class="form-control" type="text" name="project" id="project" value="{{data.0.project}}" disabled>
                     <br>
                     <label class="form-label">Key Message: </label>
                     {% for i in data %}
@@ -68,6 +64,7 @@
                     <div id="counter">Limited to 375 characters</div>
                     <p>{{error}}</p>
                     <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary"><a href="{% url 'key_message' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
                 </form>
         </div>
     </section>
