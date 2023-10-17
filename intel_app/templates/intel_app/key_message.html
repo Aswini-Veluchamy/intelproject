@@ -14,12 +14,7 @@
     <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
-<style>
-td:last-child {
-  border :none;
-  background-color: #ffffff!important;
-}
-</style>
+
 <body style="background-color:#ffffff!important;">
 <!-- Example Code -->
 <nav class="navbar navbar-expand-lg">
@@ -93,7 +88,7 @@ td:last-child {
                     <th nowrap data-sortable="true" class="message">Message</th>
                     <th nowrap data-sortable="true" class="project">Project</th>
                     <th nowrap class="created_at" data-field="created_at" data-sortable="true">Created at</th>
-                    <th nowrap></th>
+                    <th style="border:none" nowrap></th>
                 </tr>
                 </thead>
                 <tbody>
