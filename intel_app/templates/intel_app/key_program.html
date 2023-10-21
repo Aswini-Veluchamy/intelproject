@@ -163,21 +163,12 @@
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">Status</label>
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="customRadioInline1" name="status"
-                                           class="custom-control-input" value="R" required="required">
-                                    <label class="custom-control-label" for="customRadioInline1">R</label>
-                                </div>
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="customRadioInline2" name="status"
-                                           class="custom-control-input" value="G" required="required">
-                                    <label class="custom-control-label" for="customRadioInline2">G</label>
-                                </div>
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="customRadioInline3" name="status"
-                                           class="custom-control-input" value="B" required="required">
-                                    <label class="custom-control-label" for="customRadioInline3">B</label>
-                                </div>
+                                <select class="form-select" name="severity" id='status' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
+                                    <option value="R">R</option>
+                                    <option value="G">G</option>
+                                    <option value="B">B</option>
+                                </select>
                             </div>
                         </div>
                     </div>
