@@ -1,0 +1,143 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Risks</title>
+    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
+
+<body style="background-color:#ffffff!important;">
+
+<!-- Example Code -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand">
+            <span>Intel</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-md-auto gap-2">
+                <li class="nav-item rounded">
+                    <a class="nav-link ho" href="{% url 'home' %}">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown rounded">
+                    <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-user"></i>
+                        <span>{{request.user.username}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<main>
+    <!-- Service 4 - Bootstrap Brain Component -->
+    <section>
+        <div class="container"><!--style="max-width:100%;"-->
+            <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
+                {% csrf_token %}
+                {% for i in data %}
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="problem_statement">Name</label>
+                            <textarea class="form-control" id="problem_statement" name="problem_statement"
+                                      placeholder="Enter Problem Statement" cols="3" maxlength="250"
+                                      required="required">{{i.problem_statement}}</textarea>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="severity" id='status' required="required">
+                                <option value="" disabled="disabled" selected="selected">{{ i.status }}</option>
+                                <option value="R">R</option>
+                                <option value="G">G</option>
+                                <option value="B">B</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="owner">Owner</label>
+                            <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner"
+                                   required="required" value="{{i.owner}}"/>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="message">Message</label>
+                            <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
+                                      cols="3" maxlength="250" required="required">{{ i.message }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="eta">ETA</label>
+                            <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
+                                   required="required" value="{{ i.eta | date:'Y-m-d' }}"/>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="risk">Risk Intiated</label>
+                            <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
+                                   required="required" value="{{ i.risk | date:'Y-m-d' }}" />
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="form-label" for="severity">Severity</label>
+                            <select class="form-select" name="severity" id='severity' required="required">
+                                <option value="" disabled="disabled" selected="selected">{{ i.severity }}</option>
+                                <option value="Mgt">Mgt</option>
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label" for="impact">Impact</label>
+                            <select class="form-select" name="impact" id='impact' required="required">
+                                <option value="" disabled="disabled" selected="selected">{{ i.impact }}</option>
+                                <option value="PPA">PPA</option>
+                                <option value="Functionality">Functionality</option>
+                                <option value="Quality">Quality</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <br>
+                <p>{{error}}</p>
+                <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<!-- Include the Quill library -->
+<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+
+</body>
+</head>
+</html>

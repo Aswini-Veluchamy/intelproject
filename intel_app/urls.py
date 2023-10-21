@@ -11,4 +11,6 @@ urlpatterns = [
     path('key_message_test/', views.key_message_test, name='key_message_test'),
     path('post_view/', views.post_list, name='post_view'),
     path('risk/', views.risks, name='risk'),
+    path('risk_edit_table/<str:pk>', views.risk_edit_table, name='risk_edit_table'),
+    path('key_program/', views.key_program, name='key_program'),
 ]

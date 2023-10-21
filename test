@@ -50,3 +50,16 @@ index
 key_message
 key_edit_message
 risk_table
+
+*******************************************************************************************
+html
+
+index
+risk_table
+risk_edit
+key_program
+key_message
+
+models.py
+urls.py
+views.py

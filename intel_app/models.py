@@ -38,7 +38,7 @@ class RiskTable(models.Model):
     owner = models.CharField(max_length=200)
     message = models.CharField(max_length=250)
     eta = models.DateTimeField()
-    risk = models.CharField(max_length=200)
+    risk = models.DateTimeField()
     severity = models.CharField(max_length=200)
     impact = models.CharField(max_length=200)
     risk_id = models.CharField(max_length=100)

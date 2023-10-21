@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Risks</title>
+    <title>Key Program Metrics</title>
     <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
     <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
@@ -56,7 +56,7 @@
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     style="float:right;">
-                Add Problem
+                Add Key Program Metrics
             </button>
             <br><br>
             <table class="table table-bordered table-striped" id="example"
@@ -84,35 +84,27 @@
                    data-buttons-class="primary">
                 <thead>
                 <tr>
-                    <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
+                    <th nowrap data-sortable="true" class="category">Category</th>
+                    <th nowrap data-sortable="true" class="metric">Metric</th>
+                    <th nowrap data-sortable="true" class="target">FV Target</th>
+                    <th nowrap data-sortable="true" class="actual">Current Week Actual</th>
+                    <th nowrap data-sortable="true" class="plan">Current Week Plan</th>
                     <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
                         Status
                     </th>
-                    <th nowrap data-sortable="true" class="owner">Owner</th>
-                    <th nowrap data-sortable="true" class="message">Message</th>
-                    <th nowrap data-sortable="true" class="eta" data-field="eta">ETA</th>
-                    <th nowrap data-sortable="true" class="risk">Risk</th>
-                    <th nowrap data-sortable="true" class="severity">Severity</th>
-                    <th nowrap data-sortable="true" class="impact">Impact</th>
-                    <th nowrap data-sortable="true"></th>
+                    <th nowrap data-sortable="true" class="comments">Comments</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for i in data %}
                 <tr>
-                    <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
+                    <td nowrap class="category">{{ i.category }}</td>
+                    <td nowrap class="metric">{{ i.metric }}</td>
+                    <td nowrap class="target">{{ i.target }}</td>
+                    <td nowrap class="actual">{{ i.actual }}</td>
+                    <td nowrap class="plan">{{ i.plan }}</td>
                     <td nowrap class="status">{{ i.status }}</td>
-                    <td nowrap class="owner">{{ i.owner }}</td>
-                    <td nowrap class="message">{{ i.message }}</td>
-                    <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
-                    <td nowrap class="risk">{{ i.risk | date:'Y-m-d' }}</td>
-                    <td nowrap class="severity">{{ i.severity }}</td>
-                    <td nowrap class="impact">{{ i.impact }}</td>
-                    <td>
-                        <button type="button" class="btn btn-primary btn-sm" title="Edit Message"><a
-                                style="text-decoration:none;color:#fff;" href="{% url 'risk_edit_table' pk=i.id %}"><i
-                                class="fas fa-edit"></i>&nbsp;Edit</a></button>
-                    </td>
+                    <td nowrap class="comments">{{ i.comments }}</td>
                     {% endfor %}
                 </tr>
                 </tbody>
@@ -125,7 +117,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Risks</h1>&nbsp;
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Key Program Metrics</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -135,74 +127,14 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-sm-6">
-                                <label class="form-label" for="problem_statement">Name</label>
-                                <textarea class="form-control" id="problem_statement" name="problem_statement"
-                                          placeholder="Enter Problem Statement" cols="3" maxlength="250"
-                                          required="required"></textarea>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label">Select Project</label>
-                                <select class="form-select" name="project" id='project' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Projects</option>
-                                    {% for i in project %}
-                                    <option value="{{i}}">{{i}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label">Status</label>
-                            <select class="form-select" name="severity" id='status' required="required">
-                                <option value="" disabled="disabled" selected="selected">Select Status</option>
-                                <option value="R">R</option>
-                                <option value="G">G</option>
-                                <option value="B">B</option>
-                            </select>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label" for="owner">Owner</label>
-                                <input class="form-control" id="owner" name="owner" type="text"
-                                       placeholder="Enter Owner" required="required"/>
-                            </div>
-
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label" for="message">Message</label>
-                                <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
+                                <label class="form-label" for="category">Category</label>
+                                <textarea class="form-control" id="category" name="category" placeholder="Enter Category"
                                           cols="3" maxlength="250" required="required"></textarea>
                             </div>
                             <div class="col-sm-6">
-                                <label class="form-label" for="eta">ETA</label>
-                                <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
-                                       required="required"/>
-                            </div>
-
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label" for="risk">Risk Intiated</label>
-                                <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
-                                       required="required"/>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label" for="severity">Severity</label>
-                                <select class="form-select" name="severity" id='severity' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Select Severity</option>
-                                    <option value="Mgt">Mgt</option>
-                                    <option value=""></option>
-                                </select>
+                                <label class="form-label" for="metric">Metric</label>
+                                <textarea class="form-control" id="metric" name="metric" placeholder="Enter Metric"
+                                          cols="3" maxlength="250" required="required"></textarea>
                             </div>
                         </div>
                     </div>
@@ -210,13 +142,52 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-sm-6">
-                                <label class="form-label" for="impact">Impact</label>
-                                <select class="form-select" name="impact" id='impact' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Select Impact</option>
-                                    <option value="PPA">PPA</option>
-                                    <option value="Functionality">Functionality</option>
-                                    <option value="Quality">Quality</option>
-                                </select>
+                                <label class="form-label" for="target">FV target</label>
+                                <input class="form-control" id="target" name="target" type="number"
+                                       placeholder="Enter FV Target" required="required"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="actual">Current Week Actual</label>
+                                <input class="form-control" id="actual" name="actual" type="number"
+                                       placeholder="Enter Current Week Actual" required="required"/>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="plan">Current Week Plan</label>
+                                <input class="form-control" id="plan" name="plan" type="number"
+                                       placeholder="Enter Current Week Plan" required="required"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Status</label>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="customRadioInline1" name="status"
+                                           class="custom-control-input" value="R" required="required">
+                                    <label class="custom-control-label" for="customRadioInline1">R</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="customRadioInline2" name="status"
+                                           class="custom-control-input" value="G" required="required">
+                                    <label class="custom-control-label" for="customRadioInline2">G</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="customRadioInline3" name="status"
+                                           class="custom-control-input" value="B" required="required">
+                                    <label class="custom-control-label" for="customRadioInline3">B</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="comments">Comments</label>
+                                <textarea class="form-control" id="comments" name="comments" placeholder="Enter Comments"
+                                          cols="3" maxlength="250" required="required"></textarea>
                             </div>
                         </div>
                     </div>

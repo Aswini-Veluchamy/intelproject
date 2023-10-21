@@ -156,3 +156,37 @@ def key_edit_message(request, pk):
     else:
         data = KeyMessageTable.objects.filter(pk=pk)
         return render(request, 'intel_app/key_edit_message.html', {'data': data})
+
+@csrf_exempt
+def risk_edit_table(request, pk):
+    if request.method == "POST":
+        problem_statement = request.POST['problem_statement']
+        status = request.POST['status']
+        owner = request.POST['owner']
+        message = request.POST['message']
+        eta = request.POST['eta']
+        risk = request.POST['risk']
+        severity = request.POST['severity']
+        impact = request.POST['impact']
+
+        print(impact, severity)
+
+        user = request.session['meta_data'].get('user_id')
+        risk_id = str(int(time.time() * 1000)) + '_' + user
+        return HttpResponseRedirect(reverse("risk"))
+    else:
+        risk_data = RiskTable.objects.filter(pk=pk)
+        return render(request, 'intel_app/risk_edit_table.html', {'data': risk_data})
+
+@csrf_exempt
+def key_program(request):
+    if request.method == "POST":
+        category = request.POST['category']
+        metric = request.POST['metric']
+        target = request.POST['target']
+        actual = request.POST['actual']
+        plan = request.POST['plan']
+        status = request.POST['status']
+        comments = request.POST['comments']
+    else:
+        return render(request, 'intel_app/key_program.html')
