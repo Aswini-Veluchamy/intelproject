@@ -13,6 +13,7 @@ from .config import DEFAULT_PASSWORDS
 from .db_connection import load_key_message_data
 from .db_connection import update_key_message_data
 from .db_connection import load_risk_data
+from .db_connection import update_risk_data
 
 
 @csrf_exempt
@@ -167,16 +168,29 @@ def key_edit_message(request, pk):
 @csrf_exempt
 def risk_edit_table(request, pk):
     if request.method == "POST":
-        problem_statement = request.POST['problem_statement']
+        ps = request.POST['problem_statement']
         status = request.POST['status']
         owner = request.POST['owner']
-        message = request.POST['message']
+        msg = request.POST['message']
         eta = request.POST['eta']
         risk = request.POST['risk']
         severity = request.POST['severity']
         impact = request.POST['impact']
-        user = request.session['meta_data'].get('user_id')
-        risk_id = str(int(time.time() * 1000)) + '_' + user
+
+        tab = RiskTable.objects.filter(pk=pk)
+        # update the values in external database
+        update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, tab[0].risk_id)])
+        # update the values local database
+        tab.update(
+            problem_statement=ps,
+            status=status,
+            owner=owner,
+            message=msg,
+            eta=eta,
+            risk=risk,
+            severity=severity,
+            impact=impact,
+        )
         return HttpResponseRedirect(reverse("risk"))
     else:
         risk_data = RiskTable.objects.filter(pk=pk)

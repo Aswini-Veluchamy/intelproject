@@ -45,3 +45,15 @@ def load_risk_data(data):
     print(f'data inserted in {RISK_TABLE} ....')
     conn.commit()
     conn.close()
+
+
+def update_risk_data(data):
+    conn, cursor = db_connection()
+    for ps, status, owner, msg, eta, risk, severity, impact, risk_id in data:
+        sql = (f"UPDATE {RISK_TABLE} SET problem_statement = '{ps}', status = '{status}', owner = '{owner}', \
+                message = '{msg}', eta = '{eta}', risk = '{risk}', severity = '{severity}', impact = '{impact}' \
+                WHERE risk_id='{risk_id}'")
+        cursor.execute(sql)
+    print(f'data updated in {RISK_TABLE} ....')
+    conn.commit()
+    conn.close()

@@ -56,6 +56,10 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col-sm-6">
+                            <label class="form-label">Project </label>
+                            <input class="form-control" type="text" name="project" id="project" value="{{i.project}}" disabled>
+                        </div>
+                        <div class="col-sm-6">
                             <label class="form-label" for="problem_statement">Name</label>
                             <textarea class="form-control" id="problem_statement" name="problem_statement"
                                       placeholder="Enter Problem Statement" cols="3" maxlength="250"
@@ -126,6 +130,7 @@
                 <br>
                 <p>{{error}}</p>
                 <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary"><a href="{% url 'risk' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
             </form>
         </div>
     </section>
