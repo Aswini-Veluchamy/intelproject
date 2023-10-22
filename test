@@ -63,3 +63,18 @@ key_message
 models.py
 urls.py
 views.py
+
+--------------- 22/10/23
+CREATE TABLE risk_table(
+ problem_statement VARCHAR(200) NOT NULL,
+ status VARCHAR(50) NOT NULL,
+ owner VARCHAR(100) NOT NULL,
+ message VARCHAR(200) NOT NULL,
+ eta DATE,
+ risk DATE,
+ severity VARCHAR(200) NOT NULL,
+ impact VARCHAR(200) NOT NULL,
+ risk_id VARCHAR(200) NOT NULL,
+ project VARCHAR(100) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

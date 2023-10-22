@@ -12,6 +12,7 @@ from .config import DEFAULT_PASSWORDS
 
 from .db_connection import load_key_message_data
 from .db_connection import update_key_message_data
+from .db_connection import load_risk_data
 
 
 @csrf_exempt
@@ -88,7 +89,7 @@ def key_message(request):
         return HttpResponseRedirect(reverse("key_message"))
     else:
         project = request.session['meta_data'].get('project')
-        key_mess_data = KeyMessageTable.objects.all()
+        key_mess_data = KeyMessageTable.objects.filter(project__in=project)
         return render(request, 'intel_app/key_message.html', {'data': key_mess_data, 'project': project})
 
 
@@ -121,6 +122,7 @@ def risks(request):
         risk = request.POST['risk']
         severity = request.POST['severity']
         impact = request.POST['impact']
+        project = request.POST['project']
 
         user = request.session['meta_data'].get('user_id')
         risk_id = str(int(time.time() * 1000)) + '_' + user
@@ -134,13 +136,17 @@ def risks(request):
             risk=risk,
             severity=severity,
             impact=impact,
-            risk_id=risk_id
+            risk_id=risk_id,
+            project=project
         )
         risk_data.save()
+        # load risk data to external database
+        load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project)])
         return HttpResponseRedirect(reverse("risk"))
     else:
-        risk_data = RiskTable.objects.all()
-        return render(request, 'intel_app/risk_table.html', {'data': risk_data})
+        project = request.session['meta_data'].get('project')
+        risk_data = RiskTable.objects.filter(project__in=project)
+        return render(request, 'intel_app/risk_table.html', {'data': risk_data, 'project': project})
 
 
 @csrf_exempt
@@ -157,6 +163,7 @@ def key_edit_message(request, pk):
         data = KeyMessageTable.objects.filter(pk=pk)
         return render(request, 'intel_app/key_edit_message.html', {'data': data})
 
+
 @csrf_exempt
 def risk_edit_table(request, pk):
     if request.method == "POST":
@@ -168,15 +175,31 @@ def risk_edit_table(request, pk):
         risk = request.POST['risk']
         severity = request.POST['severity']
         impact = request.POST['impact']
-
-        print(impact, severity)
-
         user = request.session['meta_data'].get('user_id')
         risk_id = str(int(time.time() * 1000)) + '_' + user
         return HttpResponseRedirect(reverse("risk"))
     else:
         risk_data = RiskTable.objects.filter(pk=pk)
+        status = ['R', 'G', 'B']
+        impact = ['PPA', 'Functionality', 'Quality']
+        severity = ['Mgt', '']
+        for i in risk_data:
+            if i.status in status or i.impact in impact or i.severity in severity:
+                # updating the status values
+                status.remove(i.status)
+                status.insert(0, i.status)
+                # updating the impact values
+                impact.remove(i.impact)
+                impact.insert(0, i.impact)
+                # updating the severity values
+                severity.remove(i.severity)
+                severity.insert(0, i.severity)
+
+        risk_data[0].status = status
+        risk_data[0].impact = impact
+        risk_data[0].severity = severity
         return render(request, 'intel_app/risk_edit_table.html', {'data': risk_data})
+
 
 @csrf_exempt
 def key_program(request):

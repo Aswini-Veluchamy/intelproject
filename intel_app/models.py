@@ -1,11 +1,12 @@
 from django.db import models
 from django_quill.fields import QuillField
+from datetime import datetime
 
 # Create your models here.
 
 
 class KeyMessage(models.Model):
-    ''' created database fields'''
+    '''  created database fields '''
     body = QuillField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -33,15 +34,17 @@ class KeyMessageTable(models.Model):
 
 class RiskTable(models.Model):
     ''' created database fields'''
-    problem_statement = models.CharField(max_length=250)
-    status = models.CharField(max_length=200)
-    owner = models.CharField(max_length=200)
-    message = models.CharField(max_length=250)
-    eta = models.DateTimeField()
-    risk = models.DateTimeField()
-    severity = models.CharField(max_length=200)
-    impact = models.CharField(max_length=200)
-    risk_id = models.CharField(max_length=100)
+    problem_statement = models.CharField(max_length=250, default='problem_statement')
+    status = models.CharField(max_length=200, default='status')
+    owner = models.CharField(max_length=200, default='owner')
+    message = models.CharField(max_length=250, default='message')
+    eta = models.DateTimeField(default=datetime.now())
+    risk = models.DateTimeField(default=datetime.now())
+    severity = models.CharField(max_length=200, default='severity')
+    impact = models.CharField(max_length=200, default='impact')
+    risk_id = models.CharField(max_length=100, default='risk_id')
+    project = models.CharField(max_length=200, default='project')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.owner
