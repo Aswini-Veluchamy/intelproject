@@ -50,88 +50,95 @@
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
         <div class="container"><!--style="max-width:100%;"-->
-            <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
-                {% csrf_token %}
-                {% for i in data %}
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label class="form-label">Project </label>
-                            <input class="form-control" type="text" name="project" id="project" value="{{i.project}}" disabled>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label" for="problem_statement">Name</label>
-                            <textarea class="form-control" id="problem_statement" name="problem_statement"
-                                      placeholder="Enter Problem Statement" cols="3" maxlength="250"
-                                      required="required">{{i.problem_statement}}</textarea>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" name="status" id='status' required="required">
-                                {% for i in i.status %}
-                                <option value="{{i}}">{{i}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="card-header">
+                    <b>Risks</b>
                 </div>
-                <br>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label class="form-label" for="owner">Owner</label>
-                            <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner"
-                                   required="required" value="{{i.owner}}"/>
+                <div class="card-body">
+                    <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
+                        {% csrf_token %}
+                        {% for i in data %}
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label">Project </label>
+                                    <input class="form-control" type="text" name="project" id="project" value="{{i.project}}" disabled>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="problem_statement">Name</label>
+                                    <textarea class="form-control" id="problem_statement" name="problem_statement"
+                                              placeholder="Enter Problem Statement" cols="3" maxlength="250"
+                                              required="required">{{i.problem_statement}}</textarea>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" name="status" id='status' required="required">
+                                        {% for i in i.status %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="form-label" for="message">Message</label>
-                            <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
-                                      cols="3" maxlength="250" required="required">{{ i.message }}</textarea>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="owner">Owner</label>
+                                    <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner"
+                                           required="required" value="{{i.owner}}"/>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="message">Message</label>
+                                    <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
+                                              cols="3" maxlength="250" required="required">{{ i.message }}</textarea>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="eta">ETA</label>
+                                    <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
+                                           required="required" value="{{ i.eta | date:'Y-m-d' }}"/>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="risk">Risk Intiated</label>
+                                    <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
+                                           required="required" value="{{ i.risk | date:'Y-m-d' }}" />
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="severity">Severity</label>
+                                    <select class="form-select" name="severity" id='severity'>
+                                        {% for i in i.severity %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="impact">Impact</label>
+                                    <select class="form-select" name="impact" id='impact' required="required">
+                                        {% for i in i.impact %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <br>
+                        <p>{{error}}</p>
+                        <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary"><a href="{% url 'risk' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                    </form>
                 </div>
-                <br>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label class="form-label" for="eta">ETA</label>
-                            <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
-                                   required="required" value="{{ i.eta | date:'Y-m-d' }}"/>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label" for="risk">Risk Intiated</label>
-                            <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
-                                   required="required" value="{{ i.risk | date:'Y-m-d' }}" />
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label class="form-label" for="severity">Severity</label>
-                            <select class="form-select" name="severity" id='severity'>
-                                {% for i in i.severity %}
-                                <option value="{{i}}">{{i}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="form-label" for="impact">Impact</label>
-                            <select class="form-select" name="impact" id='impact' required="required">
-                                {% for i in i.impact %}
-                                <option value="{{i}}">{{i}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <br>
-                <p>{{error}}</p>
-                <button type="submit" id="btn" class="btn btn-primary">Submit</button>
-                <button type="submit" class="btn btn-primary"><a href="{% url 'risk' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
-            </form>
+            </div>
         </div>
     </section>
 </main>

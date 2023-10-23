@@ -220,10 +220,13 @@ def key_program(request):
     if request.method == "POST":
         category = request.POST['category']
         metric = request.POST['metric']
+        print(metric)
         target = request.POST['target']
+        print(target)
         actual = request.POST['actual']
         plan = request.POST['plan']
         status = request.POST['status']
         comments = request.POST['comments']
+        return HttpResponseRedirect(reverse("key_program"))
     else:
         return render(request, 'intel_app/key_program.html')

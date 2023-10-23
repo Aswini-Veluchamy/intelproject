@@ -50,22 +50,29 @@
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
         <div class="container"><!--style="max-width:100%;"-->
-            <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <!--<input type="text" value="" />-->
-                    <label class="form-label">Project</label>
-                    <input class="form-control" type="text" name="project" id="project" value="{{data.0.project}}" disabled>
-                    <br>
-                    <label class="form-label">Key Message: </label>
-                    {% for i in data %}
-                    <div id="editor" style="height: 275px;">{{i.message|safe}}</div>
-                    {% endfor %}
-                    <input type="hidden" name="hiddenInput" id="hiddenInput">
-                    <div id="counter">Limited to 375 characters</div>
-                    <p>{{error}}</p>
-                    <button type="submit" id="btn" class="btn btn-primary">Submit</button>
-                    <button type="submit" class="btn btn-primary"><a href="{% url 'key_message' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
-                </form>
+            <div class="card">
+                <div class="card-header">
+                    <b>Key Message</b>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
+                        {% csrf_token %}
+                        <!--<input type="text" value="" />-->
+                        <label class="form-label">Project</label>
+                        <input class="form-control" type="text" name="project" id="project" value="{{data.0.project}}" disabled>
+                        <br>
+                        <label class="form-label">Key Message: </label>
+                        {% for i in data %}
+                        <div id="editor" style="height: 275px;">{{i.message|safe}}</div>
+                        {% endfor %}
+                        <input type="hidden" name="hiddenInput" id="hiddenInput">
+                        <div id="counter">Limited to 375 characters</div>
+                        <p>{{error}}</p>
+                        <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary"><a href="{% url 'key_message' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
 </main>
