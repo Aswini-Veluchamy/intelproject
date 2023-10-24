@@ -103,13 +103,13 @@
                 <tbody>
                 {% for i in data %}
                 <tr>
-                    <td nowrap class="category">{{ i.category }}</td>
-                    <td nowrap class="metric">{{ i.metric }}</td>
-                    <td nowrap class="target">{{ i.fv_target }}</td>
-                    <td nowrap class="actual">{{ i.current_week_actual }}</td>
-                    <td nowrap class="plan">{{ i.current_week_plan }}</td>
+                    <td nowrap class="category">{{ i.category | linebreaks }}</td>
+                    <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
+                    <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
+                    <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
+                    <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
                     <td nowrap class="status">{{ i.status }}</td>
-                    <td nowrap class="comments">{{ i.comments }}</td>
+                    <td nowrap class="comments">{{ i.comments | linebreaks }}</td>
                     {% endfor %}
                 </tr>
                 </tbody>
