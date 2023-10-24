@@ -64,6 +64,9 @@ models.py
 urls.py
 views.py
 
+db_connection
+config 
+
 --------------- 22/10/23
 CREATE TABLE risk_table(
  problem_statement VARCHAR(200) NOT NULL,
@@ -78,3 +81,7 @@ CREATE TABLE risk_table(
  project VARCHAR(100) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-------------------- 24/10/23
+
+Added model for key metric table and backend changes also completed

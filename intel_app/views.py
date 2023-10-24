@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 import time
 from .models import KeyMessage, KeyMessageTable, RiskTable
+from .models import KeyProgramMetricTable
+
 from .forms import PostForm
 
 from .config import DEFAULT_PASSWORDS
@@ -220,13 +222,30 @@ def key_program(request):
     if request.method == "POST":
         category = request.POST['category']
         metric = request.POST['metric']
-        print(metric)
-        target = request.POST['target']
-        print(target)
-        actual = request.POST['actual']
-        plan = request.POST['plan']
+        fv_target = request.POST['target']
+        current_week_actual = request.POST['actual']
+        current_week_plan = request.POST['plan']
         status = request.POST['status']
         comments = request.POST['comments']
+        project = request.POST['project']
+
+        user = request.session['meta_data'].get('user_id')
+        metric_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
+        metric_data = KeyProgramMetricTable.objects.create(
+            category=category,
+            metric=metric,
+            fv_target=fv_target,
+            current_week_actual=current_week_actual,
+            current_week_plan=current_week_plan,
+            status=status,
+            comments=comments,
+            metric_id=metric_id,
+            project=project
+        )
+        metric_data.save()
         return HttpResponseRedirect(reverse("key_program"))
     else:
-        return render(request, 'intel_app/key_program.html')
+        project = request.session['meta_data'].get('project')
+        metric_data = KeyProgramMetricTable.objects.filter(project__in=project)
+        return render(request, 'intel_app/key_program.html', {'data': metric_data, 'project': project})
