@@ -58,62 +58,71 @@
                     <b>Key Program Metrics</b>
                 </div>
                 <div class="card-body">
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                    style="float:right;">
-                Add Key Program Metrics
-            </button>
-            <br><br>
-            <table class="table table-bordered table-striped" id="example"
-                   data-toggle="table"
-                   data-pagination="true"
-                   data-search="true"
-                   data-search-align="left"
-                   data-show-columns="true"
-                   data-show-toggle="false"
-                   data-show-columns-toggle-all="true"
-                   data-show-export="true"
-                   data-export-data-type="all"
-                   data-response-handler="responseHandler"
-                   data-show-fullscreen="true"
-                   data-show-pagination-switch="true"
-                   data-height="510"
-                   data-sort-name="eta"
-                   data-sort-order="desc"
-                   data-pagination-pre-text="Previous"
-                   data-pagination-next-text="Next"
-                   data-pagination-h-align="left"
-                   data-pagination-detail-h-align="right"
-                   data-page-size="6"
-                   data-page-list="[20, 30, 40, 50, All]"
-                   data-buttons-class="primary">
-                <thead>
-                <tr>
-                    <th nowrap data-sortable="true" class="category">Category</th>
-                    <th nowrap data-sortable="true" class="metric">Metric</th>
-                    <th nowrap data-sortable="true" class="target">FV Target</th>
-                    <th nowrap data-sortable="true" class="actual">Current Week Actual</th>
-                    <th nowrap data-sortable="true" class="plan">Current Week Plan</th>
-                    <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
-                        Status
-                    </th>
-                    <th nowrap data-sortable="true" class="comments">Comments</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in data %}
-                <tr>
-                    <td nowrap class="category">{{ i.category | linebreaks }}</td>
-                    <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
-                    <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
-                    <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
-                    <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
-                    <td nowrap class="status">{{ i.status }}</td>
-                    <td nowrap class="comments">{{ i.comments | linebreaks }}</td>
-                    {% endfor %}
-                </tr>
-                </tbody>
-            </table>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                            style="float:right;">
+                        Add Key Program Metrics
+                    </button>
+                    <br><br>
+                    <table class="table table-bordered table-striped" id="example"
+                           data-toggle="table"
+                           data-pagination="true"
+                           data-search="true"
+                           data-search-align="left"
+                           data-show-columns="true"
+                           data-show-toggle="false"
+                           data-show-columns-toggle-all="true"
+                           data-show-export="true"
+                           data-export-data-type="all"
+                           data-response-handler="responseHandler"
+                           data-show-fullscreen="true"
+                           data-show-pagination-switch="true"
+                           data-height="510"
+                           data-sort-name="eta"
+                           data-sort-order="desc"
+                           data-pagination-pre-text="Previous"
+                           data-pagination-next-text="Next"
+                           data-pagination-h-align="left"
+                           data-pagination-detail-h-align="right"
+                           data-page-size="6"
+                           data-page-list="[20, 30, 40, 50, All]"
+                           data-buttons-class="primary">
+                        <thead>
+                        <tr>
+                            <th nowrap data-sortable="true" class="category">Category</th>
+                            <th nowrap data-sortable="true" class="metric">Metric</th>
+                            <th nowrap data-sortable="true" class="target">FV Target</th>
+                            <th nowrap data-sortable="true" class="actual">Current Week Actual</th>
+                            <th nowrap data-sortable="true" class="plan">Current Week Plan</th>
+                            <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
+                                Status
+                            </th>
+                            <th nowrap data-sortable="true" class="comments">Comments</th>
+                            <th nowrap data-sortable="true"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in data %}
+                        <tr>
+                            <td nowrap class="category">{{ i.category | linebreaks }}</td>
+                            <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
+                            <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
+                            <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
+                            <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
+                            <td nowrap class="status">{{ i.status }}</td>
+                            <td nowrap class="comments">{{ i.comments | linebreaks }}</td>
+                            <td style="white-space: nowrap;">
+                                <button type="button" class="btn btn-primary btn-sm" title="Edit Metric"><a
+                                        style="text-decoration:none;color:#fff;" href="{% url 'key_program_edit' pk=i.id %}"><i
+                                        class="fas fa-edit"></i>&nbsp;Edit</a></button>
+                                <button type="button" class="btn btn-danger btn-sm" title="Delete Metric"><a
+                                        style="text-decoration:none;color:#fff;" href="#"><i
+                                        class="fas fa-trash"></i>&nbsp;Delete</a></button>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -226,6 +235,14 @@
       return '<i class="fa ' + icon + '"></i> ' + value
     }
 
+</script>
+<script>
+    $('#example').bootstrapTable({
+    exportOptions: {
+        fileName: 'Key Program Metric'
+    },
+    exportTypes: ['csv', 'excel'],
+});
 </script>
 </body>
 </head>

@@ -16,7 +16,7 @@ from .db_connection import load_key_message_data
 from .db_connection import update_key_message_data
 from .db_connection import load_risk_data
 from .db_connection import update_risk_data
-
+from .db_connection import update_metric_data
 
 @csrf_exempt
 def user_login(request):
@@ -249,3 +249,40 @@ def key_program(request):
         project = request.session['meta_data'].get('project')
         metric_data = KeyProgramMetricTable.objects.filter(project__in=project)
         return render(request, 'intel_app/key_program.html', {'data': metric_data, 'project': project})
+
+@csrf_exempt
+def key_program_edit(request, pk):
+    if request.method == "POST":
+        category = request.POST['category']
+        metric = request.POST['metric']
+        fv_target = request.POST['target']
+        current_week_actual = request.POST['actual']
+        current_week_plan = request.POST['plan']
+        status = request.POST['status']
+        comments = request.POST['comments']
+
+        tab = KeyProgramMetricTable.objects.filter(pk=pk)
+        # update the values in external database
+        update_metric_data([(category, metric, fv_target, current_week_actual, current_week_plan, status, comments, tab[0].metric_id)])
+        # update the values local database
+        tab.update(
+            category=category,
+            metric=metric,
+            fv_target=fv_target,
+            current_week_actual=current_week_actual,
+            current_week_plan=current_week_plan,
+            status=status,
+            comments=comments,
+        )
+        return HttpResponseRedirect(reverse("key_program"))
+    else:
+        metric_data = KeyProgramMetricTable.objects.filter(pk=pk)
+        status = ['R', 'G', 'B']
+        for i in metric_data:
+            if i.status in status:
+                # updating the status values
+                status.remove(i.status)
+                status.insert(0, i.status)
+
+        metric_data[0].status = status
+        return render(request, 'intel_app/key_program_edit.html', {'data': metric_data})

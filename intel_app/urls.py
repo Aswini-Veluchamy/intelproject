@@ -13,4 +13,5 @@ urlpatterns = [
     path('risk/', views.risks, name='risk'),
     path('risk_edit_table/<str:pk>', views.risk_edit_table, name='risk_edit_table'),
     path('key_program/', views.key_program, name='key_program'),
+    path('key_program_edit/<str:pk>', views.key_program_edit, name='key_program_edit'),
 ]

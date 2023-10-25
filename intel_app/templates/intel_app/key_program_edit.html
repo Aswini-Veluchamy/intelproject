@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Risks</title>
+    <title>Key Program Metric</title>
     <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
     <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
@@ -52,7 +52,7 @@
         <div class="container"><!--style="max-width:100%;"-->
             <div class="card">
                 <div class="card-header">
-                    <b>Risks</b>
+                    <b>Key Program Metric</b>
                 </div>
                 <div class="card-body">
                     <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
@@ -61,14 +61,43 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-6">
+                                    <label class="form-label" for="category">Category</label>
+                                    <textarea class="form-control" id="category" name="category" placeholder="Enter Category"
+                                              cols="3" maxlength="250" required="required">{{ i.category }}</textarea>
+                                </div>
+                                <div class="col-sm-6">
                                     <label class="form-label">Project </label>
                                     <input class="form-control" type="text" name="project" id="project" value="{{i.project}}" disabled>
                                 </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
                                 <div class="col-sm-6">
-                                    <label class="form-label" for="problem_statement">Name</label>
-                                    <textarea class="form-control" id="problem_statement" name="problem_statement"
-                                              placeholder="Enter Problem Statement" cols="3" maxlength="250"
-                                              required="required">{{i.problem_statement}}</textarea>
+                                    <label class="form-label" for="metric">Metric</label>
+                                    <textarea class="form-control" id="metric" name="metric" placeholder="Enter Metric"
+                                              cols="3" maxlength="250" required="required">{{ i.metric }}</textarea>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="target">FV Target</label>
+                                    <textarea class="form-control" id="target" name="target" placeholder="Enter Target"
+                                              cols="3" maxlength="250" required="required">{{ i.fv_target }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="actual">Current Week Actual</label>
+                                    <textarea class="form-control" id="actual" name="actual" placeholder="Enter Current Week Actual"
+                                              cols="3" maxlength="250" required="required">{{ i.current_week_actual }}</textarea>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="plan">Current Week Plan</label>
+                                    <textarea class="form-control" id="plan" name="plan" placeholder="Enter Current Week Plan"
+                                              cols="3" maxlength="250" required="required">{{ i.current_week_plan }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -84,55 +113,9 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-6">
-                                    <label class="form-label" for="owner">Owner</label>
-                                    <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner"
-                                           required="required" value="{{i.owner}}"/>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label class="form-label" for="message">Message</label>
-                                    <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
-                                              cols="3" maxlength="250" required="required">{{ i.message }}</textarea>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="form-label" for="eta">ETA</label>
-                                    <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
-                                           required="required" value="{{ i.eta | date:'Y-m-d' }}"/>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label class="form-label" for="risk">Risk Intiated</label>
-                                    <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
-                                           required="required" value="{{ i.risk | date:'Y-m-d' }}" />
-                                </div>
-                                <div class="col-sm-6">
-                                    <label class="form-label" for="severity">Severity</label>
-                                    <select class="form-select" name="severity" id='severity'>
-                                        {% for i in i.severity %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label class="form-label" for="impact">Impact</label>
-                                    <select class="form-select" name="impact" id='impact' required="required">
-                                        {% for i in i.impact %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <label class="form-label" for="comments">Comments</label>
+                                    <textarea class="form-control" id="comments" name="comments" placeholder="Enter Comments"
+                                              cols="3" maxlength="250" required="required">{{ i.comments }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -140,7 +123,7 @@
                         <br>
                         <p>{{error}}</p>
                         <button type="submit" id="btn" class="btn btn-primary">Submit</button>
-                        <button type="submit" class="btn btn-primary"><a href="{% url 'risk' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                        <button type="submit" class="btn btn-primary"><a href="{% url 'key_program' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
                     </form>
                 </div>
             </div>

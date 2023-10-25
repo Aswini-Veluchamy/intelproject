@@ -85,3 +85,7 @@ CREATE TABLE risk_table(
 -------------------- 24/10/23
 
 Added model for key metric table and backend changes also completed
+
+**********************************************************************
+html - risk table,risk_edit,key_program,key_program_edit
+urls.py, views.py

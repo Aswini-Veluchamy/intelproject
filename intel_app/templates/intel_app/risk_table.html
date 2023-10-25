@@ -114,7 +114,7 @@
                             <td nowrap class="severity">{{ i.severity }}</td>
                             <td nowrap class="impact">{{ i.impact }}</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm" title="Edit Message"><a
+                                <button type="button" class="btn btn-primary btn-sm" title="Edit Risk"><a
                                         style="text-decoration:none;color:#fff;" href="{% url 'risk_edit_table' pk=i.id %}"><i
                                         class="fas fa-edit"></i>&nbsp;Edit</a></button>
                             </td>
@@ -255,6 +255,14 @@
       return '<i class="fa ' + icon + '"></i> ' + value
     }
 
+</script>
+<script>
+    $('#example').bootstrapTable({
+    exportOptions: {
+        fileName: 'Risks'
+    },
+    exportTypes: ['csv', 'excel'],
+});
 </script>
 </body>
 </head>
