@@ -115,7 +115,8 @@
                                 <button type="button" class="btn btn-primary btn-sm" title="Edit Metric"><a
                                         style="text-decoration:none;color:#fff;" href="{% url 'key_program_edit' pk=i.id %}"><i
                                         class="fas fa-edit"></i>&nbsp;Edit</a></button>
-                                <button type="button" class="btn btn-danger btn-sm" title="Delete Metric"><a
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        title="Delete Metric"><a
                                         style="text-decoration:none;color:#fff;" href="#"><i
                                         class="fas fa-trash"></i>&nbsp;Delete</a></button>
                             </td>
@@ -128,6 +129,27 @@
         </div>
     </section>
 </main>
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="close-modal">No</button>
+                <button type="button" class="btn btn-danger"><a style="text-decoration:none;color:#fff;"
+                href="{% url 'key_program_delete' pk=i.id %}">Yes</a></button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
