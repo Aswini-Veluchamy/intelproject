@@ -145,7 +145,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="close-modal"><a href="{% url 'key_program' %}" style="text-decoration:none;color:#fff;">No</a></button>
                 <button type="button" class="btn btn-danger"><a style="text-decoration:none;color:#fff;"
-                href="#">Yes</a></button>
+                href="{% url 'key_program_delete' pk=i.id %}">Yes</a></button>
             </div>
         </div>
     </div>
