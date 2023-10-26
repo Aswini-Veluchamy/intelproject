@@ -297,7 +297,7 @@ def key_program_edit(request, pk):
 
 
 @csrf_exempt
-def key_program_data_delete(request, pk):
+def key_program_delete(request, pk):
     tab = KeyProgramMetricTable.objects.filter(pk=pk)
     # delete the data from external database
     delete_key_program_metric_data(tab[0].metric_id)

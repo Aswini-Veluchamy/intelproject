@@ -115,9 +115,8 @@
                                 <button type="button" class="btn btn-primary btn-sm" title="Edit Metric"><a
                                         style="text-decoration:none;color:#fff;" href="{% url 'key_program_edit' pk=i.id %}"><i
                                         class="fas fa-edit"></i>&nbsp;Edit</a></button>
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                        title="Delete Metric"><a
-                                        style="text-decoration:none;color:#fff;" href="#"><i
+                                <button type="button" class="btn btn-danger btn-sm" title="Delete Metric"><a
+                                        style="text-decoration:none;color:#fff;" href="{% url 'key_program_delete' pk=i.id %}"><i
                                         class="fas fa-trash"></i>&nbsp;Delete</a></button>
                             </td>
                             {% endfor %}
@@ -145,7 +144,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="close-modal">No</button>
                 <button type="button" class="btn btn-danger"><a style="text-decoration:none;color:#fff;"
-                href="{% url 'key_program_delete' pk=i.id %}">Yes</a></button>
+                href="#">Yes</a></button>
             </div>
         </div>
     </div>

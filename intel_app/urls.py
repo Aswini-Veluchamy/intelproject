@@ -14,5 +14,5 @@ urlpatterns = [
     path('risk_edit_table/<str:pk>', views.risk_edit_table, name='risk_edit_table'),
     path('key_program/', views.key_program, name='key_program'),
     path('key_program_edit/<str:pk>', views.key_program_edit, name='key_program_edit'),
-    path('key_program_delete/<str:pk>', views.key_program_data_delete, name='key_program_data_delete'),
+    path('key_program_delete/<str:pk>', views.key_program_delete, name='key_program_delete'),
 ]
