@@ -9,3 +9,4 @@ PASSWORD = "root1234"
 # Database table
 KEY_MESSAGE_TABLE = 'key_message'
 RISK_TABLE = 'risk_table'
+KEY_PROGRAM_METRIC_TABLE = 'key_program_metric_table'
