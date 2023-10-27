@@ -72,8 +72,8 @@ def forgot_password(request):
 
 
 def home(request):
-    return render(request, 'intel_app/index.html')
-
+    project = request.session['meta_data'].get('project')
+    return render(request, 'intel_app/index.html',{'project': project})
 
 @csrf_exempt
 def key_message(request):

@@ -10,7 +10,6 @@
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
-    <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
@@ -58,10 +57,6 @@
                     <b>Key Message</b>
                 </div>
                 <div class="card-body">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="float:right;">
-                        Create
-                    </button>
                     <br><br>
                     <table class="table table-bordered table-striped" id="example"
                            data-toggle="table"
@@ -114,39 +109,6 @@
         </div>
     </section>
 </main>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="exampleModalLabel">Key Message</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Create the editor container -->
-                <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <!--<input type="text" value="" />-->
-                    <label class="form-label">Select Project: </label>
-                    <select class="form-select" name="project" id='project' required="required">
-                        <option value="" disabled="disabled" selected="selected">Projects</option>
-                        {% for i in project %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
-                    <br>
-                    <label class="form-label">Key Message: </label>
-                    <div id="editor" style="height: 275px;"></div>
-                    <input type="hidden" name="hiddenInput" id="hiddenInput">
-                    <div id="counter">Limited to 375 characters</div>
-                    <p>{{error}}</p>
-                    <button type="submit" id="btn" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Include the Quill library -->
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/quill.js' %}"></script>
@@ -164,49 +126,6 @@
     },
     exportTypes: ['csv', 'excel'],
 });
-</script>
-
-<!-- Initialize Quill editor -->
-<script>
-    var toolbarOptions = [
-      ['bold', 'italic', 'underline'],        // toggled buttons
-      ['blockquote'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],  // custom dropdown
-      [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-      [{ 'align': [] }],
-      ['clean']                                         // remove formatting button
-    ];
-    var quill = new Quill('#editor', {
-      modules: {
-        toolbar: toolbarOptions
-      },
-      theme: 'snow' });
-</script>
-<script>
-    var limit = 375;
-    quill.on('text-change', function (delta, old, source) {
-      if (quill.getLength() >= limit) {
-        quill.deleteText(limit, quill.getLength());
-      }
-    });
-</script>
-
-<script>
-    $('#btn').on('click', () => {
-
-        // Get HTML content
-        var html = quill.root.innerHTML;
-
-        // Copy HTML content in hidden form
-        $('#hiddenInput').val( html )
-
-        e.preventDefault();
-
-        // Post form
-        myForm.submit();
-    })
 </script>
 </body>
 </head>
