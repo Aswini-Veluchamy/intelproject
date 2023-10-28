@@ -215,13 +215,17 @@
                     <label class="form-label">Select Project: </label>
                     <select class="form-select" name="project" id='project' required="required">
                         <option value="" disabled="disabled" selected="selected">Projects</option>
+                        {% if key_message_data %}
+                        <option value="{{ key_mess_data.project }}">{{ key_mess_data.project }}</option>
+                        {% else %}
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
                         {% endfor %}
+                        {% endif %}
                     </select>
                     <br>
                     <label class="form-label">Key Message: </label>
-                    <div id="editor" style="height: 275px;"></div>
+                    <div id="editor" style="height: 275px;">{{ key_mess_data.message|safe }}</div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
                     <div id="counter">Limited to 375 characters</div>
                     <p>{{error}}</p>

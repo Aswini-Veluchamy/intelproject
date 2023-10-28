@@ -73,7 +73,11 @@ def forgot_password(request):
 
 def home(request):
     project = request.session['meta_data'].get('project')
-    return render(request, 'intel_app/index.html',{'project': project})
+    key_mess_data = KeyMessageTable.objects.filter(project__in=project)
+    if key_mess_data:
+        key_mess_data = key_mess_data.latest("created_at")
+    return render(request, 'intel_app/index.html', {'project': project, 'key_mess_data': key_mess_data})
+
 
 @csrf_exempt
 def key_message(request):
@@ -92,7 +96,7 @@ def key_message(request):
         key_message_table.save()
         # load key message to external database
         load_key_message_data([(message_id, user, message, project)])
-        return HttpResponseRedirect(reverse("key_message"))
+        return HttpResponseRedirect(reverse("home"))
     else:
         project = request.session['meta_data'].get('project')
         key_mess_data = KeyMessageTable.objects.filter(project__in=project)
