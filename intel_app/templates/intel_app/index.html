@@ -9,39 +9,42 @@
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet" />
     <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-<style>
-.btn {
-  transition: all 0.4s;
-}
+    <script src="{% static 'intel_app/js/quill.js' %}"></script>
 
-.btn span {
-  display: inline-block;
-  position: relative;
-  transition: 0.4s;
-}
+    <style>
+        .btn {
+          transition: all 0.4s;
+        }
 
-.btn span:after {
-  content: "\00bb";
-  position: absolute;
-  opacity: 0;
-  top: 0;
-  right: -1.375rem;
-  transition: 0.4s;
-}
+        .btn span {
+          display: inline-block;
+          position: relative;
+          transition: 0.4s;
+        }
 
-.btn:hover span {
-  padding-right: 2rem;
-}
+        .btn span:after {
+          content: "\00bb";
+          position: absolute;
+          opacity: 0;
+          top: 0;
+          right: -1.375rem;
+          transition: 0.4s;
+        }
 
-.btn:hover span:after {
-  opacity: 1;
-  right: 0;
-}
-</style>
+        .btn:hover span {
+          padding-right: 2rem;
+        }
+
+        .btn:hover span:after {
+          opacity: 1;
+          right: 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -59,7 +62,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <li class="nav-item rounded">
                     <a class="nav-link ho" href="{% url 'home' %}">
-                    <i class="fa fa-home"></i>
+                        <i class="fa fa-home"></i>
                         <span>Home</span>
                     </a>
                 </li>
@@ -104,8 +107,11 @@
                             <h5 class="mb-4">Key Message</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a class="btn btn-md btn-warning button arrow" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button">
+                                <span>Update</span>
+                            </a>
                             <a class="btn btn-md btn-warning button arrow" href="{% url 'key_message' %}" role="button">
-                                <span>Add</span>
+                                <span>History</span>
                             </a>
                         </div>
                     </div>
@@ -193,6 +199,39 @@
         </div>
     </section>
 </main>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalLabel">Key Message</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Create the editor container -->
+                <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}" enctype="application/x-www-form-urlencoded">
+                    {% csrf_token %}
+                    <!--<input type="text" value="" />-->
+                    <label class="form-label">Select Project: </label>
+                    <select class="form-select" name="project" id='project' required="required">
+                        <option value="" disabled="disabled" selected="selected">Projects</option>
+                        {% for i in project %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label class="form-label">Key Message: </label>
+                    <div id="editor" style="height: 275px;"></div>
+                    <input type="hidden" name="hiddenInput" id="hiddenInput">
+                    <div id="counter">Limited to 375 characters</div>
+                    <p>{{error}}</p>
+                    <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <br><br>
 <script>
     $("#filter").on("keyup", function() {
@@ -202,7 +241,48 @@
    });
  });
 </script>
+<!-- Initialize Quill editor -->
+<script>
+    var toolbarOptions = [
+      ['bold', 'italic', 'underline'],        // toggled buttons
+      ['blockquote'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],  // custom dropdown
+      [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+      [{ 'align': [] }],
+      ['clean']                                         // remove formatting button
+    ];
+    var quill = new Quill('#editor', {
+      modules: {
+        toolbar: toolbarOptions
+      },
+      theme: 'snow' });
+</script>
+<script>
+    var limit = 375;
+    quill.on('text-change', function (delta, old, source) {
+      if (quill.getLength() >= limit) {
+        quill.deleteText(limit, quill.getLength());
+      }
+    });
+</script>
 
+<script>
+    $('#btn').on('click', () => {
+
+        // Get HTML content
+        var html = quill.root.innerHTML;
+
+        // Copy HTML content in hidden form
+        $('#hiddenInput').val( html )
+
+        e.preventDefault();
+
+        // Post form
+        myForm.submit();
+    })
+</script>
 <!-- End Example Code -->
 </body>
 </html>
