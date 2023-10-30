@@ -45,6 +45,7 @@ class RiskTable(models.Model):
     risk_id = models.CharField(max_length=100, default='risk_id')
     project = models.CharField(max_length=200, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
+    user = models.CharField(max_length=100, default='user')
 
     def __str__(self):
         return self.owner
@@ -65,6 +66,7 @@ class KeyProgramMetricTable(models.Model):
     metric_id = models.CharField(max_length=100, default='metric_id')
     project = models.CharField(max_length=200, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
+    user = models.CharField(max_length=100, default='user')
 
     def __str__(self):
         return self.category

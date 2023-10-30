@@ -49,7 +49,7 @@ def user_login(request):
 
             # redirecting to home screen
             login(request, user)
-            request.session['meta_data'] = {'user_id': username, 'project': project}
+            request.session['meta_data'] = {'user_id': username, 'project': project, 'admin': user.is_superuser}
             return HttpResponseRedirect(reverse("home"))
         else:
             context['error'] = "provide valid credentials"
@@ -73,7 +73,12 @@ def forgot_password(request):
 
 def home(request):
     project = request.session['meta_data'].get('project')
-    key_mess_data = KeyMessageTable.objects.filter(project__in=project)
+    admin = request.session['meta_data'].get('admin')
+    user = request.session['meta_data'].get('user_id')
+    if admin:
+        key_mess_data = KeyMessageTable.objects.filter(project__in=project)
+    else:
+        key_mess_data = KeyMessageTable.objects.filter(user=user)
     if key_mess_data:
         key_mess_data = key_mess_data.latest("created_at")
     return render(request, 'intel_app/index.html', {'project': project, 'key_mess_data': key_mess_data})
@@ -91,15 +96,20 @@ def key_message(request):
             message_id=message_id,
             message=message,
             project=project,
-            user=request.session['meta_data'].get('user_id')
+            user=user
         )
         key_message_table.save()
         # load key message to external database
         load_key_message_data([(message_id, user, message, project)])
         return HttpResponseRedirect(reverse("home"))
     else:
+        admin = request.session['meta_data'].get('admin')
         project = request.session['meta_data'].get('project')
-        key_mess_data = KeyMessageTable.objects.filter(project__in=project)
+        user = request.session['meta_data'].get('user_id')
+        if admin:
+            key_mess_data = KeyMessageTable.objects.filter(project__in=project)
+        else:
+            key_mess_data = KeyMessageTable.objects.filter(user=user)
         return render(request, 'intel_app/key_message.html', {'data': key_mess_data, 'project': project})
 
 
@@ -147,7 +157,8 @@ def risks(request):
             severity=severity,
             impact=impact,
             risk_id=risk_id,
-            project=project
+            project=project,
+            user=request.session['meta_data'].get('user_id')
         )
         risk_data.save()
         # load risk data to external database
@@ -248,7 +259,8 @@ def key_program(request):
             status=status,
             comments=comments,
             metric_id=metric_id,
-            project=project
+            project=project,
+            user=request.session['meta_data'].get('user_id')
         )
         metric_data.save()
         # load key program metric data to external database
