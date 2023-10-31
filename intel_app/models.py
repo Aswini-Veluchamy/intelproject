@@ -1,20 +1,7 @@
 from django.db import models
-from django_quill.fields import QuillField
 from datetime import datetime
 
 # Create your models here.
-
-
-class KeyMessage(models.Model):
-    '''  created database fields '''
-    body = QuillField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.created_at
-
-    class Meta:
-        db_table = "key_message"
 
 
 class KeyMessageTable(models.Model):

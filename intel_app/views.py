@@ -5,10 +5,8 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 import time
-from .models import KeyMessage, KeyMessageTable, RiskTable
+from .models import KeyMessageTable, RiskTable
 from .models import KeyProgramMetricTable
-
-from .forms import PostForm
 
 from .config import DEFAULT_PASSWORDS
 
@@ -75,13 +73,49 @@ def home(request):
     project = request.session['meta_data'].get('project')
     admin = request.session['meta_data'].get('admin')
     user = request.session['meta_data'].get('user_id')
+
+    # based on the user filtering the data
     if admin:
         key_mess_data = KeyMessageTable.objects.filter(project__in=project)
+        risk_data = RiskTable.objects.filter(project__in=project)
     else:
         key_mess_data = KeyMessageTable.objects.filter(user=user)
+        risk_data = RiskTable.objects.filter(user=user)
+
+    # get the latest record from the query_set
     if key_mess_data:
         key_mess_data = key_mess_data.latest("created_at")
-    return render(request, 'intel_app/index.html', {'project': project, 'key_mess_data': key_mess_data})
+        if key_mess_data.project in project:
+            project.remove(key_mess_data.project)
+            project.insert(0, key_mess_data.project)
+        key_mess_data.project = project
+    print(key_mess_data.project)
+    if risk_data:
+        risk_data = risk_data.latest("created_at")
+        status = ['R', 'G', 'B']
+        impact = ['PPA', 'Functionality', 'Quality']
+        severity = ['Mgt', '']
+        if risk_data.status in status or risk_data.impact in impact or risk_data.severity in severity \
+                or risk_data.project in project:
+            # updating the status values
+            status.remove(risk_data.status)
+            status.insert(0, risk_data.status)
+            # updating the impact values
+            impact.remove(risk_data.impact)
+            impact.insert(0, risk_data.impact)
+            # updating the severity values
+            severity.remove(risk_data.severity)
+            severity.insert(0, risk_data.severity)
+            # updating the project
+            project.remove(risk_data.project)
+            project.insert(0, risk_data.project)
+
+        risk_data.status = status
+        risk_data.impact = impact
+        risk_data.severity = severity
+        risk_data.project = project
+    return render(request, 'intel_app/index.html', {'project': project, 'key_mess_data': key_mess_data,
+                                                    'risk_data': risk_data})
 
 
 @csrf_exempt
@@ -111,24 +145,6 @@ def key_message(request):
         else:
             key_mess_data = KeyMessageTable.objects.filter(user=user)
         return render(request, 'intel_app/key_message.html', {'data': key_mess_data, 'project': project})
-
-
-@csrf_exempt
-def key_message_test(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            form.save()
-        return HttpResponseRedirect(reverse("key_message_test"))
-    else:
-        form = PostForm()
-        post_view = KeyMessage.objects.all()
-        return render(request, 'intel_app/key_message_test.html', {'post': post_view, 'form': form})
-
-
-def post_list(request):
-    post_view = KeyMessage.objects.all()
-    return render(request, 'intel_app/post_list.html', {'post': post_view})
 
 
 @csrf_exempt
@@ -163,10 +179,15 @@ def risks(request):
         risk_data.save()
         # load risk data to external database
         load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
-        return HttpResponseRedirect(reverse("risk"))
+        return HttpResponseRedirect(reverse("home"))
     else:
+        admin = request.session['meta_data'].get('admin')
         project = request.session['meta_data'].get('project')
-        risk_data = RiskTable.objects.filter(project__in=project)
+        user = request.session['meta_data'].get('user_id')
+        if admin:
+            risk_data = RiskTable.objects.filter(project__in=project)
+        else:
+            risk_data = RiskTable.objects.filter(user=user)
         return render(request, 'intel_app/risk_table.html', {'data': risk_data, 'project': project})
 
 
