@@ -9,7 +9,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3406
+        port=3306
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -38,9 +38,9 @@ def update_key_message_data(data):
 
 def load_risk_data(data):
     conn, cursor = db_connection()
-    for ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj in data:
-        sql = f"INSERT INTO {RISK_TABLE} (problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj)
+    for ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user in data:
+        sql = f"INSERT INTO {RISK_TABLE} (problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user)
         cursor.execute(sql, val)
     print(f'data inserted in {RISK_TABLE} ....')
     conn.commit()
@@ -61,11 +61,11 @@ def update_risk_data(data):
 
 def load_key_program_metric_data(data):
     conn, cursor = db_connection()
-    for cat, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj in data:
+    for cat, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user in data:
         sql = f"INSERT INTO {KEY_PROGRAM_METRIC_TABLE} (category, metric, fv_target, current_week_actual,\
-                current_week_plan, status, comments, metric_id, project) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (cat, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj)
+                current_week_plan, status, comments, metric_id, project, user) \
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (cat, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user)
         cursor.execute(sql, val)
     print(f'data inserted in {KEY_PROGRAM_METRIC_TABLE} ....')
     conn.commit()

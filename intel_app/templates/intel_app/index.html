@@ -107,7 +107,7 @@
                             <h5 class="mb-4">Key Message</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-md btn-warning button arrow" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button">
+                            <a class="btn btn-md btn-warning button arrow" data-bs-toggle="modal" data-bs-target="#keymessageModal" role="button">
                                 <span>Update</span>
                             </a>
                             <a class="btn btn-md btn-warning button arrow" href="{% url 'key_message' %}" role="button">
@@ -136,8 +136,11 @@
                             <h5 class="mb-4">Risks</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a class="btn btn-md btn-info button arrow" data-bs-toggle="modal" data-bs-target="#riskModal" role="button">
+                                <span>Update</span>
+                            </a>
                             <a class="btn btn-md btn-info button arrow" href="{% url 'risk' %}" role="button">
-                                <span>Add</span>
+                                <span>History</span>
                             </a>
                         </div>
                     </div>
@@ -199,12 +202,12 @@
         </div>
     </section>
 </main>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Keymessage -->
+<div class="modal fade" id="keymessageModal" tabindex="-1" aria-labelledby="keymessageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h6 class="modal-title" id="exampleModalLabel">Key Message</h6>
+                <h6 class="modal-title" id="keymessageModalLabel">Key Message</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -229,13 +232,120 @@
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
                     <div id="counter">Limited to 375 characters</div>
                     <p>{{error}}</p>
-                    <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                    <button type="submit" id="btn_keymessage" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+<!-- Risks -->
+<div class="modal fade" id="riskModal" tabindex="-1" aria-labelledby="riskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="riskModalLabel">Risks</h6>&nbsp;
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Create the editor container -->
+                <form method="post" id="risk_form" action="{% url 'risk' %}" autocomplete="off" enctype="application/x-www-form-urlencoded">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="problem_statement">Name</label>
+                                <textarea class="form-control" id="problem_statement" name="problem_statement"
+                                          placeholder="Enter Problem Statement" cols="3" maxlength="250"
+                                          required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Select Project</label>
+                                <select class="form-select" name="project" id='risk_project' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Projects</option>
+                                    {% for i in project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status" id='status' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
+                                    <option value="R">R</option>
+                                    <option value="G">G</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="owner">Owner</label>
+                                <input class="form-control" id="owner" name="owner" type="text"
+                                       placeholder="Enter Owner" required="required"/>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="message">Message</label>
+                                <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="eta">ETA</label>
+                                <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
+                                       required="required"/>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="risk">Risk Intiated</label>
+                                <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
+                                       required="required"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="severity">Severity</label>
+                                <select class="form-select" name="severity" id='severity' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Severity</option>
+                                    <option value="Mgt">Mgt</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="impact">Impact</label>
+                                <select class="form-select" name="impact" id='impact' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Impact</option>
+                                    <option value="PPA">PPA</option>
+                                    <option value="Functionality">Functionality</option>
+                                    <option value="Quality">Quality</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <p>{{error}}</p>
+                    <button type="submit" id="btn_risk" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <br><br>
 <script>
     $("#filter").on("keyup", function() {
@@ -273,7 +383,7 @@
 </script>
 
 <script>
-    $('#btn').on('click', () => {
+    $('#btn_keymessage').on('click', () => {
 
         // Get HTML content
         var html = quill.root.innerHTML;

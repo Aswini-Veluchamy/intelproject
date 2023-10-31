@@ -158,11 +158,11 @@ def risks(request):
             impact=impact,
             risk_id=risk_id,
             project=project,
-            user=request.session['meta_data'].get('user_id')
+            user=user
         )
         risk_data.save()
         # load risk data to external database
-        load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project)])
+        load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
         return HttpResponseRedirect(reverse("risk"))
     else:
         project = request.session['meta_data'].get('project')
@@ -260,12 +260,12 @@ def key_program(request):
             comments=comments,
             metric_id=metric_id,
             project=project,
-            user=request.session['meta_data'].get('user_id')
+            user=user
         )
         metric_data.save()
         # load key program metric data to external database
         load_key_program_metric_data([(category, metric, fv_target, current_week_actual,
-                                       current_week_plan, status, comments, metric_id, project)])
+                                       current_week_plan, status, comments, metric_id, project, user)])
         return HttpResponseRedirect(reverse("key_program"))
     else:
         project = request.session['meta_data'].get('project')
