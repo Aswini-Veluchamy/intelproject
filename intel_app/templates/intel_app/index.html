@@ -336,7 +336,7 @@
                                 <select class="form-select" name="severity" id='severity' required="required">
                                     {% if risk_data %}
                                     {% for i in risk_data.severity %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
                                     {% else %}
                                     <option value="" disabled="disabled" selected="selected">Select Severity</option>
@@ -355,7 +355,7 @@
                                 <select class="form-select" name="impact" id='impact' required="required">
                                     {% if risk_data %}
                                     {% for i in risk_data.impact %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
                                     {% else %}
                                     <option value="" disabled="disabled" selected="selected">Select Impact</option>
