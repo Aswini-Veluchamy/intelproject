@@ -152,8 +152,11 @@
                             <h5 class="mb-4">Key Program Metrics</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a class="btn btn-md btn-danger button arrow" data-bs-toggle="modal" data-bs-target="#keyprogramModal" role="button">
+                                <span>Update</span>
+                            </a>
                             <a class="btn btn-md btn-danger button arrow" href="{% url 'key_program' %}" role="button">
-                                <span>Add</span>
+                                <span>History</span>
                             </a>
                         </div>
                     </div>
@@ -202,7 +205,7 @@
         </div>
     </section>
 </main>
-<!-- Keymessage -->
+<!-- Key Message Modal -->
 <div class="modal fade" id="keymessageModal" tabindex="-1" aria-labelledby="keymessageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -240,7 +243,7 @@
         </div>
     </div>
 </div>
-<!-- Risks -->
+<!-- Risks Modal -->
 <div class="modal fade" id="riskModal" tabindex="-1" aria-labelledby="riskModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -367,6 +370,94 @@
                     <br>
                     <p>{{error}}</p>
                     <button type="submit" id="btn_risk" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br>
+<!-- Key Program Metrics Modal -->
+<div class="modal fade" id="keyprogramModal" tabindex="-1" aria-labelledby="keyprogramModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="keyprogramModalLabel">Key Program Metrics</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Create the editor container -->
+                <form method="post" id="keyprogram_form" autocomplete="off" action="{% url 'key_program' %}" enctype="application/x-www-form-urlencoded">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="category">Category</label>
+                                <textarea class="form-control" id="category" name="category" placeholder="Enter Category"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Select Project</label>
+                                <select class="form-select" name="project" id='keyprogram_project'>
+                                    <option value="" disabled="disabled" selected="selected">Projects</option>
+                                    {% for i in project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="metric">Metric</label>
+                                <textarea class="form-control" id="metric" name="metric" placeholder="Enter Metric"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="target">FV Target</label>
+                                <textarea class="form-control" id="target" name="target" placeholder="Enter Target"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="actual">Current Week Actual</label>
+                                <textarea class="form-control" id="actual" name="actual" placeholder="Enter Current Week Actual"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="plan">Current Week Plan</label>
+                                <textarea class="form-control" id="plan" name="plan" placeholder="Enter Current Week Plan"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status" id='keyprogram_status' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
+                                    <option value="R">R</option>
+                                    <option value="G">G</option>
+                                    <option value="B">B</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="comments">Comments</label>
+                                <textarea class="form-control" id="comments" name="comments" placeholder="Enter Comments"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <p>{{error}}</p>
+                    <button type="submit" id="btn" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>
