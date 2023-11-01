@@ -115,7 +115,10 @@ updated db_connection, models, forms, urls, views
 
 home.html
 
-
+*****************************
+index.html
+risk_table.html
+key_program.html
 
 
 
