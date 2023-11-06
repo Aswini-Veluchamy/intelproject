@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 import time
-from .models import KeyMessageTable, RiskTable
+from .models import KeyMessageTable, RiskTable, DetailsMessageTable
 from .models import KeyProgramMetricTable
 
 from .config import DEFAULT_PASSWORDS
@@ -364,3 +364,34 @@ def key_program_delete(request, pk):
     # delete the data from local db
     tab.delete()
     return HttpResponseRedirect(reverse("key_program"))
+
+@csrf_exempt
+def details(request):
+    if request.method == "POST":
+        message = request.POST['details_message']
+        project = request.POST['details_project']
+        user = request.session['meta_data'].get('user_id')
+        message_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
+        details_message_table = DetailsMessageTable.objects.create(
+            message_id=message_id,
+            message=message,
+            project=project,
+            user=user
+        )
+        details_message_table.save()
+        # load key message to external database
+        load_details_message_data([(message_id, user, message, project)])
+        return HttpResponseRedirect(reverse("home"))
+    else:
+        try:
+            admin = request.session['meta_data'].get('admin')
+            project = request.session['meta_data'].get('project')
+            user = request.session['meta_data'].get('user_id')
+            if admin:
+                details_mess_data = DetailsMessageTable.objects.filter(project__in=project)
+            else:
+                details_mess_data = DetailsMessageTable.objects.filter(user=user)
+            return render(request, 'intel_app/details.html', {'data': details_mess_data, 'project': project})
+        except KeyError:
+            return HttpResponseRedirect(reverse('login'))

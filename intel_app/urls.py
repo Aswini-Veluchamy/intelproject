@@ -13,4 +13,5 @@ urlpatterns = [
     path('key_program/', views.key_program, name='key_program'),
     path('key_program_edit/<str:pk>', views.key_program_edit, name='key_program_edit'),
     path('key_program_delete/<str:pk>', views.key_program_delete, name='key_program_delete'),
+    path('details/', views.details, name='details'),
 ]
