@@ -61,12 +61,13 @@ class KeyProgramMetricTable(models.Model):
     class Meta:
         db_table = "key_program_metric_table"
 
+
 class DetailsMessageTable(models.Model):
     ''' created database fields'''
-    message_id = models.CharField(max_length=128)
-    message = models.CharField(max_length=200)
-    user = models.CharField(max_length=200)
-    project = models.CharField(max_length=200)
+    details_id = models.CharField(max_length=128, default='details_id')
+    message = models.CharField(max_length=200, default='message')
+    user = models.CharField(max_length=200, default='user')
+    project = models.CharField(max_length=200, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

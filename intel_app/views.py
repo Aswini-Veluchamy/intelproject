@@ -365,23 +365,24 @@ def key_program_delete(request, pk):
     tab.delete()
     return HttpResponseRedirect(reverse("key_program"))
 
+
 @csrf_exempt
 def details(request):
     if request.method == "POST":
         message = request.POST['details_message']
         project = request.POST['details_project']
         user = request.session['meta_data'].get('user_id')
-        message_id = str(int(time.time() * 1000)) + '_' + user
+        details_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         details_message_table = DetailsMessageTable.objects.create(
-            message_id=message_id,
+            details_id=details_id,
             message=message,
             project=project,
             user=user
         )
         details_message_table.save()
         # load key message to external database
-        load_details_message_data([(message_id, user, message, project)])
+        #load_details_message_data([(message_id, user, message, project)])
         return HttpResponseRedirect(reverse("home"))
     else:
         try:

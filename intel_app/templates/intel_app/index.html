@@ -579,7 +579,7 @@
       [{ 'align': [] }],
       ['clean']                                         // remove formatting button
     ];
-    var quill = new Quill('#details_editor', {
+    var quill1 = new Quill('#details_editor', {
       modules: {
         toolbar: toolbarOptions
       },
@@ -589,7 +589,7 @@
     $('#btn_details').on('click', () => {
 
         // Get HTML content
-        var html = quill.root.innerHTML;
+        var html = quill1.root.innerHTML;
 
         // Copy HTML content in hidden form
         $('#details_message').val( html )

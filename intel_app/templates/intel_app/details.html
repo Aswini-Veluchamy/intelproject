@@ -83,7 +83,6 @@
                            data-buttons-class="primary">
                         <thead>
                         <tr>
-                            <th nowrap data-sortable="true" class="message_id">Message ID</th>
                             <th nowrap data-sortable="true" class="user">User</th>
                             <th nowrap data-sortable="true" class="message">Message</th>
                             <th nowrap data-sortable="true" class="project">Project</th>
@@ -93,7 +92,6 @@
                         <tbody>
                         {% for i in data %}
                         <tr>
-                            <td nowrap class="message_id">{{ i.message_id }}</td>
                             <td nowrap class="user">{{ i.user }}</td>
                             <td nowrap class="message">{{ i.message | safe }}</td>
                             <td nowrap class="project">{{ i.project }}</td>
