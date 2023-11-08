@@ -87,6 +87,7 @@
                             <th nowrap data-sortable="true" class="message">Message</th>
                             <th nowrap data-sortable="true" class="project">Project</th>
                             <th nowrap class="created_at" data-field="created_at" data-sortable="true">Created at</th>
+                            <th nowrap data-sortable="true"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -96,6 +97,11 @@
                             <td nowrap class="message">{{ i.message | safe }}</td>
                             <td nowrap class="project">{{ i.project }}</td>
                             <td nowrap class="project">{{ i.created_at|date:'Y-m-d H:i:s' }}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" title="Edit Details"><a
+                                        style="text-decoration:none;color:#fff;" href="{% url 'details_edit_message' pk=i.id %}"><i
+                                        class="fas fa-edit"></i>&nbsp;Edit</a></button>
+                            </td>
                             {% endfor %}
                         </tr>
                         </tbody>

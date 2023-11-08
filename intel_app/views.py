@@ -18,7 +18,7 @@ from .db_connection import load_key_program_metric_data
 from .db_connection import update_key_program_metric_data
 from .db_connection import delete_key_program_metric_data
 from .db_connection import load_details_data
-
+#from .db_connection import update_details_data
 
 @csrf_exempt
 def user_login(request):
@@ -407,3 +407,17 @@ def details(request):
             return render(request, 'intel_app/details.html', {'data': details_mess_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
+
+@csrf_exempt
+def details_edit_message(request, pk):
+    if request.method == "POST":
+        message = request.POST['hiddenInput']
+        tab = DetailsMessageTable.objects.filter(pk=pk)
+        # update the values in external database
+        #update_details_data([(tab[0].message_id, message)])
+        # update the values local database
+        tab.update(message=message)
+        return HttpResponseRedirect(reverse("details"))
+    else:
+        data = DetailsMessageTable.objects.filter(pk=pk)
+        return render(request, 'intel_app/details_edit_message.html', {'data': data})

@@ -147,4 +147,9 @@ views.py
 config
 db_connection
 
-
+######################################### 8/11/23
+views.py
+urls.py
+index.html
+details.html
+details_edit_message.html
