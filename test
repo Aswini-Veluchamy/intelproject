@@ -39,7 +39,7 @@ DATABASES = {
 CREATE TABLE key_message(
  message_id VARCHAR(50) NOT NULL,
  user VARCHAR(50) NOT NULL,
- message MEDIUMTEXT NOT NULL,
+ message LONGTEXT NOT NULL,
  project VARCHAR(20) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -129,5 +129,22 @@ admin
 models
 urls
 views
+
+
+**************************** 08/11/23
+
+create table in db;
+
+CREATE TABLE details(
+ details_id VARCHAR(50) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ message LONGTEXT NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+views.py
+config
+db_connection
 
 

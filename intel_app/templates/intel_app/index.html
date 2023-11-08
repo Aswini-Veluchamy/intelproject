@@ -493,8 +493,8 @@
                     <!--<input type="text" value="" />-->
                     <label class="form-label">Select Project: </label>
                     <select class="form-select" name="details_project" id='details_project' required="required">
-                        {% if details_mess_data %}
-                        {% for i in details_mess_data.project %}
+                        {% if details_data %}
+                        {% for i in details_data.project %}
                             <option value="{{i}}">{{i}}</option>
                         {% endfor %}
                         {% else %}
@@ -506,7 +506,7 @@
                     </select>
                     <br>
                     <label class="form-label">Details Message: </label>
-                    <div id="details_editor" style="height: 275px;">{{ details_mess_data.message|safe }}</div>
+                    <div id="details_editor" style="height: 275px;">{{ details_data.message|safe }}</div>
                     <input type="hidden" name="details_message" id="details_message">
                     <p>{{error}}</p>
                     <button type="submit" id="btn_details" class="btn btn-primary">Submit</button>

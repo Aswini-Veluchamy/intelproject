@@ -1,6 +1,7 @@
 import mysql.connector
 from .config import HOST, PORT, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
+from .config import DETAILS_TABLE
 
 
 def db_connection():
@@ -89,5 +90,15 @@ def delete_key_program_metric_data(metric_id):
     sql = f"DELETE FROM {KEY_PROGRAM_METRIC_TABLE} WHERE metric_id='{metric_id}'"
     cursor.execute(sql)
     print(f'data deleted in {KEY_PROGRAM_METRIC_TABLE} ....{metric_id}')
+    conn.commit()
+    conn.close()
+
+
+def load_details_data(details_id, user, msg, proj):
+    conn, cursor = db_connection()
+    sql = f"INSERT INTO {DETAILS_TABLE} (details_id, user, message, project) VALUES (%s, %s, %s, %s)"
+    val = (details_id, user, msg, proj)
+    cursor.execute(sql, val)
+    print(f'data inserted in {DETAILS_TABLE} ....')
     conn.commit()
     conn.close()

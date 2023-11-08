@@ -17,6 +17,7 @@ from .db_connection import update_risk_data
 from .db_connection import load_key_program_metric_data
 from .db_connection import update_key_program_metric_data
 from .db_connection import delete_key_program_metric_data
+from .db_connection import load_details_data
 
 
 @csrf_exempt
@@ -79,10 +80,12 @@ def home(request):
             key_mess_data = KeyMessageTable.objects.filter(project__in=project)
             risk_data = RiskTable.objects.filter(project__in=project)
             key_program_data = KeyProgramMetricTable.objects.filter(project__in=project)
+            details_data = DetailsMessageTable.objects.filter(project__in=project)
         else:
             key_mess_data = KeyMessageTable.objects.filter(user=user)
             risk_data = RiskTable.objects.filter(user=user)
             key_program_data = KeyProgramMetricTable.objects.filter(user=user)
+            details_data = DetailsMessageTable.objects.filter(user=user)
 
         # get the latest record from the query_set
         if key_mess_data:
@@ -126,8 +129,16 @@ def home(request):
             key_program_data.status = status
             key_program_data.project = project
 
+        if details_data:
+            details_data = details_data.latest("created_at")
+            if details_data.project in project:
+                project.remove(details_data.project)
+                project.insert(0, details_data.project)
+            details_data.project = project
+
         return render(request, 'intel_app/index.html', {'project': project, 'key_mess_data': key_mess_data,
-                                                        'risk_data': risk_data, 'key_program_data': key_program_data})
+                                                        'risk_data': risk_data, 'key_program_data': key_program_data,
+                                                        'details_data': details_data})
     except KeyError:
         return HttpResponseRedirect(reverse('login'))
 
@@ -381,8 +392,8 @@ def details(request):
             user=user
         )
         details_message_table.save()
-        # load key message to external database
-        #load_details_message_data([(message_id, user, message, project)])
+        # load details data to external database
+        load_details_data(details_id, user, message, project)
         return HttpResponseRedirect(reverse("home"))
     else:
         try:
