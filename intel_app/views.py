@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-from datetime import datetime
+
 import time
 from .models import KeyMessageTable, RiskTable, DetailsMessageTable
 from .models import KeyProgramMetricTable
@@ -18,7 +18,8 @@ from .db_connection import load_key_program_metric_data
 from .db_connection import update_key_program_metric_data
 from .db_connection import delete_key_program_metric_data
 from .db_connection import load_details_data
-#from .db_connection import update_details_data
+from .db_connection import update_details_data
+
 
 @csrf_exempt
 def user_login(request):
@@ -408,13 +409,14 @@ def details(request):
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
+
 @csrf_exempt
 def details_edit_message(request, pk):
     if request.method == "POST":
         message = request.POST['hiddenInput']
         tab = DetailsMessageTable.objects.filter(pk=pk)
         # update the values in external database
-        #update_details_data([(tab[0].message_id, message)])
+        update_details_data(tab[0].details_id, message)
         # update the values local database
         tab.update(message=message)
         return HttpResponseRedirect(reverse("details"))

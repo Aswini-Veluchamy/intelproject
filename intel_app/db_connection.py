@@ -102,3 +102,12 @@ def load_details_data(details_id, user, msg, proj):
     print(f'data inserted in {DETAILS_TABLE} ....')
     conn.commit()
     conn.close()
+
+
+def update_details_data(details_id, message):
+    conn, cursor = db_connection()
+    sql = f"UPDATE {DETAILS_TABLE} SET message = '{message}' WHERE details_id='{details_id}'"
+    cursor.execute(sql)
+    print(f'data updated in {DETAILS_TABLE} ....')
+    conn.commit()
+    conn.close()
