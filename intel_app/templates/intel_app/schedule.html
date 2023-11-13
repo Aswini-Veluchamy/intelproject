@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Key Program Metrics</title>
+    <title>Schedule</title>
     <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
     <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
@@ -55,7 +55,7 @@
         <div class="container"><!--style="max-width:100%;"-->
             <div class="card">
                 <div class="card-header">
-                    <b>Key Program Metrics</b>
+                    <b>Schedule</b>
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered table-striped" id="example"
@@ -72,8 +72,6 @@
                            data-show-fullscreen="true"
                            data-show-pagination-switch="true"
                            data-height="510"
-                           data-sort-name="eta"
-                           data-sort-order="desc"
                            data-pagination-pre-text="Previous"
                            data-pagination-next-text="Next"
                            data-pagination-h-align="left"
@@ -83,36 +81,23 @@
                            data-buttons-class="primary">
                         <thead>
                         <tr>
-                            <th nowrap data-sortable="true" class="category">Category</th>
-                            <th nowrap data-sortable="true" class="metric">Metric</th>
-                            <th nowrap data-sortable="true" class="target">FV Target</th>
-                            <th nowrap data-sortable="true" class="actual">Current Week Actual</th>
-                            <th nowrap data-sortable="true" class="plan">Current Week Plan</th>
+                            <th nowrap data-sortable="true" class="milestone">Milestone</th>
+                            <th nowrap data-sortable="true" class="por_commit">POR Commit</th>
+                            <th nowrap data-sortable="true" class="por_trend">POR Trend</th>
                             <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
                                 Status
                             </th>
                             <th nowrap data-sortable="true" class="comments">Comments</th>
-                            <th nowrap data-sortable="true"></th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for i in data %}
                         <tr>
-                            <td nowrap class="category">{{ i.category | linebreaks }}</td>
-                            <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
-                            <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
-                            <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
-                            <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
+                            <td nowrap class="milestone">{{ i.milestone }}</td>
+                            <td nowrap class="por_commit">{{ i.por_commit | date:'Y-m-d' }}</td>
+                            <td nowrap class="por_trend">{{ i.por_trend | date:'Y-m-d' }}</td>
                             <td nowrap class="status">{{ i.status }}</td>
-                            <td nowrap class="comments">{{ i.comments | linebreaks }}</td>
-                            <td style="white-space: nowrap;">
-                                <button type="button" class="btn btn-primary btn-sm" title="Edit Metric"><a
-                                        style="text-decoration:none;color:#fff;" href="{% url 'key_program_edit' pk=i.id %}"><i
-                                        class="fas fa-edit"></i>&nbsp;Edit</a></button>
-                                <button type="button" class="btn btn-danger btn-sm" title="Delete Metric"><a
-                                        style="text-decoration:none;color:#fff;" href="{% url 'key_program_delete' pk=i.id %}"><i
-                                        class="fas fa-trash"></i>&nbsp;Delete</a></button>
-                            </td>
+                            <td nowrap class="comments">{{ i.comments }}</td>
                             {% endfor %}
                         </tr>
                         </tbody>
@@ -122,24 +107,6 @@
         </div>
     </section>
 </main>
-<!-- Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmation</h5>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="close-modal"><a href="{% url 'key_program' %}" style="text-decoration:none;color:#fff;">No</a></button>
-                <button type="button" class="btn btn-danger"><a style="text-decoration:none;color:#fff;"
-                href="#">Yes</a></button>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Include the Quill library -->
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/quill.js' %}"></script>
@@ -164,7 +131,7 @@
 <script>
     $('#example').bootstrapTable({
     exportOptions: {
-        fileName: 'Key Program Metric'
+        fileName: 'Schedule'
     },
     exportTypes: ['csv', 'excel'],
 });

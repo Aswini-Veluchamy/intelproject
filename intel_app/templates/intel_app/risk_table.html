@@ -72,8 +72,6 @@
                            data-show-fullscreen="true"
                            data-show-pagination-switch="true"
                            data-height="510"
-                           data-sort-name="eta"
-                           data-sort-order="desc"
                            data-pagination-pre-text="Previous"
                            data-pagination-next-text="Next"
                            data-pagination-h-align="left"
@@ -89,7 +87,7 @@
                             </th>
                             <th nowrap data-sortable="true" class="owner">Owner</th>
                             <th nowrap data-sortable="true" class="message">Message</th>
-                            <th nowrap data-sortable="true" class="eta" data-field="eta">ETA</th>
+                            <th nowrap data-sortable="true" class="eta">ETA</th>
                             <th nowrap data-sortable="true" class="risk">Risk</th>
                             <th nowrap data-sortable="true" class="severity">Severity</th>
                             <th nowrap data-sortable="true" class="impact">Impact</th>
@@ -135,6 +133,7 @@
     function nameFormatter(value, row) {
       var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
       row.status === 'G'  ? 'fa-circle fa-sm text-success' :
+      row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
       row.status === 'B'  ? 'fa-circle fa-sm text-primary' :
       'fa-circle fa-sm text-info'
       return '<i class="fa ' + icon + '"></i> ' + value

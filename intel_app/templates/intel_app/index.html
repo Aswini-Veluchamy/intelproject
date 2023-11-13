@@ -123,8 +123,11 @@
                             <h5 class="mb-4">Schedule</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-md btn-secondary button arrow" href="#" role="button">
-                                <span>Add</span>
+                            <a class="btn btn-md btn-secondary button arrow" data-bs-toggle="modal" data-bs-target="#scheduleModal" role="button">
+                                <span>Update</span>
+                            </a>
+                            <a class="btn btn-md btn-secondary button arrow" href="{% url 'schedule' %}" role="button">
+                                <span>History</span>
                             </a>
                         </div>
                     </div>
@@ -225,7 +228,7 @@
                     <select class="form-select" name="project" id='project' required="required">
                         {% if key_mess_data %}
                         {% for i in key_mess_data.project %}
-                            <option value="{{i}}">{{i}}</option>
+                        <option value="{{i}}">{{i}}</option>
                         {% endfor %}
                         {% else %}
                         <option value="" disabled="disabled" selected="selected">Projects</option>
@@ -263,15 +266,15 @@
                             <div class="col-sm-6">
                                 <label class="form-label" for="problem_statement">Name</label>
                                 <textarea class="form-control" id="problem_statement" name="problem_statement"
-                                              placeholder="Enter Problem Statement" cols="3" maxlength="250"
-                                              required="required">{{risk_data.problem_statement}}</textarea>
+                                          placeholder="Enter Problem Statement" cols="3" maxlength="250"
+                                          required="required">{{risk_data.problem_statement}}</textarea>
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label">Select Project</label>
                                 <select class="form-select" name="project" id='risk_project' required="required">
                                     {% if risk_data %}
                                     {% for i in risk_data.project %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
                                     {% else %}
                                     <option value="" disabled="disabled" selected="selected">Projects</option>
@@ -292,20 +295,21 @@
                                 <select class="form-select" name="status" id='status' required="required">
                                     {% if risk_data %}
                                     {% for i in risk_data.status %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
                                     {% else %}
                                     <option value="" disabled="disabled" selected="selected">Select Status</option>
                                     <option value="R">R</option>
                                     <option value="G">G</option>
                                     <option value="B">B</option>
+                                    <option value="Y">Y</option>
                                     {% endif %}
                                 </select>
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label" for="owner">Owner</label>
                                 <input class="form-control" id="owner" name="owner" type="text" placeholder="Enter Owner"
-                                           required="required" value="{{risk_data.owner}}"/>
+                                       required="required" value="{{risk_data.owner}}"/>
                             </div>
 
                         </div>
@@ -320,8 +324,8 @@
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label" for="eta">ETA</label>
-                                <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
-                                           required="required" value="{{ risk_data.eta | date:'Y-m-d' }}"/>
+                                <input class="form-control" id="eta" name="eta" type="date" placeholder="Enter ETA"
+                                       required="required" value="{{ risk_data.eta | date:'Y-m-d' }}"/>
                             </div>
 
                         </div>
@@ -332,7 +336,7 @@
                             <div class="col-sm-6">
                                 <label class="form-label" for="risk">Risk Intiated</label>
                                 <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
-                                           required="required" value="{{ risk_data.risk | date:'Y-m-d' }}" />
+                                       required="required" value="{{ risk_data.risk | date:'Y-m-d' }}" />
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label" for="severity">Severity</label>
@@ -403,7 +407,7 @@
                                 <select class="form-select" name="project" id='keyprogram_project'>
                                     {% if key_program_data %}
                                     {% for i in key_program_data.project %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
                                     {% else %}
                                     <option value="" disabled="disabled" selected="selected">Projects</option>
@@ -453,13 +457,14 @@
                                 <select class="form-select" name="status" id='keyprogram_status' required="required">
                                     {% if key_program_data %}
                                     {% for i in key_program_data.status %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
                                     {% else %}
                                     <option value="" disabled="disabled" selected="selected">Select Status</option>
                                     <option value="R">R</option>
                                     <option value="G">G</option>
                                     <option value="B">B</option>
+                                    <option value="Y">Y</option>
                                     {% endif %}
                                 </select>
                             </div>
@@ -472,7 +477,7 @@
                     </div>
                     <br>
                     <p>{{error}}</p>
-                    <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                    <button type="submit" id="btn_key_program" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>
@@ -495,7 +500,7 @@
                     <select class="form-select" name="details_project" id='details_project' required="required">
                         {% if details_data %}
                         {% for i in details_data.project %}
-                            <option value="{{i}}">{{i}}</option>
+                        <option value="{{i}}">{{i}}</option>
                         {% endfor %}
                         {% else %}
                         <option value="" disabled="disabled" selected="selected">Projects</option>
@@ -510,6 +515,95 @@
                     <input type="hidden" name="details_message" id="details_message">
                     <p>{{error}}</p>
                     <button type="submit" id="btn_details" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<br><br>
+<!-- Schedule Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="scheduleModalLabel">Schedule</h6>&nbsp;
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Create the editor container -->
+                <form method="post" id="schedule_form" action="{% url 'schedule' %}" autocomplete="off" enctype="application/x-www-form-urlencoded">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="milestone">Milestone</label>
+                                <textarea class="form-control" id="milestone" name="milestone"
+                                          placeholder="Enter Milestone" cols="3" maxlength="250"
+                                          required="required">{{schedule_data.milestone}}</textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Select Project</label>
+                                <select class="form-select" name="project" id='schedule_project' required="required">
+                                    {% if schedule_data %}
+                                    {% for i in schedule_data.project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                    <option value="" disabled="disabled" selected="selected">Projects</option>
+                                    {% for i in project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="por_commit">POR Commit</label>
+                                <input class="form-control" id="por_commit" name="por_commit" type="date" placeholder="Enter POR Commit"
+                                       required="required" value="{{ schedule_data.por_commit | date:'Y-m-d' }}"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="por_trend">POR Trend</label>
+                                <input class="form-control" id="por_trend" name="por_trend" type="date" placeholder="Enter POR Trend"
+                                       required="required" value="{{ schedule_data.por_trend | date:'Y-m-d' }}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status" id='schedule_status' required="required">
+                                    {% if schedule_data %}
+                                    {% for i in schedule_data.status %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                    {% else %}
+                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
+                                    <option value="R">R</option>
+                                    <option value="G">G</option>
+                                    <option value="B">B</option>
+                                    <option value="Y">Y</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="schedule_comments">Comments</label>
+                                <textarea class="form-control" id="schedule_comments" name="comments"
+                                          placeholder="Enter Comments" cols="3" maxlength="250"
+                                          required="required">{{schedule_data.comments}}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <p>{{error}}</p>
+                    <button type="submit" id="btn_schedule" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>

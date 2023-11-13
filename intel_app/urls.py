@@ -15,4 +15,5 @@ urlpatterns = [
     path('key_program_delete/<str:pk>', views.key_program_delete, name='key_program_delete'),
     path('details/', views.details, name='details'),
     path('details_edit_message/<str:pk>', views.details_edit_message, name='details_edit_message'),
+    path('schedule/', views.schedule, name='schedule'),
 ]

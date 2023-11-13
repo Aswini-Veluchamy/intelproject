@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 
 import time
 from .models import KeyMessageTable, RiskTable, DetailsMessageTable
-from .models import KeyProgramMetricTable
+from .models import KeyProgramMetricTable, ScheduleMetricTable
 
 from .config import DEFAULT_PASSWORDS
 
@@ -98,7 +98,7 @@ def home(request):
 
         if risk_data:
             risk_data = risk_data.latest("created_at")
-            status = ['R', 'G', 'B']
+            status = ['R', 'G', 'B', 'Y']
             impact = ['PPA', 'Functionality', 'Quality']
             severity = ['Mgt', '']
             if risk_data.status in status or risk_data.impact in impact or risk_data.severity in severity \
@@ -122,7 +122,7 @@ def home(request):
 
         if key_program_data:
             key_program_data = key_program_data.latest("created_at")
-            status = ['R', 'G', 'B']
+            status = ['R', 'G', 'B', 'Y']
             if key_program_data.status in status:
                 # updating the status values
                 status.remove(key_program_data.status)
@@ -267,7 +267,7 @@ def risk_edit_table(request, pk):
         return HttpResponseRedirect(reverse("risk"))
     else:
         risk_data = RiskTable.objects.filter(pk=pk)
-        status = ['R', 'G', 'B']
+        status = ['R', 'G', 'B', 'Y']
         impact = ['PPA', 'Functionality', 'Quality']
         severity = ['Mgt', '']
         for i in risk_data:
@@ -357,7 +357,7 @@ def key_program_edit(request, pk):
         return HttpResponseRedirect(reverse("key_program"))
     else:
         metric_data = KeyProgramMetricTable.objects.filter(pk=pk)
-        status = ['R', 'G', 'B']
+        status = ['R', 'G', 'B', 'Y']
         for i in metric_data:
             if i.status in status:
                 # updating the status values
@@ -423,3 +423,39 @@ def details_edit_message(request, pk):
     else:
         data = DetailsMessageTable.objects.filter(pk=pk)
         return render(request, 'intel_app/details_edit_message.html', {'data': data})
+
+@csrf_exempt
+def schedule(request):
+    if request.method == "POST":
+        milestone = request.POST['milestone']
+        por_commit = request.POST['por_commit']
+        por_trend = request.POST['por_trend']
+        status = request.POST['status']
+        comments = request.POST['comments']
+        project = request.POST['project']
+
+        user = request.session['meta_data'].get('user_id')
+        metric_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
+        metric_data = ScheduleMetricTable.objects.create(
+            milestone=milestone,
+            por_commit=por_commit,
+            por_trend=por_trend,
+            status=status,
+            comments=comments,
+            metric_id=metric_id,
+            project=project,
+            user=user
+        )
+        metric_data.save()
+        # load schedule metric data to external database
+        # load_key_program_metric_data([(milestone, por_commit, por_trend, status,
+        #                                comment, metric_id, project, user)])
+        return HttpResponseRedirect(reverse("schedule"))
+    else:
+        try:
+            project = request.session['meta_data'].get('project')
+            metric_data = ScheduleMetricTable.objects.filter(project__in=project)
+            return render(request, 'intel_app/schedule.html', {'data': metric_data, 'project': project})
+        except KeyError:
+            return HttpResponseRedirect(reverse('login'))

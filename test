@@ -153,3 +153,13 @@ urls.py
 index.html
 details.html
 details_edit_message.html
+
+***************************************** 13/11/23
+views.py
+urls.py
+models.py
+schedule.html
+index.html
+
+risk_table.html
+key_program.html
