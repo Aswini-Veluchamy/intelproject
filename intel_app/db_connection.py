@@ -1,7 +1,7 @@
 import mysql.connector
 from .config import HOST, PORT, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
-from .config import DETAILS_TABLE
+from .config import DETAILS_TABLE, SCHEDULE_TABLE
 
 
 def db_connection():
@@ -40,7 +40,8 @@ def update_key_message_data(data):
 def load_risk_data(data):
     conn, cursor = db_connection()
     for ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user in data:
-        sql = f"INSERT INTO {RISK_TABLE} (problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        sql = f"INSERT INTO {RISK_TABLE} (problem_statement, status, owner, message, eta, risk, severity, impact, \
+            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         val = (ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user)
         cursor.execute(sql, val)
     print(f'data inserted in {RISK_TABLE} ....')
@@ -109,5 +110,16 @@ def update_details_data(details_id, message):
     sql = f"UPDATE {DETAILS_TABLE} SET message = '{message}' WHERE details_id='{details_id}'"
     cursor.execute(sql)
     print(f'data updated in {DETAILS_TABLE} ....')
+    conn.commit()
+    conn.close()
+
+
+def load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, proj):
+    conn, cursor = db_connection()
+    sql = f"INSERT INTO {SCHEDULE_TABLE} (milestone, por_commit, por_trend, status, comments, schedule_id,\
+            user, project) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (milestone, por_commit, por_trend, status, comments, schedule_id, user, proj)
+    cursor.execute(sql, val)
+    print(f'data inserted in {SCHEDULE_TABLE} ....')
     conn.commit()
     conn.close()

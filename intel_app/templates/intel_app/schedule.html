@@ -82,6 +82,7 @@
                         <thead>
                         <tr>
                             <th nowrap data-sortable="true" class="milestone">Milestone</th>
+                            <th nowrap data-sortable="true" class="project">Milestone</th>
                             <th nowrap data-sortable="true" class="por_commit">POR Commit</th>
                             <th nowrap data-sortable="true" class="por_trend">POR Trend</th>
                             <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
@@ -94,6 +95,7 @@
                         {% for i in data %}
                         <tr>
                             <td nowrap class="milestone">{{ i.milestone }}</td>
+                            <td nowrap class="milestone">{{ i.project }}</td>
                             <td nowrap class="por_commit">{{ i.por_commit | date:'Y-m-d' }}</td>
                             <td nowrap class="por_trend">{{ i.por_trend | date:'Y-m-d' }}</td>
                             <td nowrap class="status">{{ i.status }}</td>

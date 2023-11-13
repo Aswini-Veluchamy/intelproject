@@ -76,6 +76,7 @@ class DetailsMessageTable(models.Model):
     class Meta:
         db_table = "details_message_table"
 
+
 class ScheduleMetricTable(models.Model):
     ''' created database fields'''
     milestone = models.CharField(max_length=250, default='milestone')
@@ -83,7 +84,7 @@ class ScheduleMetricTable(models.Model):
     por_trend = models.DateTimeField(default='por_trend')
     status = models.CharField(max_length=200, default='status')
     comments = models.CharField(max_length=200, default='comments')
-    metric_id = models.CharField(max_length=100, default='metric_id')
+    schedule_id = models.CharField(max_length=100, default='schedule_id')
     project = models.CharField(max_length=200, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.CharField(max_length=100, default='user')

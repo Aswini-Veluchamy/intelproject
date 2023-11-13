@@ -19,6 +19,7 @@ from .db_connection import update_key_program_metric_data
 from .db_connection import delete_key_program_metric_data
 from .db_connection import load_details_data
 from .db_connection import update_details_data
+from .db_connection import load_schedule_data
 
 
 @csrf_exempt
@@ -82,11 +83,13 @@ def home(request):
             risk_data = RiskTable.objects.filter(project__in=project)
             key_program_data = KeyProgramMetricTable.objects.filter(project__in=project)
             details_data = DetailsMessageTable.objects.filter(project__in=project)
+            schedule_data = ScheduleMetricTable.objects.filter(project__in=project)
         else:
             key_mess_data = KeyMessageTable.objects.filter(user=user)
             risk_data = RiskTable.objects.filter(user=user)
             key_program_data = KeyProgramMetricTable.objects.filter(user=user)
             details_data = DetailsMessageTable.objects.filter(user=user)
+            schedule_data = ScheduleMetricTable.objects.filter(user=user)
 
         # get the latest record from the query_set
         if key_mess_data:
@@ -123,10 +126,13 @@ def home(request):
         if key_program_data:
             key_program_data = key_program_data.latest("created_at")
             status = ['R', 'G', 'B', 'Y']
-            if key_program_data.status in status:
+            if key_program_data.status in status or key_program_data.project in project:
                 # updating the status values
                 status.remove(key_program_data.status)
                 status.insert(0, key_program_data.status)
+                # updating the project
+                project.remove(key_program_data.project)
+                project.insert(0, key_program_data.project)
             key_program_data.status = status
             key_program_data.project = project
 
@@ -137,9 +143,22 @@ def home(request):
                 project.insert(0, details_data.project)
             details_data.project = project
 
+        if schedule_data:
+            schedule_data = schedule_data.latest("created_at")
+            status = ['R', 'G', 'B', 'Y']
+            if schedule_data.status in status or schedule_data.project in project:
+                # updating the status values
+                status.remove(schedule_data.status)
+                status.insert(0, schedule_data.status)
+                # updating the project
+                project.remove(schedule_data.project)
+                project.insert(0, schedule_data.project)
+            schedule_data.status = status
+            schedule_data.project = project
+
         return render(request, 'intel_app/index.html', {'project': project, 'key_mess_data': key_mess_data,
                                                         'risk_data': risk_data, 'key_program_data': key_program_data,
-                                                        'details_data': details_data})
+                                                        'details_data': details_data, 'schedule_data': schedule_data})
     except KeyError:
         return HttpResponseRedirect(reverse('login'))
 
@@ -424,6 +443,7 @@ def details_edit_message(request, pk):
         data = DetailsMessageTable.objects.filter(pk=pk)
         return render(request, 'intel_app/details_edit_message.html', {'data': data})
 
+
 @csrf_exempt
 def schedule(request):
     if request.method == "POST":
@@ -435,7 +455,7 @@ def schedule(request):
         project = request.POST['project']
 
         user = request.session['meta_data'].get('user_id')
-        metric_id = str(int(time.time() * 1000)) + '_' + user
+        schedule_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         metric_data = ScheduleMetricTable.objects.create(
             milestone=milestone,
@@ -443,19 +463,23 @@ def schedule(request):
             por_trend=por_trend,
             status=status,
             comments=comments,
-            metric_id=metric_id,
+            schedule_id=schedule_id,
             project=project,
             user=user
         )
         metric_data.save()
         # load schedule metric data to external database
-        # load_key_program_metric_data([(milestone, por_commit, por_trend, status,
-        #                                comment, metric_id, project, user)])
-        return HttpResponseRedirect(reverse("schedule"))
+        load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, project)
+        return HttpResponseRedirect(reverse("home"))
     else:
         try:
+            admin = request.session['meta_data'].get('admin')
             project = request.session['meta_data'].get('project')
-            metric_data = ScheduleMetricTable.objects.filter(project__in=project)
-            return render(request, 'intel_app/schedule.html', {'data': metric_data, 'project': project})
+            user = request.session['meta_data'].get('user_id')
+            if admin:
+                schedule_data = ScheduleMetricTable.objects.filter(project__in=project)
+            else:
+                schedule_data = ScheduleMetricTable.objects.filter(user=user)
+            return render(request, 'intel_app/schedule.html', {'data': schedule_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))

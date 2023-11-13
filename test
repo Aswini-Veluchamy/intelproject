@@ -158,8 +158,27 @@ details_edit_message.html
 views.py
 urls.py
 models.py
+admin.py
+db_connection.py
+config.py
+
 schedule.html
 index.html
 
 risk_table.html
 key_program.html
+
+
+CREATE TABLE schedule_table(
+ milestone VARCHAR(200) NOT NULL,
+ por_commit DATE,
+ por_trend DATE,
+ status VARCHAR(50) NOT NULL,
+ comments VARCHAR(200) NOT NULL,
+ schedule_id VARCHAR(50) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ sort_value int NOT NULL AUTO_INCREMENT,
+ PRIMARY KEY (sort_value)
+);
