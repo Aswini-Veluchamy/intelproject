@@ -20,6 +20,7 @@ from .db_connection import delete_key_program_metric_data
 from .db_connection import load_details_data
 from .db_connection import update_details_data
 from .db_connection import load_schedule_data
+from .db_connection import update_schedule_data
 
 
 @csrf_exempt
@@ -484,6 +485,7 @@ def schedule(request):
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
+
 @csrf_exempt
 def schedule_edit_table(request, pk):
     if request.method == "POST":
@@ -495,7 +497,7 @@ def schedule_edit_table(request, pk):
 
         tab = ScheduleMetricTable.objects.filter(pk=pk)
         # update the values in external database
-        #update_key_program_metric_data([(milestone, por_commit, por_trend, status, comments, tab[0].schedule_id)])
+        update_schedule_data([(milestone, por_commit, por_trend, status, comments, tab[0].schedule_id)])
         # update the values local database
         tab.update(
             milestone=milestone,

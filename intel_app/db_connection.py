@@ -123,3 +123,15 @@ def load_schedule_data(milestone, por_commit, por_trend, status, comments, sched
     print(f'data inserted in {SCHEDULE_TABLE} ....')
     conn.commit()
     conn.close()
+
+
+def update_schedule_data(data):
+    conn, cursor = db_connection()
+    for milestone, por_commit, por_trend, status, comments, schedule_id in data:
+        sql = (f"UPDATE {SCHEDULE_TABLE} SET milestone = '{milestone}', por_commit = '{por_commit}', \
+                por_trend = '{por_trend}', status = '{status}', comments = '{comments}' \
+                WHERE schedule_id='{schedule_id}'")
+        cursor.execute(sql)
+    print(f'data updated in {SCHEDULE_TABLE} ....')
+    conn.commit()
+    conn.close()
