@@ -483,3 +483,36 @@ def schedule(request):
             return render(request, 'intel_app/schedule.html', {'data': schedule_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
+
+@csrf_exempt
+def schedule_edit_table(request, pk):
+    if request.method == "POST":
+        milestone = request.POST['milestone']
+        por_commit = request.POST['por_commit']
+        por_trend = request.POST['por_trend']
+        status = request.POST['status']
+        comments = request.POST['comments']
+
+        tab = ScheduleMetricTable.objects.filter(pk=pk)
+        # update the values in external database
+        #update_key_program_metric_data([(milestone, por_commit, por_trend, status, comments, tab[0].schedule_id)])
+        # update the values local database
+        tab.update(
+            milestone=milestone,
+            por_commit=por_commit,
+            por_trend=por_trend,
+            status=status,
+            comments=comments,
+        )
+        return HttpResponseRedirect(reverse("schedule"))
+    else:
+        metric_data = ScheduleMetricTable.objects.filter(pk=pk)
+        status = ['R', 'G', 'B', 'Y']
+        for i in metric_data:
+            if i.status in status:
+                # updating the status values
+                status.remove(i.status)
+                status.insert(0, i.status)
+
+        metric_data[0].status = status
+        return render(request, 'intel_app/schedule_edit_table.html', {'data': metric_data})

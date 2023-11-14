@@ -89,6 +89,7 @@
                                 Status
                             </th>
                             <th nowrap data-sortable="true" class="comments">Comments</th>
+                            <th nowrap data-sortable="true"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -100,6 +101,11 @@
                             <td nowrap class="por_trend">{{ i.por_trend | date:'Y-m-d' }}</td>
                             <td nowrap class="status">{{ i.status }}</td>
                             <td nowrap class="comments">{{ i.comments }}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" title="Edit Schedule"><a
+                                        style="text-decoration:none;color:#fff;" href="{% url 'schedule_edit_table' pk=i.id %}"><i
+                                        class="fas fa-edit"></i>&nbsp;Edit</a></button>
+                            </td>
                             {% endfor %}
                         </tr>
                         </tbody>

@@ -16,4 +16,5 @@ urlpatterns = [
     path('details/', views.details, name='details'),
     path('details_edit_message/<str:pk>', views.details_edit_message, name='details_edit_message'),
     path('schedule/', views.schedule, name='schedule'),
+    path('schedule_edit_table/<str:pk>', views.schedule_edit_table, name='schedule_edit_table'),
 ]

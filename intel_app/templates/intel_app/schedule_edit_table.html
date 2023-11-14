@@ -1,0 +1,128 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Schedule</title>
+    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
+
+<body style="background-color:#ffffff!important;">
+
+<!-- Example Code -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand">
+            <span>Intel</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-md-auto gap-2">
+                <li class="nav-item rounded">
+                    <a class="nav-link ho" href="{% url 'home' %}">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown rounded">
+                    <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-user"></i>
+                        <span>{{request.user.username}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+<main>
+    <!-- Service 4 - Bootstrap Brain Component -->
+    <section>
+        <div class="container"><!--style="max-width:100%;"-->
+            <div class="card">
+                <div class="card-header">
+                    <b>Schedule</b>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="myForm" autocomplete="off" enctype="application/x-www-form-urlencoded">
+                        {% csrf_token %}
+                        {% for i in data %}
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label">Project </label>
+                                    <input class="form-control" type="text" name="project" id="project" value="{{i.project}}" disabled>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="milestone">Milestone</label>
+                                    <textarea class="form-control" id="milestone" name="milestone"
+                                              placeholder="Enter Milestone" cols="3" maxlength="250"
+                                              required="required">{{i.milestone}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="por_commit">POR Commit</label>
+                                    <input class="form-control" id="por_commit" name="por_commit" type="date" placeholder="Enter POR Commit"
+                                           required="required" value="{{ i.por_commit | date:'Y-m-d' }}"/>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="por_trend">POR Trend</label>
+                                    <input class="form-control" id="por_trend" name="por_trend" type="date" placeholder="Enter POR Trend"
+                                           required="required" value="{{ i.por_trend | date:'Y-m-d' }}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" name="status" id='status' required="required">
+                                        {% for i in i.status %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="schedule_comments">Comments</label>
+                                    <textarea class="form-control" id="schedule_comments" name="comments"
+                                              placeholder="Enter Comments" cols="3" maxlength="250"
+                                              required="required">{{i.comments}}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <br>
+                        <p>{{error}}</p>
+                        <button type="submit" id="btn" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary"><a href="{% url 'schedule' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Include the Quill library -->
+<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+
+</body>
+</head>
+</html>
