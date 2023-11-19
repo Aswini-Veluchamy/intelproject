@@ -56,6 +56,11 @@
             <div class="card">
                 <div class="card-header">
                     <b>Risks</b>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#riskModal"
+                            style="float:right;">
+                        Add Problem
+                    </button>
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered table-striped" id="example"
@@ -78,7 +83,7 @@
                            data-pagination-detail-h-align="right"
                            data-page-size="6"
                            data-page-list="[20, 30, 40, 50, All]"
-                           data-buttons-class="primary">
+                           data-buttons-class="primary btn-sm">
                         <thead>
                         <tr>
                             <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
@@ -119,35 +124,208 @@
         </div>
     </section>
 </main>
-<!-- Include the Quill library -->
-<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-<script src="{% static 'intel_app/js/quill.js' %}"></script>
-<script src="{% static 'intel_app/table/popper.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
-<script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
-<script>
-    function nameFormatter(value, row) {
-      var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
-      row.status === 'G'  ? 'fa-circle fa-sm text-success' :
-      row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
-      row.status === 'B'  ? 'fa-circle fa-sm text-primary' :
-      'fa-circle fa-sm text-info'
-      return '<i class="fa ' + icon + '"></i> ' + value
-    }
+<!-- Risks Modal -->
+<div class="modal fade" id="riskModal" tabindex="-1" aria-labelledby="riskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="riskModalLabel">Risks</h6>&nbsp;
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Create the editor container -->
+                <form method="post" id="risk_form" action="{% url 'risk' %}" autocomplete="off" enctype="application/x-www-form-urlencoded">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="problem_statement">Name</label>
+                                <textarea class="form-control" id="problem_statement" name="problem_statement"
+                                          placeholder="Enter Problem Statement" cols="3" maxlength="250"
+                                          required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Select Project</label>
+                                <select class="form-select" name="project" id='project' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Projects</option>
+                                    {% for i in project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-</script>
-<script>
-    $('#example').bootstrapTable({
-    exportOptions: {
-        fileName: 'Risks'
-    },
-    exportTypes: ['csv', 'excel'],
-});
-</script>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status" id='status' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
+                                    <option value="R">R</option>
+                                    <option value="G">G</option>
+                                    <option value="B">B</option>
+                                    <option value="Y">Y</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="owner">Owner</label>
+                                <input class="form-control" id="owner" name="owner" type="text"
+                                       placeholder="Enter Owner" required="required"/>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="message">Message</label>
+                                <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
+                                          cols="3" maxlength="250" required="required"></textarea>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="eta">ETA</label>
+                                <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
+                                       required="required"/>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="risk">Risk Intiated</label>
+                                <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
+                                       required="required"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="severity">Severity</label>
+                                <select class="form-select" name="severity" id='severity' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Severity</option>
+                                    <option value="Mgt">Mgt</option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="impact">Impact</label>
+                                <select class="form-select" name="impact" id='impact' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Impact</option>
+                                    <option value="PPA">PPA</option>
+                                    <option value="Functionality">Functionality</option>
+                                    <option value="Quality">Quality</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <p>{{error}}</p>
+                    <button type="submit" id="btn_risk" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS files-->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" />
+<div class="container"><!--style="max-width:100%;"-->
+    <div class="card">
+        <div class="card-header">
+            <b>Risks</b>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#riskModal"
+                    style="float:right;">
+                Add Problem
+            </button>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="DyanmicTable">
+                <thead>
+                <tr>
+                    <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
+                    <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
+                        Status
+                    </th>
+                    <th nowrap data-sortable="true" class="owner">Owner</th>
+                    <th nowrap data-sortable="true" class="message">Message</th>
+                    <th nowrap data-sortable="true" class="eta">ETA</th>
+                    <th nowrap data-sortable="true" class="risk">Risk</th>
+                    <th nowrap data-sortable="true" class="severity">Severity</th>
+                    <th nowrap data-sortable="true" class="impact">Impact</th>
+                          <th class="text-center">
+        <button id="addNewRow" class="btn btn-primary btn-sm">Add New Row</button>
+      </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in data %}
+                <tr>
+                    <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
+                    <td nowrap class="status">{{ i.status }}</td>
+                    <td nowrap class="owner">{{ i.owner }}</td>
+                    <td nowrap class="message">{{ i.message }}</td>
+                    <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
+                    <td nowrap class="risk">{{ i.risk | date:'Y-m-d' }}</td>
+                    <td nowrap class="severity">{{ i.severity }}</td>
+                    <td nowrap class="impact">{{ i.impact }}</td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+        <!--JS Files-->
+        <script  src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://vithalreddy.github.io/editable-html-table-js/bootstable.min.js"></script>
+        <script>
+            $('#DyanmicTable').SetEditable({ $addButton: $('#addNewRow')});
+        </script>
+        <!-- Include the Quill library -->
+        <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+        <script src="{% static 'intel_app/js/quill.js' %}"></script>
+        <script src="{% static 'intel_app/table/popper.min.js' %}"></script>
+        <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
+        <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
+        <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
+        <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script>
+            function nameFormatter(value, row) {
+              var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
+              row.status === 'G'  ? 'fa-circle fa-sm text-success' :
+              row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
+              row.status === 'B'  ? 'fa-circle fa-sm text-primary' :
+              'fa-circle fa-sm text-info'
+              return '<i class="fa ' + icon + '"></i> ' + value
+            }
+
+        </script>
+        <script>
+            $('#example').bootstrapTable({
+            exportOptions: {
+                fileName: 'Risks'
+            },
+            exportTypes: ['csv', 'excel'],
+        });
+        </script>
+        <script>
+            $(document).ready(function() {
+              $("#DyanmicTable").DataTable();
+            });
+        </script>
 </body>
 </head>
 </html>
