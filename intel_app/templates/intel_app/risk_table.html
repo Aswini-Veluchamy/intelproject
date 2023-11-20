@@ -234,14 +234,14 @@
     </div>
 </div>
 <!-- CSS files-->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" />
-<div class="container"><!--style="max-width:100%;"-->
+<div class="container">&lt;!&ndash;style="max-width:100%;"&ndash;&gt;
     <div class="card">
         <div class="card-header">
             <b>Risks</b>
-            <!-- Button trigger modal -->
+            &lt;!&ndash; Button trigger modal &ndash;&gt;
             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#riskModal"
                     style="float:right;">
                 Add Problem
@@ -284,12 +284,12 @@
         </div>
     </div>
 </div>
-        <!--JS Files-->
+        &lt;!&ndash;JS Files&ndash;&gt;
         <script  src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://vithalreddy.github.io/editable-html-table-js/bootstable.min.js"></script>
         <script>
             $('#DyanmicTable').SetEditable({ $addButton: $('#addNewRow')});
-        </script>
+        </script>-->
         <!-- Include the Quill library -->
         <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
         <script src="{% static 'intel_app/js/quill.js' %}"></script>
@@ -320,11 +320,11 @@
             exportTypes: ['csv', 'excel'],
         });
         </script>
-        <script>
+        <!--<script>
             $(document).ready(function() {
               $("#DyanmicTable").DataTable();
             });
-        </script>
+        </script>-->
 </body>
 </head>
 </html>
