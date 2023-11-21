@@ -108,14 +108,14 @@ def home(request):
             if risk_data.status in status or risk_data.impact in impact or risk_data.severity in severity \
                     or risk_data.project in project:
                 # updating the status values
-                status.remove(risk_data.status)
-                status.insert(0, risk_data.status)
-                # updating the impact values
-                impact.remove(risk_data.impact)
-                impact.insert(0, risk_data.impact)
-                # updating the severity values
-                severity.remove(risk_data.severity)
-                severity.insert(0, risk_data.severity)
+                # status.remove(risk_data.status)
+                # status.insert(0, risk_data.status)
+                # # updating the impact values
+                # impact.remove(risk_data.impact)
+                # impact.insert(0, risk_data.impact)
+                # # updating the severity values
+                # severity.remove(risk_data.severity)
+                # severity.insert(0, risk_data.severity)
                 # updating the project
                 project.remove(risk_data.project)
                 project.insert(0, risk_data.project)
@@ -129,9 +129,9 @@ def home(request):
             status = ['R', 'G', 'B', 'Y']
             if key_program_data.status in status or key_program_data.project in project:
                 # updating the status values
-                status.remove(key_program_data.status)
-                status.insert(0, key_program_data.status)
-                # updating the project
+                # status.remove(key_program_data.status)
+                # status.insert(0, key_program_data.status)
+                # # updating the project
                 project.remove(key_program_data.project)
                 project.insert(0, key_program_data.project)
             key_program_data.status = status
@@ -147,13 +147,13 @@ def home(request):
         if schedule_data:
             schedule_data = schedule_data.latest("created_at")
             status = ['R', 'G', 'B', 'Y']
-            if schedule_data.status in status or schedule_data.project in project:
+            #if schedule_data.status in status or schedule_data.project in project:
                 # updating the status values
-                status.remove(schedule_data.status)
-                status.insert(0, schedule_data.status)
-                # updating the project
-                project.remove(schedule_data.project)
-                project.insert(0, schedule_data.project)
+                # status.remove(schedule_data.status)
+                # status.insert(0, schedule_data.status)
+                # # updating the project
+                # project.remove(schedule_data.project)
+                # project.insert(0, schedule_data.project)
             schedule_data.status = status
             schedule_data.project = project
 
@@ -228,7 +228,7 @@ def risks(request):
         risk_data.save()
         # load risk data to external database
         load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
-        return HttpResponseRedirect(reverse("home"))
+        return HttpResponseRedirect(reverse("risk"))
     else:
         try:
             admin = request.session['meta_data'].get('admin')
@@ -238,6 +238,23 @@ def risks(request):
                 risk_data = RiskTable.objects.filter(project__in=project)
             else:
                 risk_data = RiskTable.objects.filter(user=user)
+
+            if len(risk_data) >= 1:
+                status = ['R', 'G', 'B', 'Y']
+                impact = ['PPA', 'Functionality', 'Quality']
+                severity = ['Mgt', '']
+                for i in risk_data:
+                    if i.status in status or i.impact in impact or i.severity in severity \
+                            or i.project in project:
+                        status.remove(i.status)
+                        status.insert(0, i.status)
+                        # updating the impact values
+                        impact.remove(i.impact)
+                        impact.insert(0, i.impact)
+                        # updating the severity values
+                        severity.remove(i.severity)
+                        severity.insert(0, i.severity)
+                        RiskTable.objects.filter(id=i.id).update(status=list(status), impact=impact, severity=severity)
             return render(request, 'intel_app/risk_table.html', {'data': risk_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
@@ -269,10 +286,10 @@ def risk_edit_table(request, pk):
         risk = request.POST['risk']
         severity = request.POST['severity']
         impact = request.POST['impact']
-
+        print(request.POST)
         tab = RiskTable.objects.filter(pk=pk)
         # update the values in external database
-        update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, tab[0].risk_id)])
+        #update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, tab[0].risk_id)])
         # update the values local database
         tab.update(
             problem_statement=ps,

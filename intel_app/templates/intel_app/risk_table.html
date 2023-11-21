@@ -14,6 +14,24 @@
     <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
+<style>
+tr[data-non-edit="true"] {
+
+}
+tr[data-non-edit="false"] {
+    display : none;
+}
+tr[data-edit="true"] {
+
+}
+tr[data-edit="false"] {
+    display : none;
+}
+
+tr[data-add="false"] {
+    display : none;
+}
+</style>
 <body style="background-color:#ffffff!important;">
 
 <!-- Example Code -->
@@ -57,7 +75,7 @@
                 <div class="card-header">
                     <b>Risks</b>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#riskModal"
+                    <button type="button" class="btn btn-primary btn-sm add-btn"
                             style="float:right;">
                         Add Problem
                     </button>
@@ -65,7 +83,6 @@
                 <div class="card-body">
                     <table class="table table-bordered table-striped" id="example"
                            data-toggle="table"
-                           data-pagination="true"
                            data-search="true"
                            data-search-align="left"
                            data-show-columns="true"
@@ -75,14 +92,7 @@
                            data-export-data-type="all"
                            data-response-handler="responseHandler"
                            data-show-fullscreen="true"
-                           data-show-pagination-switch="true"
-                           data-height="510"
-                           data-pagination-pre-text="Previous"
-                           data-pagination-next-text="Next"
-                           data-pagination-h-align="left"
-                           data-pagination-detail-h-align="right"
                            data-page-size="6"
-                           data-page-list="[20, 30, 40, 50, All]"
                            data-buttons-class="primary btn-sm">
                         <thead>
                         <tr>
@@ -99,9 +109,25 @@
                             <th nowrap data-sortable="true"></th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody data-body="risk">
+                         <tr data-a-id="new" data-add="false">
+                            <td class="problem_statement"><input data-prop="problem_statement" type="text" /></td>
+                            <td class="status"><input data-prop="status" type="text" /></td>
+                            <td class="owner"><input data-prop="owner" type="text" /></td>
+                            <td class="message"><input data-prop="message" type="text" /></td>
+                            <td class="eta"><input data-prop="eta" type="text" /></td>
+                            <td class="risk"><input data-prop="risk" type="text"  /></td>
+                            <td class="severity"><input data-prop="severity" type="text"  /></td>
+                            <td class="impact"><input data-prop="impact" type="text"  /></td>
+                            <td>
+                                <button data-id="new-save" type="button" class="btn btn-primary btn-sm add-save-btn" title="Save Risk"> <i
+                                        class="fas fa-edit"></i>&nbsp;Save</button>
+                                <button data-id="new-cancel" type="button" class="btn btn-primary btn-sm add-cancel-btn" title="Edit Risk"> <i
+                                        class="fas fa-edit"></i>&nbsp;Cancel</button>
+                            </td>
+                        </tr>
                         {% for i in data %}
-                        <tr>
+                        <tr data-n-id="{{ i.id }}" data-non-edit="true">
                             <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
                             <td nowrap class="status">{{ i.status }}</td>
                             <td nowrap class="owner">{{ i.owner }}</td>
@@ -111,12 +137,46 @@
                             <td nowrap class="severity">{{ i.severity }}</td>
                             <td nowrap class="impact">{{ i.impact }}</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm" title="Edit Risk"><a
-                                        style="text-decoration:none;color:#fff;" href="{% url 'risk_edit_table' pk=i.id %}"><i
-                                        class="fas fa-edit"></i>&nbsp;Edit</a></button>
+                                <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm edit-btn"
+                                        title="Edit Risk"><i
+                                        class="fas fa-edit"></i>&nbsp;Edit</button>
                             </td>
-                            {% endfor %}
                         </tr>
+
+                        <tr data-e-id="{{ i.id }}" data-edit="false">
+                            <td class="problem_statement"><input data-prop="problem_statement" type="text" value="{{ i.problem_statement }}"/></td>
+                            <td class="status"><select class="form-select" name="status" id='status' required="required">
+                                        {% for i in i.status %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select></td>
+                            <td class="owner"><input data-prop="owner" type="text" value="{{ i.owner }}"/></td>
+                            <td class="message"><input data-prop="message" type="text" value="{{ i.message }}"/></td>
+                            <td class="eta"><input class="form-control" data-prop="eta" id="eta" name="eta" type="date" placeholder="created_at"
+                                           required="required" value="{{ i.eta | date:'Y-m-d' }}" /></td>
+                            <td class="risk"><input class="form-control" data-prop="risk" id="risk" name="risk" type="date" placeholder="Enter Risk"
+                                           required="required" value="{{ i.risk | date:'Y-m-d' }}" /></td>
+                            <td class="severity"><select class="form-select" data-prop="severity" name="severity" id='severity'>
+                                        {% for i in i.severity %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select></td>
+                            <td class="impact">
+                                    <select class="form-select" data-prop="impact" name="impact" id='impact' required="required">
+                                        {% for j in i.impact %}
+                                        <option value="{{j}}">{{j}}</option>
+                                        {% endfor %}
+                                    </select></td>
+                            <td>
+                                <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm save-btn" title="Save Risk"> <i
+                                        class="fas fa-save"></i>&nbsp;</button>&nbsp;&nbsp;
+                                <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm cancel-btn" title="Edit Risk"> <i
+                                        class="fas fa-cancel"></i>&nbsp;</button>
+                            </td>
+                        </tr>
+                         {% endfor %}
+
+
                         </tbody>
                     </table>
                 </div>
@@ -124,172 +184,6 @@
         </div>
     </section>
 </main>
-<!-- Risks Modal -->
-<div class="modal fade" id="riskModal" tabindex="-1" aria-labelledby="riskModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="riskModalLabel">Risks</h6>&nbsp;
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Create the editor container -->
-                <form method="post" id="risk_form" action="{% url 'risk' %}" autocomplete="off" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label" for="problem_statement">Name</label>
-                                <textarea class="form-control" id="problem_statement" name="problem_statement"
-                                          placeholder="Enter Problem Statement" cols="3" maxlength="250"
-                                          required="required"></textarea>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label">Select Project</label>
-                                <select class="form-select" name="project" id='project' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Projects</option>
-                                    {% for i in project %}
-                                    <option value="{{i}}">{{i}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" name="status" id='status' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
-                                    <option value="R">R</option>
-                                    <option value="G">G</option>
-                                    <option value="B">B</option>
-                                    <option value="Y">Y</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label" for="owner">Owner</label>
-                                <input class="form-control" id="owner" name="owner" type="text"
-                                       placeholder="Enter Owner" required="required"/>
-                            </div>
-
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label" for="message">Message</label>
-                                <textarea class="form-control" id="message" name="message" placeholder="Enter Comments"
-                                          cols="3" maxlength="250" required="required"></textarea>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label" for="eta">ETA</label>
-                                <input class="form-control" id="eta" name="eta" type="date" placeholder="created_at"
-                                       required="required"/>
-                            </div>
-
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label" for="risk">Risk Intiated</label>
-                                <input class="form-control" id="risk" name="risk" type="date" placeholder="Enter Risk"
-                                       required="required"/>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label" for="severity">Severity</label>
-                                <select class="form-select" name="severity" id='severity' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Select Severity</option>
-                                    <option value="Mgt">Mgt</option>
-                                    <option value=""></option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label class="form-label" for="impact">Impact</label>
-                                <select class="form-select" name="impact" id='impact' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Select Impact</option>
-                                    <option value="PPA">PPA</option>
-                                    <option value="Functionality">Functionality</option>
-                                    <option value="Quality">Quality</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <p>{{error}}</p>
-                    <button type="submit" id="btn_risk" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- CSS files-->
-<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" />
-<div class="container">&lt;!&ndash;style="max-width:100%;"&ndash;&gt;
-    <div class="card">
-        <div class="card-header">
-            <b>Risks</b>
-            &lt;!&ndash; Button trigger modal &ndash;&gt;
-            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#riskModal"
-                    style="float:right;">
-                Add Problem
-            </button>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-striped" id="DyanmicTable">
-                <thead>
-                <tr>
-                    <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
-                    <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
-                        Status
-                    </th>
-                    <th nowrap data-sortable="true" class="owner">Owner</th>
-                    <th nowrap data-sortable="true" class="message">Message</th>
-                    <th nowrap data-sortable="true" class="eta">ETA</th>
-                    <th nowrap data-sortable="true" class="risk">Risk</th>
-                    <th nowrap data-sortable="true" class="severity">Severity</th>
-                    <th nowrap data-sortable="true" class="impact">Impact</th>
-                          <th class="text-center">
-        <button id="addNewRow" class="btn btn-primary btn-sm">Add New Row</button>
-      </th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for i in data %}
-                <tr>
-                    <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
-                    <td nowrap class="status">{{ i.status }}</td>
-                    <td nowrap class="owner">{{ i.owner }}</td>
-                    <td nowrap class="message">{{ i.message }}</td>
-                    <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
-                    <td nowrap class="risk">{{ i.risk | date:'Y-m-d' }}</td>
-                    <td nowrap class="severity">{{ i.severity }}</td>
-                    <td nowrap class="impact">{{ i.impact }}</td>
-                    {% endfor %}
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-        &lt;!&ndash;JS Files&ndash;&gt;
-        <script  src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="https://vithalreddy.github.io/editable-html-table-js/bootstable.min.js"></script>
-        <script>
-            $('#DyanmicTable').SetEditable({ $addButton: $('#addNewRow')});
-        </script>-->
         <!-- Include the Quill library -->
         <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
         <script src="{% static 'intel_app/js/quill.js' %}"></script>
@@ -313,18 +207,99 @@
 
         </script>
         <script>
+
+
             $('#example').bootstrapTable({
             exportOptions: {
                 fileName: 'Risks'
             },
             exportTypes: ['csv', 'excel'],
         });
-        </script>
-        <!--<script>
-            $(document).ready(function() {
-              $("#DyanmicTable").DataTable();
+
+        $(document).ready(function() {
+                $('.edit-btn').on('click', function () {
+                    let objectId = $(this).data('id');
+                    const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+                    const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+                    $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+                    $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+                });
+
+                $('.cancel-btn').on('click', function () {
+                    let objectId = $(this).data('id');
+                    const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+                    const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+                    $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+                    $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+                });
+
+                $('.save-btn').on('click', function () {
+                    let objectId = $(this).data('id');
+                    const risk = {
+                       problem_statement : $('tr[data-e-id="' + objectId + '"] input[data-prop="problem_statement"]')[0].value,
+                       status : $('tr[data-e-id="' + objectId + '"] input[data-prop="status"]')[0].value,
+                       owner : $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+                       message : $('tr[data-e-id="' + objectId + '"] input[data-prop="message"]')[0].value,
+                       eta : $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+                       risk : $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+                       severity : $('tr[data-e-id="' + objectId + '"] input[data-prop="severity"]')[0].value,
+                       impact : $('tr[data-e-id="' + objectId + '"] input[data-prop="impact"]')[0].value
+                    }
+                    $.ajax(
+                            {
+                                type:"POST",
+                                url: "/risk_edit_table/"+objectId,
+                                data:risk,
+                                success: function( data )
+                                {
+                                window.location.reload()
+
+                                }
+                             })
+
+                    console.log(risk);
+                });
+
+                $('.add-btn').on('click', function () {
+                   $('tr[data-a-id="new"]').attr('data-add', true);
+                });
+
+                 $('.add-save-btn').on('click', function () {
+
+                    let objectId = "new";
+                    const risk = {
+                       problem_statement : $('tr[data-a-id="' + objectId + '"] input[data-prop="problem_statement"]')[0].value,
+                       status : $('tr[data-a-id="' + objectId + '"] input[data-prop="status"]')[0].value,
+                       owner : $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+                       message : $('tr[data-a-id="' + objectId + '"] input[data-prop="message"]')[0].value,
+                       eta : $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+                       risk : $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+                       severity : $('tr[data-a-id="' + objectId + '"] input[data-prop="severity"]')[0].value,
+                       impact : $('tr[data-a-id="' + objectId + '"] input[data-prop="impact"]')[0].value,
+                       project : ''
+                    }
+                    $.ajax(
+                            {
+                                type:"POST",
+                                url: "/risk/",
+                                data:risk,
+                                success: function( data )
+                                {
+                                window.location.reload()
+
+                                }
+                             })
+
+                    console.log(risk);
+                });
+
+                 $('.add-cancel-btn').click(function () {
+                    alert()
+                    $('tr[data-a-id="new"]').attr('data-add', false);
+                });
             });
-        </script>-->
+        </script>
+
 </body>
 </head>
 </html>
