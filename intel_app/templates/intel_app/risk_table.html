@@ -14,24 +14,24 @@
     <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
-<style>
-tr[data-non-edit="true"] {
+    <style>
+    tr[data-non-edit="true"] {
 
-}
-tr[data-non-edit="false"] {
-    display : none;
-}
-tr[data-edit="true"] {
+    }
+    tr[data-non-edit="false"] {
+        display : none;
+    }
+    tr[data-edit="true"] {
 
-}
-tr[data-edit="false"] {
-    display : none;
-}
+    }
+    tr[data-edit="false"] {
+        display : none;
+    }
 
-tr[data-add="false"] {
-    display : none;
-}
-</style>
+    tr[data-add="false"] {
+        display : none;
+    }
+    </style>
 <body style="background-color:#ffffff!important;">
 
 <!-- Example Code -->
@@ -129,13 +129,13 @@ tr[data-add="false"] {
                         {% for i in data %}
                         <tr data-n-id="{{ i.id }}" data-non-edit="true">
                             <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
-                            <td nowrap class="status">{{ i.status }}</td>
+                            <td nowrap class="status">{{ i.status.0 }}</td>
                             <td nowrap class="owner">{{ i.owner }}</td>
                             <td nowrap class="message">{{ i.message }}</td>
                             <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
                             <td nowrap class="risk">{{ i.risk | date:'Y-m-d' }}</td>
-                            <td nowrap class="severity">{{ i.severity }}</td>
-                            <td nowrap class="impact">{{ i.impact }}</td>
+                            <td nowrap class="severity">{{ i.severity.0 }}</td>
+                            <td nowrap class="impact">{{ i.impact.0 }}</td>
                             <td>
                                 <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm edit-btn"
                                         title="Edit Risk"><i
@@ -145,7 +145,7 @@ tr[data-add="false"] {
 
                         <tr data-e-id="{{ i.id }}" data-edit="false">
                             <td class="problem_statement"><input data-prop="problem_statement" type="text" value="{{ i.problem_statement }}"/></td>
-                            <td class="status"><select class="form-select" name="status" id='status' required="required">
+                            <td class="status"><select class="form-select"  data-prop="status" name="status" id='status' required="required">
                                         {% for i in i.status %}
                                         <option value="{{i}}">{{i}}</option>
                                         {% endfor %}
@@ -237,13 +237,13 @@ tr[data-add="false"] {
                     let objectId = $(this).data('id');
                     const risk = {
                        problem_statement : $('tr[data-e-id="' + objectId + '"] input[data-prop="problem_statement"]')[0].value,
-                       status : $('tr[data-e-id="' + objectId + '"] input[data-prop="status"]')[0].value,
+                       status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                        owner : $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                        message : $('tr[data-e-id="' + objectId + '"] input[data-prop="message"]')[0].value,
                        eta : $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
                        risk : $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
-                       severity : $('tr[data-e-id="' + objectId + '"] input[data-prop="severity"]')[0].value,
-                       impact : $('tr[data-e-id="' + objectId + '"] input[data-prop="impact"]')[0].value
+                       severity : $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+                       impact : $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
                     }
                     $.ajax(
                             {
@@ -294,7 +294,6 @@ tr[data-add="false"] {
                 });
 
                  $('.add-cancel-btn').click(function () {
-                    alert()
                     $('tr[data-a-id="new"]').attr('data-add', false);
                 });
             });
