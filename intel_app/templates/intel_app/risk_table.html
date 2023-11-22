@@ -15,22 +15,22 @@
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
     <style>
-    tr[data-non-edit="true"] {
+        tr[data-non-edit="true"] {
 
-    }
-    tr[data-non-edit="false"] {
-        display : none;
-    }
-    tr[data-edit="true"] {
+        }
+        tr[data-non-edit="false"] {
+            display : none;
+        }
+        tr[data-edit="true"] {
 
-    }
-    tr[data-edit="false"] {
-        display : none;
-    }
+        }
+        tr[data-edit="false"] {
+            display : none;
+        }
 
-    tr[data-add="false"] {
-        display : none;
-    }
+        tr[data-add="false"] {
+            display : none;
+        }
     </style>
 <body style="background-color:#ffffff!important;">
 
@@ -70,7 +70,7 @@
 <main>
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
-        <div class="container"><!--style="max-width:100%;"-->
+        <div class="container" style="max-width:100%;">
             <div class="card">
                 <div class="card-header">
                     <b>Risks</b>
@@ -97,38 +97,79 @@
                         <thead>
                         <tr>
                             <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
-                            <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
-                                Status
-                            </th>
+                            <th nowrap data-sortable="true" class="project">Project</th>
+                            <th nowrap data-sortable="true" class="status">Status</th>
                             <th nowrap data-sortable="true" class="owner">Owner</th>
                             <th nowrap data-sortable="true" class="message">Message</th>
                             <th nowrap data-sortable="true" class="eta">ETA</th>
                             <th nowrap data-sortable="true" class="risk">Risk</th>
                             <th nowrap data-sortable="true" class="severity">Severity</th>
                             <th nowrap data-sortable="true" class="impact">Impact</th>
-                            <th nowrap data-sortable="true"></th>
+                            <th nowrap data-sortable="true">Action</th>
                         </tr>
                         </thead>
                         <tbody data-body="risk">
-                         <tr data-a-id="new" data-add="false">
-                            <td class="problem_statement"><input data-prop="problem_statement" type="text" /></td>
-                            <td class="status"><input data-prop="status" type="text" /></td>
-                            <td class="owner"><input data-prop="owner" type="text" /></td>
-                            <td class="message"><input data-prop="message" type="text" /></td>
-                            <td class="eta"><input data-prop="eta" type="text" /></td>
-                            <td class="risk"><input data-prop="risk" type="text"  /></td>
-                            <td class="severity"><input data-prop="severity" type="text"  /></td>
-                            <td class="impact"><input data-prop="impact" type="text"  /></td>
-                            <td>
-                                <button data-id="new-save" type="button" class="btn btn-primary btn-sm add-save-btn" title="Save Risk"> <i
-                                        class="fas fa-edit"></i>&nbsp;Save</button>
-                                <button data-id="new-cancel" type="button" class="btn btn-primary btn-sm add-cancel-btn" title="Edit Risk"> <i
-                                        class="fas fa-edit"></i>&nbsp;Cancel</button>
+                        <tr data-a-id="new" data-add="false">
+                            <td class="problem_statement">
+                                <textarea class="form-control" data-prop="problem_statement" name="problem_statement" placeholder="Enter Problem Statement" cols="3" maxlength="250" required></textarea>
+                            </td>
+                            <td class="project">
+                                <select class="form-select" name="project" data-prop='project' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Projects</option>
+                                    {% for i in project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="status">
+                                <select class="form-select" data-prop="status" name="status" required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
+                                    <option value="R">R</option>
+                                    <option value="G">G</option>
+                                    <option value="B">B</option>
+                                    <option value="Y">Y</option>
+                                </select>
+                            </td>
+                            <td class="owner">
+                                <input class="form-control" data-prop="owner" name="owner" type="text"
+                                       placeholder="Enter Owner" required="required" />
+                            </td>
+                            <td class="message">
+                                <textarea class="form-control" data-prop="message" name="message" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
+                            </td>
+                            <td class="eta">
+                                <input class="form-control" data-prop="eta" name="eta" type="date"
+                                       placeholder="created_at" required="required" /></td>
+                            <td class="risk">
+                                <input class="form-control" data-prop="risk" name="risk" type="date"
+                                       placeholder="Enter Risk" required="required" /></td>
+                            <td class="severity">
+                                <select class="form-select" data-prop="severity" name="severity" required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Severity</option>
+                                    <option value="Mgt">Mgt</option>
+                                    <option value=""></option>
+                                </select></td>
+                            <td class="impact">
+                                <select class="form-select" data-prop="impact" name="impact" required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Impact</option>
+                                    <option value="PPA">PPA</option>
+                                    <option value="Functionality">Functionality</option>
+                                    <option value="Quality">Quality</option>
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <button data-id="new-save" type="button" class="btn btn-primary btn-sm add-save-btn" title="Save Risk">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                                <button data-id="new-cancel" type="button" class="btn btn-primary btn-sm add-cancel-btn" title="Edit Risk">
+                                    <i class="fas fa-cancel"></i>
+                                </button>
                             </td>
                         </tr>
                         {% for i in data %}
                         <tr data-n-id="{{ i.id }}" data-non-edit="true">
                             <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
+                            <td nowrap class="project">{{ i.project }}</td>
                             <td nowrap class="status">{{ i.status.0 }}</td>
                             <td nowrap class="owner">{{ i.owner }}</td>
                             <td nowrap class="message">{{ i.message }}</td>
@@ -139,44 +180,64 @@
                             <td>
                                 <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm edit-btn"
                                         title="Edit Risk"><i
-                                        class="fas fa-edit"></i>&nbsp;Edit</button>
+                                        class="fas fa-edit"></i></button>
                             </td>
                         </tr>
 
                         <tr data-e-id="{{ i.id }}" data-edit="false">
-                            <td class="problem_statement"><input data-prop="problem_statement" type="text" value="{{ i.problem_statement }}"/></td>
-                            <td class="status"><select class="form-select"  data-prop="status" name="status" id='status' required="required">
-                                        {% for i in i.status %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select></td>
-                            <td class="owner"><input data-prop="owner" type="text" value="{{ i.owner }}"/></td>
-                            <td class="message"><input data-prop="message" type="text" value="{{ i.message }}"/></td>
-                            <td class="eta"><input class="form-control" data-prop="eta" id="eta" name="eta" type="date" placeholder="created_at"
-                                           required="required" value="{{ i.eta | date:'Y-m-d' }}" /></td>
-                            <td class="risk"><input class="form-control" data-prop="risk" id="risk" name="risk" type="date" placeholder="Enter Risk"
-                                           required="required" value="{{ i.risk | date:'Y-m-d' }}" /></td>
-                            <td class="severity"><select class="form-select" data-prop="severity" name="severity" id='severity'>
-                                        {% for i in i.severity %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select></td>
-                            <td class="impact">
-                                    <select class="form-select" data-prop="impact" name="impact" id='impact' required="required">
-                                        {% for j in i.impact %}
-                                        <option value="{{j}}">{{j}}</option>
-                                        {% endfor %}
-                                    </select></td>
-                            <td>
-                                <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm save-btn" title="Save Risk"> <i
-                                        class="fas fa-save"></i>&nbsp;</button>&nbsp;&nbsp;
-                                <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm cancel-btn" title="Edit Risk"> <i
-                                        class="fas fa-cancel"></i>&nbsp;</button>
+                            <td class="problem_statement">
+                                <textarea class="form-control" data-prop="problem_statement" name="problem_statement" cols="3" maxlength="250" required="required">{{i.problem_statement}}</textarea>
                             </td>
+                            <td class="project">
+                                <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
+                            </td>
+                            <td class="status">
+                                <select class="form-select" data-prop="status" name="status" required="required">
+                                    {% for i in i.status %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="owner">
+                                <input class="form-control" data-prop="owner" id="owner" name="owner" type="text"
+                                       required="required" value="{{i.owner}}" />
+                            </td>
+                            <td class="message">
+                                <textarea class="form-control" data-prop="message" id="message" name="message" cols="3" maxlength="250" required="required">{{ i.message }}</textarea>
+                            </td>
+                            <td class="eta">
+                                <input class="form-control" data-prop="eta" id="eta" name="eta" type="date"
+                                       required="required" value="{{ i.eta | date:'Y-m-d' }}" />
+                            </td>
+                            <td class="risk">
+                                <input class="form-control" data-prop="risk" name="risk" type="date"
+                                       required="required" value="{{ i.risk | date:'Y-m-d' }}" />
+                            </td>
+                            <td class="severity">
+                                <select class="form-select" data-prop="severity" name="severity">
+                                    {% for i in i.severity %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="impact">
+                                <select class="form-select" data-prop="impact" name="impact" required="required">
+                                    {% for j in i.impact %}
+                                    <option value="{{j}}">{{j}}</option>
+                                    {% endfor %}
+                                </select></td>
+                            <div class="text-center">
+                                <td>
+                                    <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm save-btn" title="Save Risk">
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                    <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm cancel-btn" title="Cancel Risk">
+                                        <i class="fas fa-cancel"></i>
+                                    </button>
+                                </td>
+                            </div>
                         </tr>
-                         {% endfor %}
-
-
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -184,121 +245,129 @@
         </div>
     </section>
 </main>
-        <!-- Include the Quill library -->
-        <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-        <script src="{% static 'intel_app/js/quill.js' %}"></script>
-        <script src="{% static 'intel_app/table/popper.min.js' %}"></script>
-        <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-        <script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
-        <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
-        <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
-        <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
-        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-        <script>
-            function nameFormatter(value, row) {
-              var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
-              row.status === 'G'  ? 'fa-circle fa-sm text-success' :
-              row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
-              row.status === 'B'  ? 'fa-circle fa-sm text-primary' :
-              'fa-circle fa-sm text-info'
-              return '<i class="fa ' + icon + '"></i> ' + value
-            }
-
-        </script>
-        <script>
+<!-- Include the Quill library -->
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+<script src="{% static 'intel_app/js/quill.js' %}"></script>
+<script src="{% static 'intel_app/table/popper.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
+<script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+<script>
 
 
-            $('#example').bootstrapTable({
-            exportOptions: {
-                fileName: 'Risks'
-            },
-            exportTypes: ['csv', 'excel'],
+    $('#example').bootstrapTable({
+    exportOptions: {
+        fileName: 'Risks'
+    },
+    exportTypes: ['csv', 'excel'],
+});
+
+$(document).ready(function() {
+        $('.edit-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
         });
 
-        $(document).ready(function() {
-                $('.edit-btn').on('click', function () {
-                    let objectId = $(this).data('id');
-                    const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-                    const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-                    $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-                    $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-                });
+        $('.cancel-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
 
-                $('.cancel-btn').on('click', function () {
-                    let objectId = $(this).data('id');
-                    const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-                    const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-                    $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-                    $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-                });
+        $('.save-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const risk = {
+               problem_statement : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
+               project : $('tr[data-a-id="' + objectId + '"] input[data-prop="project"]')[0].value,
+               status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+               owner : $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+               message : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
+               eta : $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+               risk : $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+               severity : $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+               impact : $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
+            }
+            $.ajax(
+                    {
+                        type:"POST",
+                        url: "/risk_edit_table/"+objectId,
+                        data:risk,
+                        success: function( data )
+                        {
+                        window.location.reload()
 
-                $('.save-btn').on('click', function () {
-                    let objectId = $(this).data('id');
-                    const risk = {
-                       problem_statement : $('tr[data-e-id="' + objectId + '"] input[data-prop="problem_statement"]')[0].value,
-                       status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-                       owner : $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-                       message : $('tr[data-e-id="' + objectId + '"] input[data-prop="message"]')[0].value,
-                       eta : $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-                       risk : $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
-                       severity : $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
-                       impact : $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
-                    }
-                    $.ajax(
-                            {
-                                type:"POST",
-                                url: "/risk_edit_table/"+objectId,
-                                data:risk,
-                                success: function( data )
-                                {
-                                window.location.reload()
+                        }
+                     })
 
-                                }
-                             })
+            console.log(risk);
+        });
 
-                    console.log(risk);
-                });
+        $('.add-btn').on('click', function () {
+           $('tr[data-a-id="new"]').attr('data-add', true);
+        });
 
-                $('.add-btn').on('click', function () {
-                   $('tr[data-a-id="new"]').attr('data-add', true);
-                });
+         $('.add-save-btn').on('click', function () {
 
-                 $('.add-save-btn').on('click', function () {
+            let objectId = "new";
+            const risk = {
+               problem_statement : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
+               project : $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
+               status : $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+               owner : $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+               message : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
+               eta : $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+               risk : $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+               severity : $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+               impact : $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
+               project : ''
+            }
+            $.ajax(
+                    {
+                        type:"POST",
+                        url: "/risk/",
+                        data:risk,
+                        success: function( data )
+                        {
+                        window.location.reload()
 
-                    let objectId = "new";
-                    const risk = {
-                       problem_statement : $('tr[data-a-id="' + objectId + '"] input[data-prop="problem_statement"]')[0].value,
-                       status : $('tr[data-a-id="' + objectId + '"] input[data-prop="status"]')[0].value,
-                       owner : $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-                       message : $('tr[data-a-id="' + objectId + '"] input[data-prop="message"]')[0].value,
-                       eta : $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-                       risk : $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
-                       severity : $('tr[data-a-id="' + objectId + '"] input[data-prop="severity"]')[0].value,
-                       impact : $('tr[data-a-id="' + objectId + '"] input[data-prop="impact"]')[0].value,
-                       project : ''
-                    }
-                    $.ajax(
-                            {
-                                type:"POST",
-                                url: "/risk/",
-                                data:risk,
-                                success: function( data )
-                                {
-                                window.location.reload()
+                        }
+                     })
 
-                                }
-                             })
+            console.log(risk);
+        });
 
-                    console.log(risk);
-                });
+         $('.add-cancel-btn').click(function () {
+            $('tr[data-a-id="new"]').attr('data-add', false);
+        });
+    });
+</script>
+<script>
+    var allTableCells = document.getElementsByTagName("td");
+    for(var i = 0, max = allTableCells.length; i < max; i++) {
+        var node = allTableCells[i];
 
-                 $('.add-cancel-btn').click(function () {
-                    $('tr[data-a-id="new"]').attr('data-add', false);
-                });
-            });
-        </script>
+        //get the text from the first child node - which should be a text node
+        var currentText = node.childNodes[0].nodeValue;
 
+        //check for 'one' and assign this table cell's background color accordingly
+        if (currentText === "R")
+            node.style.backgroundColor = "red";
+        else if (currentText === "G")
+            node.style.backgroundColor = "green";
+        else if (currentText === "B")
+            node.style.backgroundColor = "blue";
+        else if (currentText === "Y")
+            node.style.backgroundColor = "yellow";
+    }
+</script>
 </body>
 </head>
 </html>
