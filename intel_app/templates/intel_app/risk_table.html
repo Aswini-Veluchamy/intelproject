@@ -158,11 +158,11 @@
                                 </select>
                             </td>
                             <td class="text-center">
-                                <button data-id="new-save" type="button" class="btn btn-primary btn-sm add-save-btn" title="Save Risk">
-                                    <i class="fas fa-save"></i>
+                                <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Risk">
+                                    <i class="fa-solid fa-check"></i>
                                 </button>
-                                <button data-id="new-cancel" type="button" class="btn btn-primary btn-sm add-cancel-btn" title="Edit Risk">
-                                    <i class="fas fa-cancel"></i>
+                                <button data-id="new-cancel" type="button" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Risk">
+                                    <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </td>
                         </tr>
@@ -178,12 +178,11 @@
                             <td nowrap class="severity">{{ i.severity.0 }}</td>
                             <td nowrap class="impact">{{ i.impact.0 }}</td>
                             <td>
-                                <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm edit-btn"
+                                <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn"
                                         title="Edit Risk"><i
                                         class="fas fa-edit"></i></button>
                             </td>
                         </tr>
-
                         <tr data-e-id="{{ i.id }}" data-edit="false">
                             <td class="problem_statement">
                                 <textarea class="form-control" data-prop="problem_statement" name="problem_statement" cols="3" maxlength="250" required="required">{{i.problem_statement}}</textarea>
@@ -228,11 +227,11 @@
                                 </select></td>
                             <div class="text-center">
                                 <td>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm save-btn" title="Save Risk">
-                                        <i class="fas fa-save"></i>
+                                    <button data-id="{{ i.id }}" type="button" class="btn btn-success btn-sm save-btn" title="Save Risk">
+                                        <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-primary btn-sm cancel-btn" title="Cancel Risk">
-                                        <i class="fas fa-cancel"></i>
+                                    <button data-id="{{ i.id }}" type="button" class="btn btn-danger btn-sm cancel-btn" title="Cancel Risk">
+                                        <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
                             </div>
@@ -256,9 +255,7 @@
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script>
-
-
-    $('#example').bootstrapTable({
+$('#example').bootstrapTable({
     exportOptions: {
         fileName: 'Risks'
     },
@@ -286,7 +283,7 @@ $(document).ready(function() {
             let objectId = $(this).data('id');
             const risk = {
                problem_statement : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
-               project : $('tr[data-a-id="' + objectId + '"] input[data-prop="project"]')[0].value,
+               project : $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                owner : $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                message : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
@@ -303,7 +300,6 @@ $(document).ready(function() {
                         success: function( data )
                         {
                         window.location.reload()
-
                         }
                      })
 
@@ -327,7 +323,6 @@ $(document).ready(function() {
                risk : $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
                severity : $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
                impact : $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
-               project : ''
             }
             $.ajax(
                     {
@@ -337,7 +332,6 @@ $(document).ready(function() {
                         success: function( data )
                         {
                         window.location.reload()
-
                         }
                      })
 
