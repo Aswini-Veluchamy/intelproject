@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django_mysql.models import ListCharField, ListTextField
 
 # Create your models here.
 
@@ -22,15 +23,26 @@ class KeyMessageTable(models.Model):
 class RiskTable(models.Model):
     ''' created database fields'''
     problem_statement = models.CharField(max_length=250, default='problem_statement')
-    status = models.CharField(max_length=200, default='status')
+    status = ListCharField(
+        base_field=models.CharField(max_length=10),
+        size=6,
+        max_length=(6 * 11)
+    )
     owner = models.CharField(max_length=200, default='owner')
     message = models.CharField(max_length=250, default='message')
     eta = models.DateTimeField(default=datetime.now())
     risk = models.DateTimeField(default=datetime.now())
-    severity = models.CharField(max_length=200, default='severity')
-    impact = models.CharField(max_length=200, default='impact')
+    severity = ListTextField(
+        base_field=models.CharField(max_length=10),
+        size=100,
+    )
+    impact = ListCharField(
+        base_field=models.CharField(max_length=10),
+        size=6,
+        max_length=(6 * 11)
+    )
     risk_id = models.CharField(max_length=100, default='risk_id')
-    project = models.CharField(max_length=200, default='project')
+    project = models.CharField(max_length=100, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.CharField(max_length=100, default='user')
 

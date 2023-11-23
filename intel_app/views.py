@@ -22,6 +22,8 @@ from .db_connection import update_details_data
 from .db_connection import load_schedule_data
 from .db_connection import update_schedule_data
 
+from copy import deepcopy
+
 
 @csrf_exempt
 def user_login(request):
@@ -207,7 +209,6 @@ def risks(request):
         severity = request.POST['severity']
         impact = request.POST['impact']
         project = request.POST['project']
-
         user = request.session['meta_data'].get('user_id')
         risk_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
@@ -221,7 +222,7 @@ def risks(request):
             severity=severity,
             impact=impact,
             risk_id=risk_id,
-            project='intel',
+            project=project,
             user=user
         )
         risk_data.save()
@@ -241,24 +242,23 @@ def risks(request):
             if len(risk_data) >= 1:
                 status = ['R', 'G', 'B', 'Y']
                 impact = ['PPA', 'Functionality', 'Quality']
-                severity = ['Mgt', '']
+                severity = ['None', 'Mgt']
                 for i in risk_data:
-                    if i.status in status or i.impact in impact or i.severity in severity \
-                            or i.project in project:
-                        status.remove(i.status)
-                        status.insert(0, i.status)
-                        # updating the impact values
-                        impact.remove(i.impact)
-                        impact.insert(0, i.impact)
-                        # updating the severity values
-                        severity.remove(i.severity)
-                        severity.insert(0, i.severity)
-                        i.status = status
-                        i.impact = impact
-                        i.severity = severity
+                    i.status = update_queryset_values(status, i.status[0])
+                    i.severity = update_queryset_values(severity, i.severity[0]) if i.severity else severity
+                    i.impact = update_queryset_values(impact, i.impact[0])
+                    i.save()
             return render(request, 'intel_app/risk_table.html', {'data': risk_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
+
+
+def update_queryset_values(data_list: list, input_value: str):
+    deep_copy_data = deepcopy(data_list)
+    if input_value in deep_copy_data:
+        deep_copy_data.remove(input_value)
+        deep_copy_data.insert(0, input_value)
+    return deep_copy_data
 
 
 @csrf_exempt
