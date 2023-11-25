@@ -263,83 +263,76 @@ $('#example').bootstrapTable({
 });
 
 $(document).ready(function() {
-        $('.edit-btn').on('click', function () {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
+	$('.edit-btn').on('click', function() {
+		let objectId = $(this).data('id');
+		const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+		const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+		$('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+		$('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+	});
 
-        $('.cancel-btn').on('click', function () {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
+	$('.cancel-btn').on('click', function() {
+		let objectId = $(this).data('id');
+		const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+		const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+		$('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+		$('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+	});
 
-        $('.save-btn').on('click', function () {
-            let objectId = $(this).data('id');
-            const risk = {
-               problem_statement : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
-               project : $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
-               status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-               owner : $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-               message : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
-               eta : $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-               risk : $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
-               severity : $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
-               impact : $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
-            }
-            $.ajax(
-                    {
-                        type:"POST",
-                        url: "/risk_edit_table/"+objectId,
-                        data:risk,
-                        success: function( data )
-                        {
-                        window.location.reload()
-                        }
-                     })
+	$('.save-btn').on('click', function() {
+		let objectId = $(this).data('id');
+		const risk = {
+			problem_statement: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
+			project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
+			status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+			owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+			message: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
+			eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+			risk: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+			severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+			impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
+		}
+		$.ajax({
+			type: "POST",
+			url: "/risk_edit_table/" + objectId,
+			data: risk,
+			success: function(data) {
+				window.location.reload()
+			}
+		})
+	});
 
-        });
+	$('.add-btn').on('click', function() {
+		$('tr[data-a-id="new"]').attr('data-add', true);
+	});
 
-        $('.add-btn').on('click', function () {
-           $('tr[data-a-id="new"]').attr('data-add', true);
-        });
+	$('.add-save-btn').on('click', function() {
+		let objectId = "new";
+		const risk = {
+			problem_statement: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
+			project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
+			status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+			owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+			message: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
+			eta: $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+			risk: $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+			severity: $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+			impact: $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
+		}
+		$.ajax({
+			type: "POST",
+			url: "/risk/",
+			data: risk,
+			success: function(data) {
+				window.location.reload()
+			}
+		})
+	});
 
-         $('.add-save-btn').on('click', function () {
-
-            let objectId = "new";
-            const risk = {
-               problem_statement : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
-               project : $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
-               status : $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-               owner : $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-               message : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
-               eta : $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-               risk : $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
-               severity : $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
-               impact : $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
-            }
-            $.ajax(
-                    {
-                        type:"POST",
-                        url: "/risk/",
-                        data:risk,
-                        success: function( data )
-                        {
-                        window.location.reload()
-                        }
-                     })
-
-        });
-
-         $('.add-cancel-btn').click(function () {
-            $('tr[data-a-id="new"]').attr('data-add', false);
-        });
-    });
+	$('.add-cancel-btn').click(function() {
+		$('tr[data-a-id="new"]').attr('data-add', false);
+	});
+});
 </script>
 <script>
     var allTableCells = document.getElementsByTagName("td");
