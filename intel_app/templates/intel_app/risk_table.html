@@ -213,7 +213,7 @@
                                        required="required" value="{{ i.risk | date:'Y-m-d' }}" />
                             </td>
                             <td class="severity">
-                                <select class="form-select" data-prop="severity" name="severity">
+                                <select class="form-select" data-prop="severity" name="severity" required="required">
                                     {% for i in i.severity %}
                                     <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
