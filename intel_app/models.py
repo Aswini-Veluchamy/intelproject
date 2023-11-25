@@ -60,7 +60,11 @@ class KeyProgramMetricTable(models.Model):
     fv_target = models.CharField(max_length=250, default='fv_target')
     current_week_actual = models.CharField(max_length=200, default='current_week_actual')
     current_week_plan = models.CharField(max_length=200, default='current_week_plan')
-    status = models.CharField(max_length=200, default='status')
+    status = ListCharField(
+        base_field=models.CharField(max_length=10),
+        size=6,
+        max_length=(6 * 11)
+    )
     comments = models.CharField(max_length=250, default='comments')
     metric_id = models.CharField(max_length=100, default='metric_id')
     project = models.CharField(max_length=200, default='project')

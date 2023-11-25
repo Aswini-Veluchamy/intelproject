@@ -188,3 +188,10 @@ views.py
 urls.py
 schedule_edit.html
 schedule.html
+
+********************************************** 26/11/23
+index.html
+views
+models
+risk.html
+key_program.html

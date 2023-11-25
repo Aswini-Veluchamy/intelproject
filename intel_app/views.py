@@ -83,15 +83,9 @@ def home(request):
         # based on the user filtering the data
         if admin:
             key_mess_data = KeyMessageTable.objects.filter(project__in=project)
-            # risk_data = RiskTable.objects.filter(project__in=project)
-            # key_program_data = KeyProgramMetricTable.objects.filter(project__in=project)
-            # details_data = DetailsMessageTable.objects.filter(project__in=project)
             # schedule_data = ScheduleMetricTable.objects.filter(project__in=project)
         else:
             key_mess_data = KeyMessageTable.objects.filter(user=user)
-            # risk_data = RiskTable.objects.filter(user=user)
-            # key_program_data = KeyProgramMetricTable.objects.filter(user=user)
-            # details_data = DetailsMessageTable.objects.filter(user=user)
             # schedule_data = ScheduleMetricTable.objects.filter(user=user)
 
         # get the latest record from the query_set
@@ -102,43 +96,6 @@ def home(request):
                 project.insert(0, key_mess_data.project)
             key_mess_data.project = project
 
-        # if risk_data:
-        #     risk_data = risk_data.latest("created_at")
-        #     status = ['R', 'G', 'B', 'Y']
-        #     impact = ['PPA', 'Functionality', 'Quality']
-        #     severity = ['Mgt', '']
-        #     if risk_data.status in status or risk_data.impact in impact or risk_data.severity in severity \
-        #             or risk_data.project in project:
-        #         # updating the status values
-        #         # status.remove(risk_data.status)
-        #         # status.insert(0, risk_data.status)
-        #         # # updating the impact values
-        #         # impact.remove(risk_data.impact)
-        #         # impact.insert(0, risk_data.impact)
-        #         # # updating the severity values
-        #         # severity.remove(risk_data.severity)
-        #         # severity.insert(0, risk_data.severity)
-        #         # updating the project
-        #         project.remove(risk_data.project)
-        #         project.insert(0, risk_data.project)
-        #     risk_data.status = status
-        #     risk_data.impact = impact
-        #     risk_data.severity = severity
-        #     risk_data.project = project
-        #
-        # if key_program_data:
-        #     key_program_data = key_program_data.latest("created_at")
-        #     status = ['R', 'G', 'B', 'Y']
-        #     if key_program_data.status in status or key_program_data.project in project:
-        #         # updating the status values
-        #         # status.remove(key_program_data.status)
-        #         # status.insert(0, key_program_data.status)
-        #         # # updating the project
-        #         project.remove(key_program_data.project)
-        #         project.insert(0, key_program_data.project)
-        #     key_program_data.status = status
-        #     key_program_data.project = project
-        #
         # if details_data:
         #     details_data = details_data.latest("created_at")
         #     if details_data.project in project:
@@ -146,21 +103,9 @@ def home(request):
         #         project.insert(0, details_data.project)
         #     details_data.project = project
         #
-        # if schedule_data:
-        #     schedule_data = schedule_data.latest("created_at")
-        #     status = ['R', 'G', 'B', 'Y']
-        #     #if schedule_data.status in status or schedule_data.project in project:
-        #         # updating the status values
-        #         # status.remove(schedule_data.status)
-        #         # status.insert(0, schedule_data.status)
-        #         # # updating the project
-        #         # project.remove(schedule_data.project)
-        #         # project.insert(0, schedule_data.project)
-        #     schedule_data.status = status
-        #     schedule_data.project = project
 
-        return render(request, 'intel_app/index.html', {'project': project, 'key_mess_data': key_mess_data,
-                                                        })
+        return render(request, 'intel_app/index.html', {
+                            'project': project, 'key_mess_data': key_mess_data})
     except KeyError:
         return HttpResponseRedirect(reverse('login'))
 
@@ -227,7 +172,7 @@ def risks(request):
         )
         risk_data.save()
         # load risk data to external database
-        #load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
+        load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
         return HttpResponseRedirect(reverse("risk"))
     else:
         try:
@@ -287,10 +232,11 @@ def risk_edit_table(request, pk):
         risk = request.POST['risk']
         severity = request.POST['severity']
         impact = request.POST['impact']
-        print(request.POST)
         tab = RiskTable.objects.filter(pk=pk)
         # update the values in external database
-        #update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, tab[0].risk_id)])
+        if severity == 'None':
+            severity = ''
+        update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, tab[0].risk_id)])
         # update the values local database
         tab.update(
             problem_statement=ps,
@@ -303,27 +249,6 @@ def risk_edit_table(request, pk):
             impact=impact,
         )
         return HttpResponseRedirect(reverse("risk"))
-    else:
-        risk_data = RiskTable.objects.filter(pk=pk)
-        status = ['R', 'G', 'B', 'Y']
-        impact = ['PPA', 'Functionality', 'Quality']
-        severity = ['Mgt', '']
-        for i in risk_data:
-            if i.status in status or i.impact in impact or i.severity in severity:
-                # updating the status values
-                status.remove(i.status)
-                status.insert(0, i.status)
-                # updating the impact values
-                impact.remove(i.impact)
-                impact.insert(0, i.impact)
-                # updating the severity values
-                severity.remove(i.severity)
-                severity.insert(0, i.severity)
-
-        risk_data[0].status = status
-        risk_data[0].impact = impact
-        risk_data[0].severity = severity
-        return render(request, 'intel_app/risk_edit_table.html', {'data': risk_data})
 
 
 @csrf_exempt
@@ -360,8 +285,19 @@ def key_program(request):
         return HttpResponseRedirect(reverse("key_program"))
     else:
         try:
+            admin = request.session['meta_data'].get('admin')
             project = request.session['meta_data'].get('project')
-            metric_data = KeyProgramMetricTable.objects.filter(project__in=project)
+            user = request.session['meta_data'].get('user_id')
+            if admin:
+                metric_data = KeyProgramMetricTable.objects.filter(project__in=project)
+            else:
+                metric_data = KeyProgramMetricTable.objects.filter(user=user)
+
+            if len(metric_data) >= 1:
+                status = ['R', 'G', 'B', 'Y']
+                for i in metric_data:
+                    i.status = update_queryset_values(status, i.status[0])
+                    i.save()
             return render(request, 'intel_app/key_program.html', {'data': metric_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
@@ -393,17 +329,6 @@ def key_program_edit(request, pk):
             comments=comments,
         )
         return HttpResponseRedirect(reverse("key_program"))
-    else:
-        metric_data = KeyProgramMetricTable.objects.filter(pk=pk)
-        status = ['R', 'G', 'B', 'Y']
-        for i in metric_data:
-            if i.status in status:
-                # updating the status values
-                status.remove(i.status)
-                status.insert(0, i.status)
-
-        metric_data[0].status = status
-        return render(request, 'intel_app/key_program_edit.html', {'data': metric_data})
 
 
 @csrf_exempt
