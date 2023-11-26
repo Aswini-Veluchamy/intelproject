@@ -30,8 +30,8 @@ class RiskTable(models.Model):
     )
     owner = models.CharField(max_length=200, default='owner')
     message = models.CharField(max_length=250, default='message')
-    eta = models.DateTimeField(default=datetime.now())
-    risk = models.DateTimeField(default=datetime.now())
+    eta = models.DateTimeField(default='eta')
+    risk = models.DateTimeField(default='risk')
     severity = ListTextField(
         base_field=models.CharField(max_length=10),
         size=100,
