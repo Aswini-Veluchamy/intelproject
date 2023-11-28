@@ -92,20 +92,19 @@
                            data-export-data-type="all"
                            data-response-handler="responseHandler"
                            data-show-fullscreen="true"
-                           data-page-size="6"
                            data-buttons-class="primary btn-sm">
                         <thead>
                         <tr>
-                            <th nowrap data-sortable="true" class="problem_statement">Problem Statement</th>
-                            <th nowrap data-sortable="true" class="project">Project</th>
-                            <th nowrap data-sortable="true" class="status">Status</th>
-                            <th nowrap data-sortable="true" class="owner">Owner</th>
-                            <th nowrap data-sortable="true" class="message">Message</th>
-                            <th nowrap data-sortable="true" class="eta">ETA</th>
-                            <th nowrap data-sortable="true" class="risk">Risk</th>
-                            <th nowrap data-sortable="true" class="severity">Severity</th>
-                            <th nowrap data-sortable="true" class="impact">Impact</th>
-                            <th nowrap data-sortable="true">Action</th>
+                            <th scope="col" nowrap data-field="problem_statement" class="w-50 p-3 problem_statement">Problem Statement</th>
+                            <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
+                            <th scope="col" nowrap data-field="status" class="w-25 p-3 status">Status</th>
+                            <th scope="col" nowrap data-field="owner" class="w-50 p-3 owner">Owner</th>
+                            <th scope="col" nowrap data-field="message" class="w-50 p-3 message">Message</th>
+                            <th scope="col" nowrap data-field="eta" class="w-50 p-3 eta">ETA &nbsp;&nbsp;&nbsp;</th>
+                            <th scope="col" nowrap data-field="risk" class="w-50 p-3 risk">Risk &nbsp;&nbsp;&nbsp;</th>
+                            <th scope="col" nowrap data-field="severity" class="w-50 p-3 severity">Severity</th>
+                            <th scope="col" nowrap data-field="impact" class="w-50 p-3 impact">Impact</th>
+                            <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                         </tr>
                         </thead>
                         <tbody data-body="risk">
@@ -139,16 +138,19 @@
                             </td>
                             <td class="eta">
                                 <input class="form-control" data-prop="eta" name="eta" type="date"
-                                       placeholder="created_at" required="required" /></td>
+                                       placeholder="created_at" required="required" />
+                            </td>
                             <td class="risk">
                                 <input class="form-control" data-prop="risk" name="risk" type="date"
-                                       placeholder="Enter Risk" required="required" /></td>
+                                       placeholder="Enter Risk" required="required" />
+                            </td>
                             <td class="severity">
                                 <select class="form-select" data-prop="severity" name="severity" required="required">
                                     <option value="" disabled="disabled" selected="selected">Select Severity</option>
                                     <option value="Mgt">Mgt</option>
                                     <option value=""></option>
-                                </select></td>
+                                </select>
+                            </td>
                             <td class="impact">
                                 <select class="form-select" data-prop="impact" name="impact" required="required">
                                     <option value="" disabled="disabled" selected="selected">Select Impact</option>
@@ -177,7 +179,7 @@
                             <td nowrap class="risk">{{ i.risk | date:'Y-m-d' }}</td>
                             <td nowrap class="severity">{{ i.severity.0 }}</td>
                             <td nowrap class="impact">{{ i.impact.0 }}</td>
-                            <td>
+                            <td nowrap class="action">
                                 <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn"
                                         title="Edit Risk"><i
                                         class="fas fa-edit"></i></button>
@@ -224,8 +226,9 @@
                                     {% for j in i.impact %}
                                     <option value="{{j}}">{{j}}</option>
                                     {% endfor %}
-                                </select></td>
-                            <div class="text-center">
+                                </select>
+                            </td>
+                            <div>
                                 <td>
                                     <button data-id="{{ i.id }}" type="button" class="btn btn-success btn-sm save-btn" title="Save Risk">
                                         <i class="fa-solid fa-check"></i>
@@ -235,7 +238,7 @@
                                     </button>
                                 </td>
                             </div>
-                        </tr>
+                         </tr>
                         {% endfor %}
                         </tbody>
                     </table>
@@ -255,84 +258,84 @@
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script>
-$('#example').bootstrapTable({
-    exportOptions: {
-        fileName: 'Risks'
-    },
-    exportTypes: ['csv', 'excel'],
-});
+    $('#example').bootstrapTable({
+        exportOptions: {
+            fileName: 'Risks'
+        },
+        exportTypes: ['excel'],
+    });
 
-$(document).ready(function() {
-	$('.edit-btn').on('click', function() {
-		let objectId = $(this).data('id');
-		const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-		const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-		$('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-		$('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-	});
+    $(document).ready(function() {
+        $('.edit-btn').on('click', function() {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
 
-	$('.cancel-btn').on('click', function() {
-		let objectId = $(this).data('id');
-		const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-		const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-		$('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-		$('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-	});
+        $('.cancel-btn').on('click', function() {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
 
-	$('.save-btn').on('click', function() {
-		let objectId = $(this).data('id');
-		const risk = {
-			problem_statement: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
-			project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
-			status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-			owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-			message: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
-			eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-			risk: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
-			severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
-			impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
-		}
-		$.ajax({
-			type: "POST",
-			url: "/risk_edit_table/" + objectId,
-			data: risk,
-			success: function(data) {
-				window.location.reload()
-			}
-		})
-	});
+        $('.save-btn').on('click', function() {
+            let objectId = $(this).data('id');
+            const risk = {
+                problem_statement: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
+                project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
+                status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+                owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+                message: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
+                eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+                risk: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+                severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+                impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
+            }
+            $.ajax({
+                type: "POST",
+                url: "/risk_edit_table/" + objectId,
+                data: risk,
+                success: function(data) {
+                    window.location.reload()
+                }
+            })
+        });
 
-	$('.add-btn').on('click', function() {
-		$('tr[data-a-id="new"]').attr('data-add', true);
-	});
+        $('.add-btn').on('click', function() {
+            $('tr[data-a-id="new"]').attr('data-add', true);
+        });
 
-	$('.add-save-btn').on('click', function() {
-		let objectId = "new";
-		const risk = {
-			problem_statement: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
-			project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
-			status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-			owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-			message: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
-			eta: $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-			risk: $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
-			severity: $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
-			impact: $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
-		}
-		$.ajax({
-			type: "POST",
-			url: "/risk/",
-			data: risk,
-			success: function(data) {
-				window.location.reload()
-			}
-		})
-	});
+        $('.add-save-btn').on('click', function() {
+            let objectId = "new";
+            const risk = {
+                problem_statement: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="problem_statement"]')[0].value,
+                project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
+                status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+                owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
+                message: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="message"]')[0].value,
+                eta: $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
+                risk: $('tr[data-a-id="' + objectId + '"] input[data-prop="risk"]')[0].value,
+                severity: $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+                impact: $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
+            }
+            $.ajax({
+                type: "POST",
+                url: "/risk/",
+                data: risk,
+                success: function(data) {
+                    window.location.reload()
+                }
+            })
+        });
 
-	$('.add-cancel-btn').click(function() {
-		$('tr[data-a-id="new"]').attr('data-add', false);
-	});
-});
+        $('.add-cancel-btn').click(function() {
+            $('tr[data-a-id="new"]').attr('data-add', false);
+        });
+    });
 </script>
 <script>
     var allTableCells = document.getElementsByTagName("td");
@@ -344,13 +347,13 @@ $(document).ready(function() {
 
         //check for 'one' and assign this table cell's background color accordingly
         if (currentText === "R")
-            node.style.backgroundColor = "red";
+            node.innerHTML = '<i class="fas fa-circle text-danger fa-sm">&nbsp;' + node.innerHTML;
         else if (currentText === "G")
-            node.style.backgroundColor = "green";
+            node.innerHTML = '<i class="fas fa-circle text-success fa-sm">&nbsp;' + node.innerHTML;
         else if (currentText === "B")
-            node.style.backgroundColor = "blue";
+            node.innerHTML = '<i class="fas fa-circle text-primary fa-sm">&nbsp;' + node.innerHTML;
         else if (currentText === "Y")
-            node.style.backgroundColor = "yellow";
+            node.innerHTML = '<i class="fas fa-circle text-warning fa-sm">&nbsp;' + node.innerHTML;
     }
 </script>
 </body>

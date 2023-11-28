@@ -109,9 +109,6 @@
                             <a class="btn btn-md btn-warning button arrow" data-bs-toggle="modal" data-bs-target="#keymessageModal" role="button">
                                 <span>Update</span>
                             </a>
-                            <a class="btn btn-md btn-warning button arrow" href="{% url 'key_message' %}" role="button">
-                                <span>History</span>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -191,9 +188,6 @@
                             <a class="btn btn-md btn-dark button arrow" data-bs-toggle="modal" data-bs-target="#detailsModal" role="button">
                                 <span>Update</span>
                             </a>
-                            <a class="btn btn-md btn-dark button arrow" href="{% url 'details' %}" role="button">
-                                <span>History</span>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -205,17 +199,9 @@
 <div class="modal fade" id="keymessageModal" tabindex="-1" aria-labelledby="keymessageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="keymessageModalLabel">Key Message</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Create the editor container -->
-                <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <!--<input type="text" value="" />-->
-                    <label class="form-label">Select Project: </label>
-                    <select class="form-select" name="project" id='project' required="required">
+            <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}" enctype="application/x-www-form-urlencoded">
+                <div class="modal-header">
+                    <select class="form-select pull-right" name="project" id='project' required="required" style="margin-left:500px; width: 200px;">
                         {% if key_mess_data %}
                         {% for i in key_mess_data.project %}
                         <option value="{{i}}">{{i}}</option>
@@ -227,15 +213,22 @@
                         {% endfor %}
                         {% endif %}
                     </select>
-                    <br>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Create the editor container -->
+
+                    {% csrf_token %}
+                    <!--<input type="text" value="" />-->
                     <label class="form-label">Key Message: </label>
                     <div id="editor" style="height: 275px;">{{ key_mess_data.message|safe }}</div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
                     <div id="counter">Limited to 375 characters</div>
                     <p>{{error}}</p>
                     <button type="submit" id="btn_keymessage" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
+                    <button type="submit" class="btn btn-primary"><a href="{% url 'home' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -244,17 +237,9 @@
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="detailsModalLabel">Details</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Create the editor container -->
-                <form method="post" id="detailsForm" autocomplete="off" action="{% url 'details' %}" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <!--<input type="text" value="" />-->
-                    <label class="form-label">Select Project: </label>
-                    <select class="form-select" name="details_project" id='details_project' required="required">
+            <form method="post" id="detailsForm" autocomplete="off" action="{% url 'details' %}" enctype="application/x-www-form-urlencoded">
+                <div class="modal-header">
+                    <select class="form-select" name="details_project" id='details_project' required="required" style="margin-left:500px; width: 200px;">
                         {% if details_data %}
                         {% for i in details_data.project %}
                         <option value="{{i}}">{{i}}</option>
@@ -266,26 +251,32 @@
                         {% endfor %}
                         {% endif %}
                     </select>
-                    <br>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Create the editor container -->
+                    {% csrf_token %}
+                    <!--<input type="text" value="" />-->
                     <label class="form-label">Details Message: </label>
                     <div id="details_editor" style="height: 275px;">{{ details_data.message|safe }}</div>
                     <input type="hidden" name="details_message" id="details_message">
                     <p>{{error}}</p>
                     <button type="submit" id="btn_details" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
+                    <button type="submit" class="btn btn-primary"><a href="{% url 'home' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 <br><br>
 
 <script>
-$("#filter").on("keyup", function() {
-   var value = $(this).val().toLowerCase();
-   $("#mycard > div").filter(function() {
-     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-   });
-});
+    $("#filter").on("keyup", function() {
+       var value = $(this).val().toLowerCase();
+       $("#mycard > div").filter(function() {
+         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+       });
+    });
 </script>
 
 <!-- Initialize Quill editor for Key Message-->

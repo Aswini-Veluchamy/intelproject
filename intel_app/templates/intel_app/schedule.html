@@ -14,6 +14,24 @@
     <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
+    <style>
+        tr[data-non-edit="true"] {
+
+        }
+        tr[data-non-edit="false"] {
+            display : none;
+        }
+        tr[data-edit="true"] {
+
+        }
+        tr[data-edit="false"] {
+            display : none;
+        }
+
+        tr[data-add="false"] {
+            display : none;
+        }
+    </style>
 <body style="background-color:#ffffff!important;">
 
 <!-- Example Code -->
@@ -56,11 +74,15 @@
             <div class="card">
                 <div class="card-header">
                     <b>Schedule</b>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary btn-sm add-btn"
+                            style="float:right;">
+                        Add Schedule
+                    </button>
                 </div>
                 <div class="card-body">
                     <table class="table table-bordered table-striped" id="example"
                            data-toggle="table"
-                           data-pagination="true"
                            data-search="true"
                            data-search-align="left"
                            data-show-columns="true"
@@ -70,44 +92,110 @@
                            data-export-data-type="all"
                            data-response-handler="responseHandler"
                            data-show-fullscreen="true"
-                           data-show-pagination-switch="true"
-                           data-height="510"
-                           data-pagination-pre-text="Previous"
-                           data-pagination-next-text="Next"
-                           data-pagination-h-align="left"
-                           data-pagination-detail-h-align="right"
-                           data-page-size="6"
-                           data-page-list="[20, 30, 40, 50, All]"
-                           data-buttons-class="primary">
+                           data-buttons-class="primary btn-sm">
                         <thead>
                         <tr>
-                            <th nowrap data-sortable="true" class="milestone">Milestone</th>
-                            <th nowrap data-sortable="true" class="project">Milestone</th>
-                            <th nowrap data-sortable="true" class="por_commit">POR Commit</th>
-                            <th nowrap data-sortable="true" class="por_trend">POR Trend</th>
-                            <th nowrap data-sortable="true" data-field="status" class="status" data-formatter="nameFormatter">
-                                Status
-                            </th>
-                            <th nowrap data-sortable="true" class="comments">Comments</th>
-                            <th nowrap data-sortable="true"></th>
+                            <th scope="col" nowrap data-field="milestone" class="w-50 p-3 milestone">Milestone</th>
+                            <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
+                            <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
+                            <th scope="col" nowrap data-field="por_commit" class="w-50 p-3 por_commit">POR Commit</th>
+                            <th scope="col" nowrap data-field="por_trend" class="w-50 p-3 por_trend">POR Trend</th>
+                            <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
+                            <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody data-body="schedule">
+                        <tr data-a-id="new" data-add="false">
+                            <td class="milestone">
+                                <textarea class="form-control" data-prop="milestone" name="milestone" placeholder="Enter Milestone" cols="3" maxlength="250" required="required"></textarea>
+                            </td>
+                            <td class="project">
+                                <select class="form-select" name="project" data-prop='project' required="required">
+                                    <option value="" disabled="disabled" selected="selected">Projects</option>
+                                    {% for i in project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="status">
+                                <select class="form-select" data-prop="status" name="status" required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
+                                    <option value="R">R</option>
+                                    <option value="G">G</option>
+                                    <option value="B">B</option>
+                                    <option value="Y">Y</option>
+                                </select>
+                            </td>
+                            <td class="por_commit">
+                                 <input class="form-control" data-prop="por_commit" name="por_commit" type="date"
+                                        placeholder="Enter POR Commit" required="required" />
+                            </td>
+                            <td class="por_trend">
+                                <input class="form-control" data-prop="por_trend" name="por_trend" type="date"
+                                       placeholder="Enter POR Trend" required="required" />
+                            </td>
+                            <td class="comments">
+                                <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
+                            </td>
+                            <td class="text-center">
+                                <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Schedule">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                                <button data-id="new-cancel" type="button" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Schedule">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </td>
+                        </tr>
                         {% for i in data %}
-                        <tr>
+                        <tr data-n-id="{{ i.id }}" data-non-edit="true">
                             <td nowrap class="milestone">{{ i.milestone }}</td>
-                            <td nowrap class="milestone">{{ i.project }}</td>
+                            <td nowrap class="project">{{ i.project }}</td>
+                            <td nowrap class="status">{{ i.status.0 }}</td>
                             <td nowrap class="por_commit">{{ i.por_commit | date:'Y-m-d' }}</td>
                             <td nowrap class="por_trend">{{ i.por_trend | date:'Y-m-d' }}</td>
-                            <td nowrap class="status">{{ i.status }}</td>
                             <td nowrap class="comments">{{ i.comments }}</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm" title="Edit Schedule"><a
-                                        style="text-decoration:none;color:#fff;" href="{% url 'schedule_edit_table' pk=i.id %}"><i
-                                        class="fas fa-edit"></i>&nbsp;Edit</a></button>
+                                <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Schedule">
+                                    <i class="fas fa-edit"></i></button>
                             </td>
-                            {% endfor %}
                         </tr>
+                        <tr data-e-id="{{ i.id }}" data-edit="false">
+                            <td class="milestone">
+                                <textarea class="form-control" data-prop="milestone" name="milestone" cols="3" maxlength="250" required="required">{{i.milestone}}</textarea>
+                            </td>
+                            <td class="project">
+                                <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
+                            </td>
+                            <td class="status">
+                                <select class="form-select" data-prop="status" name="status" required="required">
+                                    {% for i in i.status %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="por_commit">
+                                <input class="form-control" data-prop="por_commit" id="eta" name="por_commit" type="date"
+                                       required="required" value="{{ i.por_commit | date:'Y-m-d' }}" />
+                            </td>
+                            <td class="por_trend">
+                                <input class="form-control" data-prop="por_trend" name="por_trend" type="date"
+                                       required="required" value="{{ i.por_trend | date:'Y-m-d' }}" />
+                            </td>
+                            <td class="comments">
+                                <textarea class="form-control" data-prop="comments" name="comments" cols="3" maxlength="250" required="required">{{i.comments}}</textarea>
+                            </td>
+                            <div class="text-center">
+                                <td>
+                                    <button data-id="{{ i.id }}" type="button" class="btn btn-success btn-sm save-btn" title="Save Schedule">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                    <button data-id="{{ i.id }}" type="button" class="btn btn-danger btn-sm cancel-btn" title="Cancel Schedule">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </td>
+                            </div>
+                        </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -126,23 +214,107 @@
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script>
-    function nameFormatter(value, row) {
-      var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
-      row.status === 'G'  ? 'fa-circle fa-sm text-success' :
-      row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
-      row.status === 'B'  ? 'fa-circle fa-sm text-primary' :
-      'fa-circle fa-sm text-info'
-      return '<i class="fa ' + icon + '"></i> ' + value
-    }
-
-</script>
-<script>
-    $('#example').bootstrapTable({
+$('#example').bootstrapTable({
     exportOptions: {
         fileName: 'Schedule'
     },
-    exportTypes: ['csv', 'excel'],
+    exportTypes: ['excel'],
 });
+$(document).ready(function() {
+    $('.edit-btn').on('click', function () {
+        let objectId = $(this).data('id');
+        const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+        const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+        $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+        $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+    });
+
+    $('.cancel-btn').on('click', function () {
+        let objectId = $(this).data('id');
+        const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+        const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+        $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+        $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+    });
+
+    $('.save-btn').on('click', function () {
+        let objectId = $(this).data('id');
+        const schedule = {
+           milestone : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
+           project : $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
+           status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+           por_commit : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
+           por_trend : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
+           comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+        }
+        $.ajax(
+                {
+                    type:"POST",
+                    url: "/schedule_edit_table/"+objectId,
+                    data:schedule,
+                    success: function( data )
+                    {
+                    window.location.reload()
+
+                    }
+                 })
+
+        console.log(schedule);
+    });
+
+    $('.add-btn').on('click', function () {
+       $('tr[data-a-id="new"]').attr('data-add', true);
+    });
+
+     $('.add-save-btn').on('click', function () {
+
+        let objectId = "new";
+        const schedule = {
+           milestone : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
+           project : $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
+           status : $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
+           por_commit : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
+           por_trend : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
+           comments : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+        }
+        $.ajax(
+                {
+                    type:"POST",
+                    url: "/schedule/",
+                    data:schedule,
+                    success: function( data )
+                    {
+                    window.location.reload()
+
+                    }
+                 })
+
+        console.log(schedule);
+    });
+
+     $('.add-cancel-btn').click(function () {
+        $('tr[data-a-id="new"]').attr('data-add', false);
+    });
+});
+</script>
+<script>
+    var allTableCells = document.getElementsByTagName("td");
+    for(var i = 0, max = allTableCells.length; i < max; i++) {
+        var node = allTableCells[i];
+
+        //get the text from the first child node - which should be a text node
+        var currentText = node.childNodes[0].nodeValue;
+
+        //check for 'one' and assign this table cell's background color accordingly
+        if (currentText === "R")
+            node.innerHTML = '<i class="fas fa-circle text-danger fa-sm">&nbsp;' + node.innerHTML;
+        else if (currentText === "G")
+            node.innerHTML = '<i class="fas fa-circle text-success fa-sm">&nbsp;' + node.innerHTML;
+        else if (currentText === "B")
+            node.innerHTML = '<i class="fas fa-circle text-primary fa-sm">&nbsp;' + node.innerHTML;
+        else if (currentText === "Y")
+            node.innerHTML = '<i class="fas fa-circle text-warning fa-sm">&nbsp;' + node.innerHTML;
+    }
 </script>
 </body>
 </head>

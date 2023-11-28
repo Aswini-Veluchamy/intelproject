@@ -92,19 +92,18 @@
                            data-export-data-type="all"
                            data-response-handler="responseHandler"
                            data-show-fullscreen="true"
-                           data-page-size="6"
                            data-buttons-class="primary btn-sm">
                         <thead>
                         <tr>
-                            <th nowrap data-sortable="true" class="category">Category</th>
-                            <th nowrap data-sortable="true" class="project">Project</th>
-                            <th nowrap data-sortable="true" class="status">Status</th>
-                            <th nowrap data-sortable="true" class="metric">Metric</th>
-                            <th nowrap data-sortable="true" class="target">FV Target</th>
-                            <th nowrap data-sortable="true" class="actual">Current Week Actual</th>
-                            <th nowrap data-sortable="true" class="plan">Current Week Plan</th>
-                            <th nowrap data-sortable="true" class="comments">Comments</th>
-                            <th nowrap data-sortable="true">Action</th>
+                            <th scope="col" nowrap data-field="category" class="w-50 p-3 category">Category</th>
+                            <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
+                            <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
+                            <th scope="col" nowrap data-field="metric" class="w-50 p-3 metric">Metric</th>
+                            <th scope="col" nowrap data-field="target" class="w-50 p-3 target">FV Target</th>
+                            <th scope="col" nowrap data-field="actual" class="w-50 p-3 actual">Current Week Actual</th>
+                            <th scope="col" nowrap data-field="plan" class="w-50 p-3 plan">Current Week Plan</th>
+                            <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
+                            <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                         </tr>
                         </thead>
                         <tbody data-body="key_program">
@@ -255,7 +254,7 @@ $('#example').bootstrapTable({
     exportOptions: {
         fileName: 'Key Program Metric'
     },
-    exportTypes: ['csv', 'excel'],
+    exportTypes: ['excel'],
 });
 
 $(document).ready(function() {
@@ -329,23 +328,23 @@ $(document).ready(function() {
 });
 </script>
 <script>
-var allTableCells = document.getElementsByTagName("td");
-for(var i = 0, max = allTableCells.length; i < max; i++) {
-    var node = allTableCells[i];
+    var allTableCells = document.getElementsByTagName("td");
+    for(var i = 0, max = allTableCells.length; i < max; i++) {
+        var node = allTableCells[i];
 
-    //get the text from the first child node - which should be a text node
-    var currentText = node.childNodes[0].nodeValue;
+        //get the text from the first child node - which should be a text node
+        var currentText = node.childNodes[0].nodeValue;
 
-    //check for 'one' and assign this table cell's background color accordingly
-    if (currentText === "R")
-        node.style.backgroundColor = "red";
-    else if (currentText === "G")
-        node.style.backgroundColor = "green";
-    else if (currentText === "B")
-        node.style.backgroundColor = "blue";
-    else if (currentText === "Y")
-        node.style.backgroundColor = "yellow";
-}
+        //check for 'one' and assign this table cell's background color accordingly
+        if (currentText === "R")
+            node.innerHTML = '<i class="fas fa-circle text-danger fa-sm">&nbsp;' + node.innerHTML;
+        else if (currentText === "G")
+            node.innerHTML = '<i class="fas fa-circle text-success fa-sm">&nbsp;' + node.innerHTML;
+        else if (currentText === "B")
+            node.innerHTML = '<i class="fas fa-circle text-primary fa-sm">&nbsp;' + node.innerHTML;
+        else if (currentText === "Y")
+            node.innerHTML = '<i class="fas fa-circle text-warning fa-sm">&nbsp;' + node.innerHTML;
+    }
 </script>
 </body>
 </head>
