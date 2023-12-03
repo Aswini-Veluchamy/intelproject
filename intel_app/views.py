@@ -145,6 +145,8 @@ def key_message(request):
 @csrf_exempt
 def risks(request):
     if request.method == "POST":
+        switch_button = request.POST.get('switch_button', 'Off')
+        print(switch_button)
         problem_statement = request.POST['problem_statement']
         status = request.POST['status']
         owner = request.POST['owner']
@@ -158,6 +160,7 @@ def risks(request):
         risk_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         risk_data = RiskTable.objects.create(
+            switch_button=switch_button,
             problem_statement=problem_statement,
             status=status,
             owner=owner,
@@ -172,7 +175,7 @@ def risks(request):
         )
         risk_data.save()
         # load risk data to external database
-        load_risk_data([(problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
+        load_risk_data([(switch_button, problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
         return HttpResponseRedirect(reverse("risk"))
     else:
         try:
