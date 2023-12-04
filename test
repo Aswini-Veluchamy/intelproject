@@ -233,3 +233,10 @@ CREATE TABLE risk_table(
  user VARCHAR(100) NOT NULL,
  display VARCHAR(20) NOT NULL
 );
+
+************************************************** 04/12/23
+risk_table
+key_program
+index
+models
+schedule

@@ -45,7 +45,7 @@ class RiskTable(models.Model):
     project = models.CharField(max_length=100, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.CharField(max_length=100, default='user')
-    display = models.CharField(max_length=100, default='true')
+    display = models.CharField(max_length=100, default='false')
 
     def __str__(self):
         return self.owner

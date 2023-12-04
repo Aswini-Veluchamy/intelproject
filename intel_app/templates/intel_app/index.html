@@ -201,7 +201,8 @@
         <div class="modal-content">
             <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}" enctype="application/x-www-form-urlencoded">
                 <div class="modal-header">
-                    <select class="form-select pull-right" name="project" id='project' required="required" style="margin-left:500px; width: 200px;">
+                    <h6 class="modal-title" id="keymessageModalLabel" style="font-weight:600;">Key Message</h6>
+                    <select class="form-select pull-right" name="project" id='project' required="required" style="margin-left:490px; width: 150px;">
                         {% if key_mess_data %}
                         {% for i in key_mess_data.project %}
                         <option value="{{i}}">{{i}}</option>
@@ -220,7 +221,6 @@
 
                     {% csrf_token %}
                     <!--<input type="text" value="" />-->
-                    <label class="form-label">Key Message: </label>
                     <div id="editor" style="height: 275px;">{{ key_mess_data.message|safe }}</div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
                     <div id="counter">Limited to 375 characters</div>
@@ -239,7 +239,8 @@
         <div class="modal-content">
             <form method="post" id="detailsForm" autocomplete="off" action="{% url 'details' %}" enctype="application/x-www-form-urlencoded">
                 <div class="modal-header">
-                    <select class="form-select" name="details_project" id='details_project' required="required" style="margin-left:500px; width: 200px;">
+                    <h6 class="modal-title" id="detailsModalLabel" style="font-weight:600;">Details</h6>
+                    <select class="form-select" name="details_project" id='details_project' required="required" style="margin-left:490px; width: 150px;">
                         {% if details_data %}
                         {% for i in details_data.project %}
                         <option value="{{i}}">{{i}}</option>
