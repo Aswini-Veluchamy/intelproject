@@ -80,7 +80,8 @@ CREATE TABLE risk_table(
  risk_id VARCHAR(200) NOT NULL,
  project VARCHAR(100) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
- user VARCHAR(100) NOT NULL
+ user VARCHAR(100) NOT NULL,
+ display VARCHAR(20) NOT NULL
 );
 
 -------------------- 24/10/23
@@ -210,3 +211,25 @@ views.py
 New files added Path
 D:\intelproject\intel_app\static\intel_app\css\bootstrap-toggle.min.css
 D:\intelproject\intel_app\static\intel_app\js\bootstrap-toggle.min.js
+
+views
+urls
+models
+db_connction
+admin
+
+CREATE TABLE risk_table(
+ problem_statement VARCHAR(200) NOT NULL,
+ status VARCHAR(50) NOT NULL,
+ owner VARCHAR(100) NOT NULL,
+ message VARCHAR(200) NOT NULL,
+ eta DATE,
+ risk DATE,
+ severity VARCHAR(200) NOT NULL,
+ impact VARCHAR(200) NOT NULL,
+ risk_id VARCHAR(200) NOT NULL,
+ project VARCHAR(100) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ user VARCHAR(100) NOT NULL,
+ display VARCHAR(20) NOT NULL
+);

@@ -45,6 +45,7 @@ class RiskTable(models.Model):
     project = models.CharField(max_length=100, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.CharField(max_length=100, default='user')
+    display = models.CharField(max_length=100, default='true')
 
     def __str__(self):
         return self.owner
@@ -98,7 +99,11 @@ class ScheduleMetricTable(models.Model):
     milestone = models.CharField(max_length=250, default='milestone')
     por_commit = models.DateTimeField(default='por_commit')
     por_trend = models.DateTimeField(default='por_trend')
-    status = models.CharField(max_length=200, default='status')
+    status = ListCharField(
+        base_field=models.CharField(max_length=10),
+        size=6,
+        max_length=(6 * 11)
+    )
     comments = models.CharField(max_length=200, default='comments')
     schedule_id = models.CharField(max_length=100, default='schedule_id')
     project = models.CharField(max_length=200, default='project')

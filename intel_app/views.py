@@ -11,14 +11,12 @@ from .models import KeyProgramMetricTable, ScheduleMetricTable
 from .config import DEFAULT_PASSWORDS
 
 from .db_connection import load_key_message_data
-from .db_connection import update_key_message_data
 from .db_connection import load_risk_data
 from .db_connection import update_risk_data
 from .db_connection import load_key_program_metric_data
 from .db_connection import update_key_program_metric_data
 from .db_connection import delete_key_program_metric_data
 from .db_connection import load_details_data
-from .db_connection import update_details_data
 from .db_connection import load_schedule_data
 from .db_connection import update_schedule_data
 
@@ -83,10 +81,10 @@ def home(request):
         # based on the user filtering the data
         if admin:
             key_mess_data = KeyMessageTable.objects.filter(project__in=project)
-            # schedule_data = ScheduleMetricTable.objects.filter(project__in=project)
+            details_data = DetailsMessageTable.objects.filter(project__in=project)
         else:
             key_mess_data = KeyMessageTable.objects.filter(user=user)
-            # schedule_data = ScheduleMetricTable.objects.filter(user=user)
+            details_data = DetailsMessageTable.objects.filter(user=user)
 
         # get the latest record from the query_set
         if key_mess_data:
@@ -96,16 +94,17 @@ def home(request):
                 project.insert(0, key_mess_data.project)
             key_mess_data.project = project
 
-        # if details_data:
-        #     details_data = details_data.latest("created_at")
-        #     if details_data.project in project:
-        #         project.remove(details_data.project)
-        #         project.insert(0, details_data.project)
-        #     details_data.project = project
-        #
+        if details_data:
+            details_data = details_data.latest("created_at")
+            if details_data.project in project:
+                project.remove(details_data.project)
+                project.insert(0, details_data.project)
+            details_data.project = project
 
-        return render(request, 'intel_app/index.html', {
-                            'project': project, 'key_mess_data': key_mess_data})
+        return render(request, 'intel_app/index.html', {'project': project,
+                                                        'key_mess_data': key_mess_data,
+                                                        'details_data': details_data
+                                                        })
     except KeyError:
         return HttpResponseRedirect(reverse('login'))
 
@@ -145,8 +144,7 @@ def key_message(request):
 @csrf_exempt
 def risks(request):
     if request.method == "POST":
-        switch_button = request.POST.get('switch_button', 'Off')
-        print(switch_button)
+        display = request.POST.get('switch_button', 'Off')
         problem_statement = request.POST['problem_statement']
         status = request.POST['status']
         owner = request.POST['owner']
@@ -160,7 +158,6 @@ def risks(request):
         risk_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         risk_data = RiskTable.objects.create(
-            switch_button=switch_button,
             problem_statement=problem_statement,
             status=status,
             owner=owner,
@@ -171,11 +168,14 @@ def risks(request):
             impact=impact,
             risk_id=risk_id,
             project=project,
-            user=user
+            user=user,
+            display=display
         )
         risk_data.save()
         # load risk data to external database
-        load_risk_data([(switch_button, problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user)])
+        load_risk_data([
+            (problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user, display)
+        ])
         return HttpResponseRedirect(reverse("risk"))
     else:
         try:
@@ -199,29 +199,6 @@ def risks(request):
             return render(request, 'intel_app/risk_table.html', {'data': risk_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
-
-
-def update_queryset_values(data_list: list, input_value: str):
-    deep_copy_data = deepcopy(data_list)
-    if input_value in deep_copy_data:
-        deep_copy_data.remove(input_value)
-        deep_copy_data.insert(0, input_value)
-    return deep_copy_data
-
-
-@csrf_exempt
-def key_edit_message(request, pk):
-    if request.method == "POST":
-        message = request.POST['hiddenInput']
-        tab = KeyMessageTable.objects.filter(pk=pk)
-        # update the values in external database
-        update_key_message_data([(tab[0].message_id, message)])
-        # update the values local database
-        tab.update(message=message)
-        return HttpResponseRedirect(reverse("key_message"))
-    else:
-        data = KeyMessageTable.objects.filter(pk=pk)
-        return render(request, 'intel_app/key_edit_message.html', {'data': data})
 
 
 @csrf_exempt
@@ -362,33 +339,6 @@ def details(request):
         # load details data to external database
         load_details_data(details_id, user, message, project)
         return HttpResponseRedirect(reverse("home"))
-    else:
-        try:
-            admin = request.session['meta_data'].get('admin')
-            project = request.session['meta_data'].get('project')
-            user = request.session['meta_data'].get('user_id')
-            if admin:
-                details_mess_data = DetailsMessageTable.objects.filter(project__in=project)
-            else:
-                details_mess_data = DetailsMessageTable.objects.filter(user=user)
-            return render(request, 'intel_app/details.html', {'data': details_mess_data, 'project': project})
-        except KeyError:
-            return HttpResponseRedirect(reverse('login'))
-
-
-@csrf_exempt
-def details_edit_message(request, pk):
-    if request.method == "POST":
-        message = request.POST['hiddenInput']
-        tab = DetailsMessageTable.objects.filter(pk=pk)
-        # update the values in external database
-        update_details_data(tab[0].details_id, message)
-        # update the values local database
-        tab.update(message=message)
-        return HttpResponseRedirect(reverse("details"))
-    else:
-        data = DetailsMessageTable.objects.filter(pk=pk)
-        return render(request, 'intel_app/details_edit_message.html', {'data': data})
 
 
 @csrf_exempt
@@ -417,7 +367,7 @@ def schedule(request):
         metric_data.save()
         # load schedule metric data to external database
         load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, project)
-        return HttpResponseRedirect(reverse("home"))
+        return HttpResponseRedirect(reverse("schedule"))
     else:
         try:
             admin = request.session['meta_data'].get('admin')
@@ -427,6 +377,13 @@ def schedule(request):
                 schedule_data = ScheduleMetricTable.objects.filter(project__in=project)
             else:
                 schedule_data = ScheduleMetricTable.objects.filter(user=user)
+
+            if len(schedule_data) >= 1:
+                status = ['R', 'G', 'B', 'Y']
+                for i in schedule_data:
+                    new_status = update_queryset_values(status, i.status[0])
+                    i.status = new_status
+                    i.save()
             return render(request, 'intel_app/schedule.html', {'data': schedule_data, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
@@ -453,14 +410,11 @@ def schedule_edit_table(request, pk):
             comments=comments,
         )
         return HttpResponseRedirect(reverse("schedule"))
-    else:
-        metric_data = ScheduleMetricTable.objects.filter(pk=pk)
-        status = ['R', 'G', 'B', 'Y']
-        for i in metric_data:
-            if i.status in status:
-                # updating the status values
-                status.remove(i.status)
-                status.insert(0, i.status)
 
-        metric_data[0].status = status
-        return render(request, 'intel_app/schedule_edit_table.html', {'data': metric_data})
+
+def update_queryset_values(data_list: list, input_value: str):
+    deep_copy_data = deepcopy(data_list)
+    if input_value in deep_copy_data:
+        deep_copy_data.remove(input_value)
+        deep_copy_data.insert(0, input_value)
+    return deep_copy_data

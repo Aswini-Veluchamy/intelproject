@@ -39,10 +39,10 @@ def update_key_message_data(data):
 
 def load_risk_data(data):
     conn, cursor = db_connection()
-    for ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user in data:
+    for ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user, display in data:
         sql = f"INSERT INTO {RISK_TABLE} (problem_statement, status, owner, message, eta, risk, severity, impact, \
-            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user)
+            risk_id, project, user, display) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user, display)
         cursor.execute(sql, val)
     print(f'data inserted in {RISK_TABLE} ....')
     conn.commit()
