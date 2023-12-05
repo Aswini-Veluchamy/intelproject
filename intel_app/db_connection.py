@@ -63,11 +63,11 @@ def update_risk_data(data):
 
 def load_key_program_metric_data(data):
     conn, cursor = db_connection()
-    for cat, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user in data:
-        sql = f"INSERT INTO {KEY_PROGRAM_METRIC_TABLE} (category, metric, fv_target, current_week_actual,\
+    for metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user in data:
+        sql = f"INSERT INTO {KEY_PROGRAM_METRIC_TABLE} (metric, fv_target, current_week_actual,\
                 current_week_plan, status, comments, metric_id, project, user) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (cat, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user)
         cursor.execute(sql, val)
     print(f'data inserted in {KEY_PROGRAM_METRIC_TABLE} ....')
     conn.commit()
@@ -76,8 +76,8 @@ def load_key_program_metric_data(data):
 
 def update_key_program_metric_data(data):
     conn, cursor = db_connection()
-    for cat, metric, fv_target, cwa, cwp, status, comments, metric_id in data:
-        sql = (f"UPDATE {KEY_PROGRAM_METRIC_TABLE} SET category = '{cat}', metric = '{metric}', fv_target = '{fv_target}', \
+    for metric, fv_target, cwa, cwp, status, comments, metric_id in data:
+        sql = (f"UPDATE {KEY_PROGRAM_METRIC_TABLE} SET metric = '{metric}', fv_target = '{fv_target}', \
                 current_week_actual = '{cwa}', current_week_plan = '{cwp}', status = '{status}', comments = '{comments}' \
                 WHERE metric_id='{metric_id}'")
         cursor.execute(sql)

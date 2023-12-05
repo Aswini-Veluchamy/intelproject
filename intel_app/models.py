@@ -56,7 +56,6 @@ class RiskTable(models.Model):
 
 class KeyProgramMetricTable(models.Model):
     ''' created database fields'''
-    category = models.CharField(max_length=250, default='category')
     metric = models.CharField(max_length=200, default='metric')
     fv_target = models.CharField(max_length=250, default='fv_target')
     current_week_actual = models.CharField(max_length=200, default='current_week_actual')
@@ -116,17 +115,18 @@ class ScheduleMetricTable(models.Model):
     class Meta:
         db_table = "schedule_table"
 
+
 class LinksMetricTable(models.Model):
     ''' created database fields'''
-    links = models.CharField(max_length=250, default='links')
-    comments = models.CharField(max_length=200, default='comments')
+    list = models.CharField(max_length=250, default='list')
+    link = models.URLField(max_length=200)
     links_id = models.CharField(max_length=100, default='links_id')
     project = models.CharField(max_length=200, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.CharField(max_length=100, default='user')
 
     def __str__(self):
-        return self.links
+        return self.link
 
     class Meta:
         db_table = "links_table"

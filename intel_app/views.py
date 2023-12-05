@@ -234,7 +234,6 @@ def risk_edit_table(request, pk):
 @csrf_exempt
 def key_program(request):
     if request.method == "POST":
-        category = request.POST['category']
         metric = request.POST['metric']
         fv_target = request.POST['target']
         current_week_actual = request.POST['actual']
@@ -247,7 +246,6 @@ def key_program(request):
         metric_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         metric_data = KeyProgramMetricTable.objects.create(
-            category=category,
             metric=metric,
             fv_target=fv_target,
             current_week_actual=current_week_actual,
@@ -260,7 +258,7 @@ def key_program(request):
         )
         metric_data.save()
         # load key program metric data to external database
-        load_key_program_metric_data([(category, metric, fv_target, current_week_actual,
+        load_key_program_metric_data([(metric, fv_target, current_week_actual,
                                        current_week_plan, status, comments, metric_id, project, user)])
         return HttpResponseRedirect(reverse("key_program"))
     else:
@@ -286,7 +284,6 @@ def key_program(request):
 @csrf_exempt
 def key_program_edit(request, pk):
     if request.method == "POST":
-        category = request.POST['category']
         metric = request.POST['metric']
         fv_target = request.POST['target']
         current_week_actual = request.POST['actual']
@@ -296,11 +293,10 @@ def key_program_edit(request, pk):
 
         tab = KeyProgramMetricTable.objects.filter(pk=pk)
         # update the values in external database
-        update_key_program_metric_data([(category, metric, fv_target, current_week_actual, current_week_plan,
+        update_key_program_metric_data([(metric, fv_target, current_week_actual, current_week_plan,
                                          status, comments, tab[0].metric_id)])
         # update the values local database
         tab.update(
-            category=category,
             metric=metric,
             fv_target=fv_target,
             current_week_actual=current_week_actual,
@@ -419,6 +415,7 @@ def update_queryset_values(data_list: list, input_value: str):
         deep_copy_data.insert(0, input_value)
     return deep_copy_data
 
+
 @csrf_exempt
 def links(request):
     if request.method == "POST":
@@ -436,9 +433,9 @@ def links(request):
             project=project,
             user=user
         )
-        metric_data.save()
+        #metric_data.save()
         # load links metric data to external database
-        load_schedule_data(links, comments, links_id, user, project)
+        #load_schedule_data(links, comments, links_id, user, project)
         return HttpResponseRedirect(reverse("links"))
     else:
         try:
