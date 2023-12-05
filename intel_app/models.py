@@ -115,3 +115,18 @@ class ScheduleMetricTable(models.Model):
 
     class Meta:
         db_table = "schedule_table"
+
+class LinksMetricTable(models.Model):
+    ''' created database fields'''
+    links = models.CharField(max_length=250, default='links')
+    comments = models.CharField(max_length=200, default='comments')
+    links_id = models.CharField(max_length=100, default='links_id')
+    project = models.CharField(max_length=200, default='project')
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.CharField(max_length=100, default='user')
+
+    def __str__(self):
+        return self.links
+
+    class Meta:
+        db_table = "links_table"

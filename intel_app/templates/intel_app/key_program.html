@@ -166,31 +166,11 @@
                                 <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <div class="text-center">
-                                    <!-- Button HTML (to Trigger Modal) -->
-                                    <button type="button" class="btn btn-danger btn-sm" title="Delete Metric">
-                                        <a data-bs-toggle="modal" data-bs-target="#myModal" role="button" style="text-decoration:none;color:#fff;">
-                                            <i class="fas fa-trash"></i></a>
-                                    </button>
-                                </div>
-                                <!-- Modal -->
-                                <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h6 class="modal-title" id="exampleModalLabel">Are you sure?</h6>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h6>Do you really want to delete these record? This process cannot be undone.</h6>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-danger"><a href="{% url 'key_program_delete' pk=i.id %}" role="button" style="text-decoration:none;color:#fff;">Delete</a></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <button type="button" class="btn btn-danger btn-sm" title="Delete Metric">
+                                    <a style="text-decoration:none;color:#fff;" href="{% url 'key_program_delete' pk=i.id %}" onclick="return confirmDelete()">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </button>
                             </td>
                         </tr>
                         <tr data-e-id="{{ i.id }}" data-edit="false">
@@ -241,24 +221,6 @@
         </div>
     </section>
 </main>
-<!-- Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmation</h5>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="close-modal"><a href="{% url 'key_program' %}" style="text-decoration:none;color:#fff;">No</a></button>
-                <button type="button" class="btn btn-danger"><a style="text-decoration:none;color:#fff;"
-                                                                href="#">Yes</a></button>
-            </div>
-        </div>
-    </div>
-</div>
 <!-- Include the Quill library -->
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/quill.js' %}"></script>
@@ -365,6 +327,15 @@
         else if (currentText === "Y")
             node.innerHTML = '<i class="fas fa-circle text-warning fa-sm">&nbsp;' + node.innerHTML;
     }
+</script>
+<script>
+    function confirmDelete() {
+    if (confirm("Delete Record?") == true) {
+        return true;
+    } else {
+        return false;
+    }
+}
 </script>
 </body>
 </head>

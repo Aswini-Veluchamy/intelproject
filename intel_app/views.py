@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 
 import time
 from .models import KeyMessageTable, RiskTable, DetailsMessageTable
-from .models import KeyProgramMetricTable, ScheduleMetricTable
+from .models import KeyProgramMetricTable, ScheduleMetricTable, LinksMetricTable
 
 from .config import DEFAULT_PASSWORDS
 
@@ -418,3 +418,54 @@ def update_queryset_values(data_list: list, input_value: str):
         deep_copy_data.remove(input_value)
         deep_copy_data.insert(0, input_value)
     return deep_copy_data
+
+@csrf_exempt
+def links(request):
+    if request.method == "POST":
+        links = request.POST['links']
+        print(links)
+        comments = request.POST['comments']
+        project = request.POST['project']
+
+        user = request.session['meta_data'].get('user_id')
+        links_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
+        metric_data = LinksMetricTable.objects.create(
+            links=links,
+            links_id=links_id,
+            project=project,
+            user=user
+        )
+        metric_data.save()
+        # load links metric data to external database
+        load_schedule_data(links, comments, links_id, user, project)
+        return HttpResponseRedirect(reverse("links"))
+    else:
+        try:
+            admin = request.session['meta_data'].get('admin')
+            project = request.session['meta_data'].get('project')
+            user = request.session['meta_data'].get('user_id')
+            if admin:
+                links_data = LinksMetricTable.objects.filter(project__in=project)
+            else:
+                links_data = LinksMetricTable.objects.filter(user=user)
+            return render(request, 'intel_app/links.html', {'data': links_data, 'project': project})
+        except KeyError:
+            return HttpResponseRedirect(reverse('login'))
+
+
+@csrf_exempt
+def links_edit_table(request, pk):
+    if request.method == "POST":
+        links = request.POST['links']
+        comments = request.POST['comments']
+
+        tab = LinksMetricTable.objects.filter(pk=pk)
+        # update the values in external database
+        update_schedule_data([(links, comments, tab[0].links_id)])
+        # update the values local database
+        tab.update(
+            links=links,
+            comments=comments,
+        )
+        return HttpResponseRedirect(reverse("links"))
