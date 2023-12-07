@@ -81,6 +81,7 @@
                     </button>
                 </div>
                 <div class="card-body">
+                    <form>
                     <table class="table table-bordered table-striped" id="example"
                            data-toggle="table"
                            data-search="true"
@@ -97,7 +98,7 @@
                         <tr>
                             <th scope="col" nowrap data-field="milestone" class="w-50 p-3 milestone">Milestone</th>
                             <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
-                            <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
+                            <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
                             <th scope="col" nowrap data-field="por_commit" class="w-50 p-3 por_commit">POR Commit</th>
                             <th scope="col" nowrap data-field="por_trend" class="w-50 p-3 por_trend">POR Trend</th>
                             <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
@@ -138,10 +139,10 @@
                                 <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
                             </td>
                             <td class="text-center">
-                                <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Schedule">
+                                <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Schedule">
                                     <i class="fa-solid fa-check"></i>
                                 </button>
-                                <button data-id="new-cancel" type="button" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Schedule">
+                                <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Schedule">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </td>
@@ -186,10 +187,10 @@
                             </td>
                             <div class="text-center">
                                 <td>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-success btn-sm save-btn" title="Save Schedule">
+                                    <button data-id="{{ i.id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Schedule">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-danger btn-sm cancel-btn" title="Cancel Schedule">
+                                    <button data-id="{{ i.id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Schedule">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
@@ -198,6 +199,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                        </form>
                 </div>
             </div>
         </div>
@@ -213,6 +215,16 @@
 <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+<script>
+    function nameFormatter(value, row) {
+      var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
+      row.status === 'G'  ? 'fa-circle fa-sm text-success' :
+      row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
+      row.status === 'B'  ? 'fa-circle fa-sm text-primary' : 'none'
+      return '<i class="fa ' + icon + '"></i> ' + value
+    }
+
+</script>
 <script>
 $('#example').bootstrapTable({
     exportOptions: {
@@ -296,25 +308,6 @@ $(document).ready(function() {
         $('tr[data-a-id="new"]').attr('data-add', false);
     });
 });
-</script>
-<script>
-    var allTableCells = document.getElementsByTagName("td");
-    for(var i = 0, max = allTableCells.length; i < max; i++) {
-        var node = allTableCells[i];
-
-        //get the text from the first child node - which should be a text node
-        var currentText = node.childNodes[0].nodeValue;
-
-        //check for 'one' and assign this table cell's background color accordingly
-        if (currentText === "R")
-            node.innerHTML = '<i class="fas fa-circle text-danger fa-sm">&nbsp;' + node.innerHTML;
-        else if (currentText === "G")
-            node.innerHTML = '<i class="fas fa-circle text-success fa-sm">&nbsp;' + node.innerHTML;
-        else if (currentText === "B")
-            node.innerHTML = '<i class="fas fa-circle text-primary fa-sm">&nbsp;' + node.innerHTML;
-        else if (currentText === "Y")
-            node.innerHTML = '<i class="fas fa-circle text-warning fa-sm">&nbsp;' + node.innerHTML;
-    }
 </script>
 </body>
 </head>

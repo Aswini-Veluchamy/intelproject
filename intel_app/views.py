@@ -234,6 +234,7 @@ def risk_edit_table(request, pk):
 @csrf_exempt
 def key_program(request):
     if request.method == "POST":
+        category = request.POST['category']
         metric = request.POST['metric']
         fv_target = request.POST['target']
         current_week_actual = request.POST['actual']
@@ -246,6 +247,7 @@ def key_program(request):
         metric_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         metric_data = KeyProgramMetricTable.objects.create(
+            category=category,
             metric=metric,
             fv_target=fv_target,
             current_week_actual=current_week_actual,
@@ -258,7 +260,7 @@ def key_program(request):
         )
         metric_data.save()
         # load key program metric data to external database
-        load_key_program_metric_data([(metric, fv_target, current_week_actual,
+        load_key_program_metric_data([(category, metric, fv_target, current_week_actual,
                                        current_week_plan, status, comments, metric_id, project, user)])
         return HttpResponseRedirect(reverse("key_program"))
     else:
@@ -284,6 +286,7 @@ def key_program(request):
 @csrf_exempt
 def key_program_edit(request, pk):
     if request.method == "POST":
+        category = request.POST['category']
         metric = request.POST['metric']
         fv_target = request.POST['target']
         current_week_actual = request.POST['actual']
@@ -293,10 +296,11 @@ def key_program_edit(request, pk):
 
         tab = KeyProgramMetricTable.objects.filter(pk=pk)
         # update the values in external database
-        update_key_program_metric_data([(metric, fv_target, current_week_actual, current_week_plan,
+        update_key_program_metric_data([(category, metric, fv_target, current_week_actual, current_week_plan,
                                          status, comments, tab[0].metric_id)])
         # update the values local database
         tab.update(
+            category=category,
             metric=metric,
             fv_target=fv_target,
             current_week_actual=current_week_actual,
@@ -415,54 +419,16 @@ def update_queryset_values(data_list: list, input_value: str):
         deep_copy_data.insert(0, input_value)
     return deep_copy_data
 
-
 @csrf_exempt
 def links(request):
     if request.method == "POST":
-        links = request.POST['links']
-        print(links)
+        links_url = request.POST['links_url']
         comments = request.POST['comments']
         project = request.POST['project']
-
-        user = request.session['meta_data'].get('user_id')
-        links_id = str(int(time.time() * 1000)) + '_' + user
-        ''' storing data into database'''
-        metric_data = LinksMetricTable.objects.create(
-            links=links,
-            links_id=links_id,
-            project=project,
-            user=user
-        )
-        #metric_data.save()
-        # load links metric data to external database
-        #load_schedule_data(links, comments, links_id, user, project)
+        print(links_url, comments, project)
         return HttpResponseRedirect(reverse("links"))
     else:
-        try:
-            admin = request.session['meta_data'].get('admin')
-            project = request.session['meta_data'].get('project')
-            user = request.session['meta_data'].get('user_id')
-            if admin:
-                links_data = LinksMetricTable.objects.filter(project__in=project)
-            else:
-                links_data = LinksMetricTable.objects.filter(user=user)
-            return render(request, 'intel_app/links.html', {'data': links_data, 'project': project})
-        except KeyError:
-            return HttpResponseRedirect(reverse('login'))
+        project = request.session['meta_data'].get('project')
 
+        return render(request, 'intel_app/links.html', {'project': project})
 
-@csrf_exempt
-def links_edit_table(request, pk):
-    if request.method == "POST":
-        links = request.POST['links']
-        comments = request.POST['comments']
-
-        tab = LinksMetricTable.objects.filter(pk=pk)
-        # update the values in external database
-        update_schedule_data([(links, comments, tab[0].links_id)])
-        # update the values local database
-        tab.update(
-            links=links,
-            comments=comments,
-        )
-        return HttpResponseRedirect(reverse("links"))

@@ -72,7 +72,7 @@ class KeyProgramMetricTable(models.Model):
     user = models.CharField(max_length=100, default='user')
 
     def __str__(self):
-        return self.category
+        return self.metric
 
     class Meta:
         db_table = "key_program_metric_table"
@@ -115,18 +115,17 @@ class ScheduleMetricTable(models.Model):
     class Meta:
         db_table = "schedule_table"
 
-
 class LinksMetricTable(models.Model):
     ''' created database fields'''
-    list = models.CharField(max_length=250, default='list')
-    link = models.URLField(max_length=200)
+    links_url = models.CharField(max_length=250, default='links_url')
+    comments = models.CharField(max_length=200, default='comments')
     links_id = models.CharField(max_length=100, default='links_id')
     project = models.CharField(max_length=200, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.CharField(max_length=100, default='user')
 
     def __str__(self):
-        return self.link
+        return self.links_url
 
     class Meta:
         db_table = "links_table"

@@ -81,86 +81,91 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-striped" id="example"
-                           data-toggle="table"
-                           data-search="true"
-                           data-search-align="left"
-                           data-show-columns="true"
-                           data-show-toggle="false"
-                           data-show-columns-toggle-all="true"
-                           data-show-export="true"
-                           data-export-data-type="all"
-                           data-response-handler="responseHandler"
-                           data-show-fullscreen="true"
-                           data-buttons-class="primary btn-sm">
-                        <thead>
-                        <tr>
-                            <th scope="col" nowrap data-field="links" class="w-50 p-3 links">Links</th>
-                            <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
-                            <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
-                            <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody data-body="links">
-                        <tr data-a-id="new" data-add="false">
-                            <td class="links">
-                                <textarea class="form-control" data-prop="links" name="links" placeholder="Enter Links" cols="3" maxlength="250" required="required"></textarea>
-                            </td>
-                            <td class="project">
-                                <select class="form-select" name="project" data-prop='project' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Projects</option>
-                                    {% for i in project %}
-                                    <option value="{{i}}">{{i}}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td class="comments">
-                                <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
-                            </td>
-                            <td class="text-center">
-                                <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Links">
-                                    <i class="fa-solid fa-check"></i>
-                                </button>
-                                <button data-id="new-cancel" type="button" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Links">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% for i in data %}
-                        <tr data-n-id="{{ i.id }}" data-non-edit="true">
-                            <td nowrap class="links">{{ i.links }}</td>
-                            <td nowrap class="project">{{ i.project }}</td>
-                            <td nowrap class="comments">{{ i.comments }}</td>
-                            <td>
-                                <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-e-id="{{ i.id }}" data-edit="false">
-                            <td class="links">
-                                <textarea class="form-control" data-prop="links" name="links" cols="3" maxlength="250" required="required">{{i.links}}</textarea>
-                            </td>
-                            <td class="project">
-                                <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
-                            </td>
-                            <td class="comments">
-                                <textarea class="form-control" data-prop="comments" name="comments" cols="3" maxlength="250" required="required">{{i.comments}}</textarea>
-                            </td>
-                            <div class="text-center">
-                                <td>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-success btn-sm save-btn" title="Save Links">
+                    <form>
+                        <table class="table table-bordered table-striped" id="example"
+                               data-toggle="table"
+                               data-search="true"
+                               data-search-align="left"
+                               data-show-columns="true"
+                               data-show-toggle="false"
+                               data-show-columns-toggle-all="true"
+                               data-show-export="true"
+                               data-export-data-type="all"
+                               data-response-handler="responseHandler"
+                               data-show-fullscreen="true"
+                               data-buttons-class="primary btn-sm">
+                            <thead>
+                            <tr>
+                                <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
+                                <th scope="col" nowrap data-field="links_url" class="w-50 p-3 links_url">Links</th>
+                                <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
+                                <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody data-body="links">
+                            <tr data-a-id="new" data-add="false">
+                                <td class="project">
+                                    <select class="form-select" name="project" data-prop='project' required="required">
+                                        <option value="" disabled="disabled" selected="selected">Projects</option>
+                                        {% for i in project %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="links_url">
+                                    <input class="form-control" data-prop="links_url" name="links_url" type="url"  placeholder="Enter Links" pattern="^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
+                                           oninvalid="setCustomValidity('Please Enter URL.')"
+                                           onchange="try{setCustomValidity('')}catch(e){}" required="required">
+                                </td>
+                                <td class="comments">
+                                    <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
+                                </td>
+                                <td class="text-center">
+                                    <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Links">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-danger btn-sm cancel-btn" title="Cancel Links">
+                                    <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Links">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
-                            </div>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </tr>
+                            {% for i in data %}
+                            <tr data-n-id="{{ i.id }}" data-non-edit="true">
+                                <td nowrap class="project">{{ i.project }}</td>
+                                <td nowrap class="links_url">{{ i.links_url }}</td>
+                                <td nowrap class="comments">{{ i.comments }}</td>
+                                <td>
+                                    <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links">
+                                        <i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr data-e-id="{{ i.id }}" data-edit="false">
+                                <td class="project">
+                                    <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
+                                </td>
+                                <td class="links_url">
+                                    <input class="form-control" data-prop="links_url" name="links_url" type="url"  placeholder="Enter Links" pattern="^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
+                                           oninvalid="setCustomValidity('Please Enter URL.')"
+                                           onchange="try{setCustomValidity('')}catch(e){}" value="{{i.links_url}}" required="required">
+                                </td>
+                                <td class="comments">
+                                    <textarea class="form-control" data-prop="comments" name="comments" cols="3" maxlength="250" required="required">{{i.comments}}</textarea>
+                                </td>
+                                <div class="text-center">
+                                    <td>
+                                        <button data-id="{{ i.id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Links">
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                        <button data-id="{{ i.id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Links">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </td>
+                                </div>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
             </div>
         </div>
@@ -177,83 +182,82 @@
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script>
-$('#example').bootstrapTable({
-    exportOptions: {
-        fileName: 'Links'
-    },
-    exportTypes: ['excel'],
-});
-
-$(document).ready(function() {
-    $('.edit-btn').on('click', function () {
-        let objectId = $(this).data('id');
-        const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-        const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-        $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-        $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+    $('#example').bootstrapTable({
+        exportOptions: {
+            fileName: 'Links'
+        },
+        exportTypes: ['excel'],
     });
+    $(document).ready(function() {
+        $('.edit-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
 
-    $('.cancel-btn').on('click', function () {
-        let objectId = $(this).data('id');
-        const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-        const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-        $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-        $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-    });
+        $('.cancel-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
 
-    $('.save-btn').on('click', function () {
-        let objectId = $(this).data('id');
-        const links = {
-           links : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="links"]')[0].value,
-           project : $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
-           comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
-        }
-        $.ajax(
-                {
-                    type:"POST",
-                    url: "/links_edit_table/"+objectId,
-                    data:links,
-                    success: function( data )
+        $('.save-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const links = {
+               project : $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
+               links_url : $('tr[data-e-id="' + objectId + '"] input[data-prop="links_url"]')[0].value,
+               comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+            }
+            $.ajax(
                     {
-                    window.location.reload()
+                        type:"POST",
+                        url: "/links_edit_table/"+objectId,
+                        data:links,
+                        success: function( data )
+                        {
+                        window.location.reload()
 
-                    }
-                 })
+                        }
+                     })
 
-        console.log(links);
-    });
+            console.log(links);
+        });
 
-    $('.add-btn').on('click', function () {
-       $('tr[data-a-id="new"]').attr('data-add', true);
-    });
+        $('.add-btn').on('click', function () {
+           $('tr[data-a-id="new"]').attr('data-add', true);
+        });
 
-     $('.add-save-btn').on('click', function () {
+         $('.add-save-btn').on('click', function () {
 
-        let objectId = "new";
-        const links = {
-           links : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="links"]')[0].value,
-           project : $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
-           comments : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
-        }
-        $.ajax(
-                {
-                    type:"POST",
-                    url: "/links/",
-                    data:links,
-                    success: function( data )
+            let objectId = "new";
+            const links = {
+               project : $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
+               links_url : $('tr[data-a-id="' + objectId + '"] input[data-prop="links_url"]')[0].value,
+               comments : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+            }
+            $.ajax(
                     {
-                    window.location.reload()
+                        type:"POST",
+                        url: "/links/",
+                        data:links,
+                        success: function( data )
+                        {
+                        window.location.reload()
 
-                    }
-                 })
+                        }
+                     })
 
-        console.log(links);
+            console.log(links);
+        });
+
+         $('.add-cancel-btn').click(function () {
+            $('tr[data-a-id="new"]').attr('data-add', false);
+        });
     });
-
-     $('.add-cancel-btn').click(function () {
-        $('tr[data-a-id="new"]').attr('data-add', false);
-    });
-});
 </script>
 </body>
 </head>
