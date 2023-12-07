@@ -81,6 +81,7 @@
                     </button>
                 </div>
                 <div class="card-body">
+                    <form>
                     <table class="table table-bordered table-striped" id="example"
                            data-toggle="table"
                            data-search="true"
@@ -96,7 +97,7 @@
                         <thead>
                         <tr>
                             <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
-                            <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
+                            <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
                             <th scope="col" nowrap data-field="metric" class="w-50 p-3 metric">Metric</th>
                             <th scope="col" nowrap data-field="target" class="w-50 p-3 target">FV Target</th>
                             <th scope="col" nowrap data-field="actual" class="w-50 p-3 actual">Current Week Actual</th>
@@ -140,10 +141,10 @@
                                 <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
                             </td>
                             <td class="text-center">
-                                <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
+                                <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
                                     <i class="fa-solid fa-check"></i>
                                 </button>
-                                <button data-id="new-cancel" type="button" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Metric">
+                                <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Metric">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </td>
@@ -196,10 +197,10 @@
                             </td>
                             <div class="text-center">
                                 <td>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-success btn-sm save-btn" title="Save Metric">
+                                    <button data-id="{{ i.id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Metric">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-danger btn-sm cancel-btn" title="Cancel Metric">
+                                    <button data-id="{{ i.id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Metric">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
@@ -208,6 +209,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
+                        </form>
                 </div>
             </div>
         </div>
@@ -223,6 +225,16 @@
 <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+<script>
+    function nameFormatter(value, row) {
+      var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
+      row.status === 'G'  ? 'fa-circle fa-sm text-success' :
+      row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
+      row.status === 'B'  ? 'fa-circle fa-sm text-primary' : 'none'
+      return '<i class="fa ' + icon + '"></i> ' + value
+    }
+
+</script>
 <script>
     $('#example').bootstrapTable({
         exportOptions: {
@@ -299,7 +311,7 @@
         });
     });
 </script>
-<script>
+<!--<script>
     var allTableCells = document.getElementsByTagName("td");
     for(var i = 0, max = allTableCells.length; i < max; i++) {
         var node = allTableCells[i];
@@ -317,7 +329,7 @@
         else if (currentText === "Y")
             node.innerHTML = '<i class="fas fa-circle text-warning fa-sm">&nbsp;' + node.innerHTML;
     }
-</script>
+</script>-->
 <script>
     function confirmDelete() {
     if (confirm("Delete Record?") == true) {
