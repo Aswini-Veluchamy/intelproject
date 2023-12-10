@@ -289,20 +289,15 @@ $(document).ready(function() {
            por_trend : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
            comments : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
         }
-        $.ajax(
-                {
-                    type:"POST",
-                    url: "/schedule/",
-                    data:schedule,
-                    success: function( data )
-                    {
+            $.ajax({
+                type: "POST",
+                url: "/schedule/",
+                data: schedule,
+                success: function(data) {
                     window.location.reload()
-
-                    }
-                 })
-
-        console.log(schedule);
-    });
+                }
+            })
+        });
 
      $('.add-cancel-btn').click(function () {
         $('tr[data-a-id="new"]').attr('data-add', false);

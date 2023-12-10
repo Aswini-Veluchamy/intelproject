@@ -105,7 +105,7 @@
                                 <th scope="col" nowrap data-field="pv_freq" class="w-50 p-3 pv_freq">PV Freq</th>
                                 <th scope="col" nowrap data-field="perf_target" class="w-50 p-3 perf_target">Perf Target</th>
                                 <th scope="col" nowrap data-field="cdyn" class="w-50 p-3 cdyn">Cdyn</th>
-                                <th scope="col" nowrap data-field="schedule" class="w-50 p-3 schedule">Schedule</th>
+                                <th scope="col" nowrap data-field="schedule_bbox" class="w-50 p-3 schedule_bbox">Schedule</th>
                                 <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                             </tr>
                             </thead>
@@ -143,8 +143,8 @@
                                 <td class="cdyn">
                                     <textarea class="form-control" data-prop="cdyn" name="cdyn" placeholder="Enter Cdyn" cols="10" rows="6" maxlength="250" required="required"></textarea>
                                 </td>
-                                <td class="schedule">
-                                    <textarea class="form-control" data-prop="schedule" name="schedule" placeholder="Enter Schedule" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                <td class="schedule_bbox">
+                                    <textarea class="form-control" data-prop="schedule_bbox" name="schedule_bbox" placeholder="Enter Schedule" cols="10" rows="6" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="text-center">
                                     <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
@@ -165,7 +165,7 @@
                                 <td nowrap class="pv_freq">{{ i.pv_freq | linebreaks }}</td>
                                 <td nowrap class="perf_target">{{ i.perf_target | linebreaks }}</td>
                                 <td nowrap class="cdyn">{{ i.cdyn | linebreaks }}</td>
-                                <td nowrap class="schedule">{{ i.schedule | linebreaks }}</td>
+                                <td nowrap class="schedule_bbox">{{ i.schedule_bbox | linebreaks }}</td>
                                 <td class="text-center">
                                     <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                         <i class="fas fa-edit"></i>
@@ -200,8 +200,8 @@
                                 <td class="cdyn">
                                     <textarea class="form-control" data-prop="cdyn" name="cdyn" cols="10" rows="6" maxlength="250" required="required">{{ i.cdyn }}</textarea>
                                 </td>
-                                <td class="schedule">
-                                    <textarea class="form-control" data-prop="schedule" name="schedule" cols="10" rows="6" maxlength="250" required="required">{{ i.schedule }}</textarea>
+                                <td class="schedule_bbox">
+                                    <textarea class="form-control" data-prop="schedule_bbox" name="schedule_bbox" cols="10" rows="6" maxlength="250" required="required">{{ i.schedule_bbox }}</textarea>
                                 </td>
                                 <div class="text-center">
                                     <td>
@@ -277,7 +277,7 @@
                 pv_freq: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="pv_freq"]')[0].value,
                 perf_target: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="perf_target"]')[0].value,
                 cdyn: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="cdyn"]')[0].value,
-                schedule: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="schedule"]')[0].value,
+                schedule_bbox: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="schedule_bbox"]')[0].value,
             }
             $.ajax({
                 type: "POST",
@@ -303,7 +303,7 @@
                 pv_freq: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="pv_freq"]')[0].value,
                 perf_target: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="perf_target"]')[0].value,
                 cdyn: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="cdyn"]')[0].value,
-                schedule: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="schedule"]')[0].value,
+                schedule_bbox: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="schedule_bbox"]')[0].value,
             }
             $.ajax({
                 type: "POST",

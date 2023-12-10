@@ -293,8 +293,8 @@ def key_program_edit(request, pk):
 
         tab = KeyProgramMetricTable.objects.filter(pk=pk)
         # update the values in external database
-        update_key_program_metric_data([(metric, fv_target, current_week_actual, current_week_plan,
-                                         status, comments, tab[0].metric_id)])
+        #update_key_program_metric_data([(metric, fv_target, current_week_actual, current_week_plan,
+         #                                status, comments, tab[0].metric_id)])
         # update the values local database
         tab.update(
             metric=metric,
@@ -425,7 +425,6 @@ def links(request):
         return HttpResponseRedirect(reverse("links"))
     else:
         project = request.session['meta_data'].get('project')
-
         return render(request, 'intel_app/links.html', {'project': project})
 
 @csrf_exempt

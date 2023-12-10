@@ -98,7 +98,7 @@
                             <tr>
                                 <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="links_url" class="w-50 p-3 links_url">Links</th>
-                                <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
+                                <th scope="col" nowrap data-field="comments_links" class="w-50 p-3 comments_links">Comments</th>
                                 <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                             </tr>
                             </thead>
@@ -117,8 +117,8 @@
                                            oninvalid="setCustomValidity('Please Enter URL.')"
                                            onchange="try{setCustomValidity('')}catch(e){}" required="required">
                                 </td>
-                                <td class="comments">
-                                    <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
+                                <td class="comments_links">
+                                    <textarea class="form-control" data-prop="comments_links" name="comments_links" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="text-center">
                                     <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Links">
@@ -133,7 +133,7 @@
                             <tr data-n-id="{{ i.id }}" data-non-edit="true">
                                 <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="links_url">{{ i.links_url }}</td>
-                                <td nowrap class="comments">{{ i.comments }}</td>
+                                <td nowrap class="comments_links">{{ i.comments_links }}</td>
                                 <td>
                                     <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links">
                                         <i class="fas fa-edit"></i></button>
@@ -148,8 +148,8 @@
                                            oninvalid="setCustomValidity('Please Enter URL.')"
                                            onchange="try{setCustomValidity('')}catch(e){}" value="{{i.links_url}}" required="required">
                                 </td>
-                                <td class="comments">
-                                    <textarea class="form-control" data-prop="comments" name="comments" cols="3" maxlength="250" required="required">{{i.comments}}</textarea>
+                                <td class="comments_links">
+                                    <textarea class="form-control" data-prop="comments_links" name="comments_links" cols="3" maxlength="250" required="required">{{i.comments_links}}</textarea>
                                 </td>
                                 <div class="text-center">
                                     <td>
@@ -210,7 +210,7 @@
             const links = {
                project : $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                links_url : $('tr[data-e-id="' + objectId + '"] input[data-prop="links_url"]')[0].value,
-               comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+               comments_links : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value,
             }
             $.ajax(
                     {
@@ -237,21 +237,16 @@
             const links = {
                project : $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                links_url : $('tr[data-a-id="' + objectId + '"] input[data-prop="links_url"]')[0].value,
-               comments : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+               comments_links : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value,
             }
-            $.ajax(
-                    {
-                        type:"POST",
-                        url: "/links/",
-                        data:links,
-                        success: function( data )
-                        {
-                        window.location.reload()
-
-                        }
-                     })
-
-            console.log(links);
+            $.ajax({
+                type: "POST",
+                url: "/links/",
+                data: links,
+                success: function(data) {
+                    window.location.reload()
+                }
+            })
         });
 
          $('.add-cancel-btn').click(function () {
