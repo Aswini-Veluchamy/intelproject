@@ -428,3 +428,20 @@ def links(request):
 
         return render(request, 'intel_app/links.html', {'project': project})
 
+@csrf_exempt
+def bbox(request):
+    if request.method == "POST":
+        project = request.POST['project']
+        process = request.POST['process']
+        die_area = request.POST['die_area']
+        config = request.POST['config']
+        pv_freq = request.POST['pv_freq']
+        perf_target = request.POST['perf_target']
+        cdyn = request.POST['cdyn']
+        schedule = request.POST['schedule']
+        print(process)
+        return HttpResponseRedirect(reverse("bbox"))
+    else:
+        project = request.session['meta_data'].get('project')
+
+        return render(request, 'intel_app/bbox.html', {'project': project})
