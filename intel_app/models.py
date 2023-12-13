@@ -115,10 +115,11 @@ class ScheduleMetricTable(models.Model):
     class Meta:
         db_table = "schedule_table"
 
+
 class LinksMetricTable(models.Model):
     ''' created database fields'''
-    links_url = models.CharField(max_length=250, default='links_url')
-    comments = models.CharField(max_length=200, default='comments')
+    links_url = models.URLField(max_length=200, default='www.google.com')
+    comments_links = models.CharField(max_length=200, default='comments')
     links_id = models.CharField(max_length=100, default='links_id')
     project = models.CharField(max_length=200, default='project')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -129,3 +130,4 @@ class LinksMetricTable(models.Model):
 
     class Meta:
         db_table = "links_table"
+

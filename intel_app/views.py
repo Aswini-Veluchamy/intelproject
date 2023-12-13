@@ -415,17 +415,58 @@ def update_queryset_values(data_list: list, input_value: str):
         deep_copy_data.insert(0, input_value)
     return deep_copy_data
 
+
 @csrf_exempt
 def links(request):
     if request.method == "POST":
         links_url = request.POST['links_url']
-        comments = request.POST['comments']
+        comments = request.POST['comments_links']
         project = request.POST['project']
-        print(links_url, comments, project)
+        user = request.session['meta_data'].get('user_id')
+
+        if links_url == '' or comments == '' or project == '':
+            raise Exception('fill the fields!!!!!!!!')
+
+        links_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
+        links_data = LinksMetricTable.objects.create(
+            links_id=links_id,
+            links_url=links_url,
+            comments_links=comments,
+            project=project,
+            user=user
+        )
+        links_data.save()
         return HttpResponseRedirect(reverse("links"))
     else:
+        admin = request.session['meta_data'].get('admin')
         project = request.session['meta_data'].get('project')
-        return render(request, 'intel_app/links.html', {'project': project})
+        user = request.session['meta_data'].get('user_id')
+        if admin:
+            links_data = LinksMetricTable.objects.filter(project__in=project)
+        else:
+            links_data = LinksMetricTable.objects.filter(user=user)
+        return render(request, 'intel_app/links.html', {'project': project, 'data': links_data})
+
+
+@csrf_exempt
+def links_edit_table(request, pk):
+    if request.method == "POST":
+        links_url = request.POST['links_url']
+        comments = request.POST['comments_links']
+        project = request.POST['project']
+
+        tab = LinksMetricTable.objects.filter(pk=pk)
+        # update the values in external database
+        #update_schedule_data([(milestone, por_commit, por_trend, status, comments, tab[0].schedule_id)])
+        # update the values local database
+        tab.update(
+            links_url=links_url,
+            comments_links=comments,
+            project=project,
+        )
+        return HttpResponseRedirect(reverse("links"))
+
 
 @csrf_exempt
 def bbox(request):

@@ -1,7 +1,7 @@
 import mysql.connector
 from .config import HOST, PORT, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
-from .config import DETAILS_TABLE, SCHEDULE_TABLE
+from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE
 
 
 def db_connection():
@@ -133,5 +133,16 @@ def update_schedule_data(data):
                 WHERE schedule_id='{schedule_id}'")
         cursor.execute(sql)
     print(f'data updated in {SCHEDULE_TABLE} ....')
+    conn.commit()
+    conn.close()
+
+
+def load_links_data():
+    conn, cursor = db_connection()
+    sql = f"INSERT INTO {LINKS_TABLE} (milestone, por_commit, por_trend, status, comments, schedule_id,\
+            user, project) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (milestone, por_commit, por_trend, status, comments, schedule_id, user, proj)
+    cursor.execute(sql, val)
+    print(f'data inserted in {SCHEDULE_TABLE} ....')
     conn.commit()
     conn.close()

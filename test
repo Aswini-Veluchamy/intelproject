@@ -245,3 +245,12 @@ key_program
 models
 urls
 views
+
+CREATE TABLE links_table(
+ links_url LONGTEXT NOT NULL,
+ comments_links VARCHAR(200) NOT NULL,
+ links_id VARCHAR(50) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
