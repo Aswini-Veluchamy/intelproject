@@ -254,3 +254,7 @@ CREATE TABLE links_table(
  user VARCHAR(50) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+
+echo "from django.contrib.auth import get_user_model; CustomUser = get_user_model();  CustomUser.objects.create_superuser('test_user', '', 'Admin#1234')" | python manage.py shell
