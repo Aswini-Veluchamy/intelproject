@@ -258,3 +258,37 @@ CREATE TABLE links_table(
 
 
 echo "from django.contrib.auth import get_user_model; CustomUser = get_user_model();  CustomUser.objects.create_superuser('test_user', '', 'Admin#1234')" | python manage.py shell
+
+
+
+
+
+
+
+
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+#MEDIA
+MEDIA_ROOT_DIR = 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_ROOT_DIR)
+MEDIA_URL = '/media/'
+
+#TinyMce
+TINYMCE_JS_ROOT = os.path.join(STATIC_URL, "tinymce")
+TINYMCE_JS_URL = os.path.join(TINYMCE_JS_ROOT, "tinymce.min.js")
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,paste,searchreplace",
+    'theme': "advanced",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+}
+TINYMCE_SPELLCHECKER = False
+TINYMCE_COMPRESSOR = False
