@@ -1,0 +1,19 @@
+.login {
+    min-height: 100vh;
+}
+
+.bg-image {
+    background-image: url('https://img.freepik.com/free-vector/big-data-center-server-room-rack-engineering-process-teamwork-computer-technology-cloud-storage_39422-1032.jpg?w=740&t=st=1696072798~exp=1696073398~hmac=51d56a26d651942ab82fa244be1e4118fc74b3c585256c867937fc5b23995926');
+    background-size: cover;
+    background-position: center;
+}
+
+.login-heading {
+    font-weight: 300;
+}
+
+.btn-login {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+    padding: 0.75rem 1rem;
+}

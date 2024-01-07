@@ -10,7 +10,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3406
+        port=3306
     )
     cursor = conn.cursor()
     return conn, cursor

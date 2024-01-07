@@ -18,4 +18,5 @@ urlpatterns = [
     path('links/', views.links, name='links'),
     #path('links_edit_table/<str:pk>', views.links_edit_table, name='links_edit_table'),
     path('bbox/', views.bbox, name='bbox'),
+    path('user_create/', views.user_create, name='user_create'),
 ]
