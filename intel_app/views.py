@@ -419,7 +419,7 @@ def update_queryset_values(data_list: list, input_value: str):
 def links(request):
     if request.method == "POST":
         links_url = request.POST['links_url']
-        comments_links = request.POST['comments_links']
+        comments = request.POST['comments']
         project = request.POST['project']
         print(links_url, comments, project)
         return HttpResponseRedirect(reverse("links"))
@@ -437,20 +437,10 @@ def bbox(request):
         pv_freq = request.POST['pv_freq']
         perf_target = request.POST['perf_target']
         cdyn = request.POST['cdyn']
-        schedule_bbox = request.POST['schedule_bbox']
+        schedule = request.POST['schedule']
         print(process)
         return HttpResponseRedirect(reverse("bbox"))
     else:
         project = request.session['meta_data'].get('project')
 
         return render(request, 'intel_app/bbox.html', {'project': project})
-
-def user_create(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        project = request.POST['project']
-        password = request.POST['password']
-        print(username,password,project)
-        return render(request, 'intel_app/user_create.html')
-    else:
-        return render(request, 'intel_app/user_create.html')

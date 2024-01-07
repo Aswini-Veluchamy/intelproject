@@ -245,3 +245,92 @@ key_program
 models
 urls
 views
+
+CREATE TABLE links_table(
+ links_url LONGTEXT NOT NULL,
+ comments_links VARCHAR(200) NOT NULL,
+ links_id VARCHAR(50) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+echo "from django.contrib.auth import get_user_model; CustomUser = get_user_model();  CustomUser.objects.create_superuser('test_user', '', 'Admin#1234')" | python manage.py shell
+
+
+
+
+
+
+
+
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticroot')
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+#MEDIA
+MEDIA_ROOT_DIR = 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_ROOT_DIR)
+MEDIA_URL = '/media/'
+
+#TinyMce
+TINYMCE_JS_ROOT = os.path.join(STATIC_URL, "tinymce")
+TINYMCE_JS_URL = os.path.join(TINYMCE_JS_ROOT, "tinymce.min.js")
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,paste,searchreplace",
+    'theme': "advanced",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+}
+TINYMCE_SPELLCHECKER = False
+TINYMCE_COMPRESSOR = False
+
+
+
+manifest.yml
+
+---
+applications:
+- name: HelloDjango
+  memory: 128MB
+  disk_quota: 256MB
+  random-route: true
+  buildpack: python_buildpack
+  command: bash ./run.sh
+  declared-services:
+    hellodjango:
+      label: postgres
+      plan: shared-nr
+  services:
+    - hellodjango
+
+
+
+
+run.sh
+
+ #!/bin/bash
+ if [ -z "$VCAP_APP_PORT" ];
+ then SERVER_PORT=80;
+ else SERVER_PORT="$VCAP_APP_PORT";
+ fi
+ echo port is $SERVER_PORT
+
+ echo "make migrations"
+ python manage.py makemigrations
+
+ echo "migrate"
+ python manage.py migrate
+
+ echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@whizzy.io', 'password')" | python manage.py shell
+
+ echo [$0] Starting Django Server...
+ python manage.py runserver 0.0.0.0:$SERVER_PORT --noreload
