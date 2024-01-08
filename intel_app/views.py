@@ -60,12 +60,12 @@ def user_login(request):
 def user_create(request):
     if request.method == "POST":
         username = request.POST['username']
-        project = request.POST['project']
+        project_name = request.POST.getlist('project_name')
         status = request.POST.get('status', 'False')
         password = request.POST['password']
-        print(username, status, project, password)
+        print(username, status, project_name, password)
         # registering the user
-        register_user(username, password, project, False)
+        register_user(username, password, project_name, status)
         response = HttpResponseRedirect(reverse('login'))
         return response
     else:
@@ -73,8 +73,8 @@ def user_create(request):
 
 def project(request):
     if request.method == "POST":
-        project_name = request.POST.getlist('project_name')
-        print(project_name)
+        project = request.POST['project']
+        print(project)
         return render(request, 'intel_app/project.html')
     else:
         return render(request, 'intel_app/project.html')
