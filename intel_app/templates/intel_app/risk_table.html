@@ -176,7 +176,7 @@
                                 </td>
                             </tr>
                             {% for i in data %}
-                            <tr data-n-id="{{ i.id }}" data-non-edit="true">
+                            <tr data-n-id="{{ i.risk_id }}" data-non-edit="true">
                                 <td nowrap class="switch_button">{{ i.display }}</td>
                                 <td nowrap class="problem_statement">{{ i.problem_statement }}</td>
                                 <td nowrap class="project">{{ i.project }}</td>
@@ -188,12 +188,12 @@
                                 <td nowrap class="severity">{{ i.severity.0 }}</td>
                                 <td nowrap class="impact">{{ i.impact.0 }}</td>
                                 <td nowrap class="action">
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn"
+                                    <button data-id="{{ i.risk_id }}" type="button" class="btn btn-info btn-sm edit-btn"
                                             title="Edit Risk"><i
                                             class="fas fa-edit"></i></button>
                                 </td>
                             </tr>
-                            <tr data-e-id="{{ i.id }}" data-edit="false">
+                            <tr data-e-id="{{ i.risk_id }}" data-edit="false">
                                 <td class="switch_button">
                                     <input class="form-control" type="text" name="switch_button" data-prop="switch_button" value="{{i.display}}" disabled />
                                 </td>
@@ -241,10 +241,10 @@
                                 </td>
                                 <div>
                                     <td>
-                                        <button data-id="{{ i.id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Risk">
+                                        <button data-id="{{ i.risk_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Risk">
                                             <i class="fa-solid fa-check"></i>
                                         </button>
-                                        <button data-id="{{ i.id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Risk">
+                                        <button data-id="{{ i.risk_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Risk">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </td>

@@ -48,6 +48,23 @@ def load_risk_data(data):
     conn.commit()
     conn.close()
 
+def get_key_message_data(user):
+    conn, cursor = db_connection()
+    cursor.execute(f'SELECT * FROM key_message where user="{user}" ORDER BY ts DESC LIMIT 1;')
+    columns = [col[0] for col in cursor.description]
+    result = dict(zip(columns, cursor.fetchone()))
+    conn.commit()
+    conn.close()
+    return result
+def get_data(user, table):
+    conn, cursor = db_connection()
+    cursor.execute(f'SELECT * FROM {table} where user="{user}"')
+    records = cursor.fetchall()
+    columns = [col[0] for col in cursor.description]
+    result = [dict(zip(columns, record)) for record in records]
+    conn.commit()
+    conn.close()
+    return result
 
 def update_risk_data(data):
     conn, cursor = db_connection()

@@ -3,7 +3,9 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
+from .db_connection import get_data, get_key_message_data
 import time
 from .models import KeyMessageTable, RiskTable, DetailsMessageTable
 from .models import KeyProgramMetricTable, ScheduleMetricTable, LinksMetricTable
@@ -83,16 +85,13 @@ def home(request):
             key_mess_data = KeyMessageTable.objects.filter(project__in=project)
             details_data = DetailsMessageTable.objects.filter(project__in=project)
         else:
-            key_mess_data = KeyMessageTable.objects.filter(user=user)
+            key_mess_data = get_key_message_data(user)
             details_data = DetailsMessageTable.objects.filter(user=user)
 
-        # get the latest record from the query_set
         if key_mess_data:
-            key_mess_data = key_mess_data.latest("created_at")
-            if key_mess_data.project in project:
-                project.remove(key_mess_data.project)
-                project.insert(0, key_mess_data.project)
-            key_mess_data.project = project
+            project.remove(key_mess_data.get('project'))
+            project.insert(0, key_mess_data.get('project'))
+            key_mess_data['project'] = project
 
         if details_data:
             details_data = details_data.latest("created_at")
@@ -182,21 +181,19 @@ def risks(request):
             admin = request.session['meta_data'].get('admin')
             project = request.session['meta_data'].get('project')
             user = request.session['meta_data'].get('user_id')
-            if admin:
-                risk_data = RiskTable.objects.filter(project__in=project)
-            else:
-                risk_data = RiskTable.objects.filter(user=user)
-
-            if len(risk_data) >= 1:
+            result = get_data(user, 'risk_table')
+            print(result)
+            if result:
                 status = ['R', 'G', 'B', 'Y']
                 impact = ['PPA', 'Functionality', 'Quality']
                 severity = ['None', 'Mgt']
-                for i in risk_data:
-                    i.status = update_queryset_values(status, i.status[0])
-                    i.severity = update_queryset_values(severity, i.severity[0]) if i.severity else severity
-                    i.impact = update_queryset_values(impact, i.impact[0])
-                    i.save()
-            return render(request, 'intel_app/risk_table.html', {'data': risk_data, 'project': project})
+                for i in result:
+                    i['status'] = update_queryset_values(status, i['status'])
+                    i['severity'] = update_queryset_values(severity, i['severity']) if i['severity'] else severity
+                    i['impact'] = update_queryset_values(impact, i['impact'])
+            print("-----------------------------------")
+            print(result)
+            return render(request, 'intel_app/risk_table.html', {'data': result, 'project': project})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
@@ -204,6 +201,7 @@ def risks(request):
 @csrf_exempt
 def risk_edit_table(request, pk):
     if request.method == "POST":
+        print(pk)
         ps = request.POST['problem_statement']
         status = request.POST['status']
         owner = request.POST['owner']
@@ -212,22 +210,22 @@ def risk_edit_table(request, pk):
         risk = request.POST['risk']
         severity = request.POST['severity']
         impact = request.POST['impact']
-        tab = RiskTable.objects.filter(pk=pk)
+        #tab = RiskTable.objects.filter(pk=pk)
         # update the values in external database
         if severity == 'None':
             severity = ''
-        update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, tab[0].risk_id)])
+        update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, pk)])
         # update the values local database
-        tab.update(
-            problem_statement=ps,
-            status=status,
-            owner=owner,
-            message=msg,
-            eta=eta,
-            risk=risk,
-            severity=severity,
-            impact=impact,
-        )
+        # tab.update(
+        #     problem_statement=ps,
+        #     status=status,
+        #     owner=owner,
+        #     message=msg,
+        #     eta=eta,
+        #     risk=risk,
+        #     severity=severity,
+        #     impact=impact,
+        # )
         return HttpResponseRedirect(reverse("risk"))
 
 
