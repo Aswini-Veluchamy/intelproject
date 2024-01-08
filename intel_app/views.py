@@ -61,13 +61,23 @@ def user_create(request):
     if request.method == "POST":
         username = request.POST['username']
         project = request.POST['project']
+        status = request.POST.get('status', 'False')
         password = request.POST['password']
+        print(username, status, project, password)
         # registering the user
         register_user(username, password, project, False)
         response = HttpResponseRedirect(reverse('login'))
         return response
     else:
         return render(request, 'intel_app/user_create.html')
+
+def project(request):
+    if request.method == "POST":
+        project_name = request.POST.getlist('project_name')
+        print(project_name)
+        return render(request, 'intel_app/project.html')
+    else:
+        return render(request, 'intel_app/project.html')
 
 
 def user_logout(request):
@@ -122,7 +132,7 @@ def key_message(request):
     if request.method == "POST":
         message = request.POST['hiddenInput']
         project = request.POST['project']
-        user = request.session['meta_data'].get('user_id')
+        user = request.COOKIES['user_id']
         message_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         load_key_message_data([(message_id, user, message, project)])
@@ -142,7 +152,7 @@ def risks(request):
         severity = request.POST['severity']
         impact = request.POST['impact']
         project = request.POST['project']
-        user = request.session['meta_data'].get('user_id')
+        user = request.COOKIES['user_id']
         risk_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         # load risk data to external database

@@ -10,6 +10,8 @@
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
 
 </head>
 <body style="background-color:#ffffff!important;">
@@ -53,12 +55,12 @@
                 <span class="fs-5 d-none d-sm-inline">Menu</span>
             </a>
             <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a href="{% url 'user_create' %}" class="nav-link align-middle px-0">
                         <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Users</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a href="{% url 'project' %}" class="nav-link align-middle px-0">
                         <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Projects</span>
                     </a>
@@ -72,90 +74,40 @@
                 <b>Create User</b>
             </div>
             <div class="card-body">
-                <form action="" method="post" name="signupForm" id="signupForm">
+                <form action="" method="post">
                     {% csrf_token %}
                     <div class="form-group">
                         <div class="row">
                             <div class="col-sm-12">
-                                <label class="form-label">Username </label>
-                                <input class="form-control" type="text" name="username" id="username" placeholder="Enter Username" required>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-12">
                                 <label class="form-label" for="project">Project</label>
-                                <select class="form-select" name="project" id="project" required>
+                                <select class="selectpicker" multiple="multiple" name="project_name" id="project" data-live-search="true">
                                     <option value="" selected disabled>Select Project</option>
                                     <option value="Test">Test</option>
+                                    <option value="Intel">Intel</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label class="form-label">Status</label>
-                                <input type="radio" value="True" name="status" id="r1">
-                                <label for="r1">True</label>
-                                <input type="radio" value="False" name="status" id="r2">
-                                <label for="r2">False</label>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label class="form-label" for="password">Password</label>
-                                <input class="form-control" id="password" name="password" type="password" placeholder="Enter Password" required="required" />
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label class="form-label" for="confirmPassword">Password</label>
-                                <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" placeholder="Enter Password" required="required" />
-                            </div>
-                        </div>
-                    </div>
-                    <br>
                     <p>{{error}}</p>
-                    <button type="submit" id="submitButton" onclick="validateSignupForm()" class="submitButton btn btn-primary pure-button pure-button-primary">
-                        <span>Continue</span>
+                    <button type="submit" id="submitButton" class="btn btn-primary">
+                        <span>Submit</span>
                     </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-</div>
 
 <!-- Include the Quill library -->
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
 <script>
-    var password = document.getElementById("password"),
-    confirm_password = document.getElementById("confirmPassword");
-
-    function validatePassword() {
-      if(password.value != confirm_password.value) {
-        confirm_password.setCustomValidity("Passwords Don't Match");
-        return false;
-      } else {
-        confirm_password.setCustomValidity('');
-        return true;
-      }
-    }
-
-    password.onchange = validatePassword;
-    confirm_password.onkeyup = validatePassword;
+    $(function () {
+    $('select').selectpicker();
+});
 </script>
 </body>
 </html>
