@@ -10,7 +10,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3306
+        port=3406
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -176,3 +176,33 @@ def update_links_data(links_url, comments, links_id):
     print(f'data updated in {links_id} ....')
     conn.commit()
     conn.close()
+
+
+def register_user(username, password, project, admin_status):
+    """Register a new user."""
+    try:
+        conn, cursor = db_connection()
+        query = "INSERT INTO users (username, password, project, admin_status) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (username, password, project, admin_status))
+        conn.commit()
+        print("User registered successfully!")
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
+def login_user(username, password):
+    """Login an existing user."""
+    try:
+        conn, cursor = db_connection()
+        query = "SELECT * FROM users WHERE username = %s AND password = %s"
+        cursor.execute(query, (username, password))
+        user = cursor.fetchone()
+        if user:
+            columns = [col[0] for col in cursor.description]
+            result = dict(zip(columns, user))
+            return user, result
+        else:
+            return None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+

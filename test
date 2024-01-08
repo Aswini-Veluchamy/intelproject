@@ -334,3 +334,13 @@ run.sh
 
  echo [$0] Starting Django Server...
  python manage.py runserver 0.0.0.0:$SERVER_PORT --noreload
+
+
+
+CREATE TABLE users(
+ username VARCHAR(50) NOT NULL,
+ password VARCHAR(50) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ admin_status BOOLEAN,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

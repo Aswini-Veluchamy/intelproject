@@ -1,8 +1,9 @@
 DEFAULT_PASSWORDS = ['Admin#123']
+USER_NAMES = ['admin']
 
 # Database configuration
 HOST = "localhost"
-PORT = 3306
+PORT = 3406
 USER = "root"
 PASSWORD = "root1234"
 

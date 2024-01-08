@@ -8,7 +8,7 @@ import time
 from .models import KeyProgramMetricTable
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
-from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE
+from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES
 
 from .db_connection import load_key_message_data
 from .db_connection import load_risk_data
@@ -21,6 +21,8 @@ from .db_connection import load_schedule_data
 from .db_connection import update_schedule_data
 from .db_connection import load_links_data
 from .db_connection import update_links_data
+from .db_connection import register_user
+from .db_connection import login_user
 
 import ast
 
@@ -34,36 +36,38 @@ def user_login(request):
         username = request.POST['username']
         password = request.POST['password']
         # Validating credentials with the database
-        user = authenticate(request, username=username, password=password)
-        if user:
-            if password in DEFAULT_PASSWORDS:
-                '''
-                    if user password matches with default passwords
-                    render the user to password management page
-                '''
-                return HttpResponseRedirect(reverse("home"))
-
-            if list(user.groups.all()):
-                '''
-                    if user not tagged to the any project render error message to UI
-                    else render to the respective home page 
-                '''
-                project = list(user.groups.all().values_list('name', flat=True))
-            else:
-                context['error'] = f"Please tag the project : {username}"
-                return render(request, "intel_app/login.html", context)
-
-            # redirecting to home screen
-            response = HttpResponseRedirect(reverse('home'))
-            response.set_cookie('user_id', username)
-            response.set_cookie('project', list(project))
-            response.set_cookie('admin', user.is_superuser)
-            return response
+        if (username in USER_NAMES) and password in DEFAULT_PASSWORDS:
+            '''
+                if user password matches with default passwords
+                render the user to admin page
+            '''
+            return HttpResponseRedirect(reverse("user_create"))
         else:
-            context['error'] = "provide valid credentials"
-            return render(request, "intel_app/login.html", context)
+            user, data = login_user(username, password)
+            if user:
+                response = HttpResponseRedirect(reverse('home'))
+                response.set_cookie('user_id', data.get('username'))
+                response.set_cookie('project', ['Test'])
+                response.set_cookie('admin', data.get('admin'))
+                return response
+            else:
+                context['error'] = "provide valid credentials"
+                return render(request, "intel_app/login.html", context)
     else:
         return render(request, "intel_app/login.html")
+
+
+def user_create(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        project = request.POST['project']
+        password = request.POST['password']
+        # registering the user
+        register_user(username, password, project, False)
+        response = HttpResponseRedirect(reverse('login'))
+        return response
+    else:
+        return render(request, 'intel_app/user_create.html')
 
 
 def user_logout(request):
