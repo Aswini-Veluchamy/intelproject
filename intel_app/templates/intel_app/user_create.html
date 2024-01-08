@@ -89,9 +89,13 @@
                             <div class="col-sm-12">
                                 <label class="form-label" for="project">Project</label>
                                 <select class="selectpicker" multiple="multiple" name="project_name" id="project" data-live-search="true">
+                                    {% if projects %}
                                     <option value="" selected disabled>Select Project</option>
-                                    <option value="Test">Test</option>
-                                    <option value="Intel">Intel</option>
+                                    {% for i in projects.project %}
+                                    <option value="{{i}}">{{i}}</option>
+                                    {% endfor %}
+                                    {% endif %}
+
                                 </select>
                             </div>
                         </div>

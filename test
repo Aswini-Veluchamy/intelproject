@@ -340,7 +340,13 @@ run.sh
 CREATE TABLE users(
  username VARCHAR(50) NOT NULL,
  password VARCHAR(50) NOT NULL,
- project VARCHAR(20) NOT NULL,
+ project JSON,
  admin_status BOOLEAN,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE project_data(
+ project VARCHAR(50) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

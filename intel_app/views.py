@@ -23,6 +23,8 @@ from .db_connection import load_links_data
 from .db_connection import update_links_data
 from .db_connection import register_user
 from .db_connection import login_user
+from .db_connection import create_project
+from .db_connection import get_projects
 
 import ast
 
@@ -47,7 +49,7 @@ def user_login(request):
             if user:
                 response = HttpResponseRedirect(reverse('home'))
                 response.set_cookie('user_id', data.get('username'))
-                response.set_cookie('project', ['Test'])
+                response.set_cookie('project', data.get('project'))
                 response.set_cookie('admin', data.get('admin'))
                 return response
             else:
@@ -63,18 +65,19 @@ def user_create(request):
         project_name = request.POST.getlist('project_name')
         status = request.POST.get('status', 'False')
         password = request.POST['password']
-        print(username, status, project_name, password)
         # registering the user
-        register_user(username, password, project_name, status)
+        register_user(username, password, project_name, bool(status))
         response = HttpResponseRedirect(reverse('login'))
         return response
     else:
-        return render(request, 'intel_app/user_create.html')
+        projects = get_projects()
+        return render(request, 'intel_app/user_create.html', {'projects': projects})
+
 
 def project(request):
     if request.method == "POST":
         project = request.POST['project']
-        print(project)
+        create_project(project)
         return render(request, 'intel_app/project.html')
     else:
         return render(request, 'intel_app/project.html')
@@ -98,11 +101,10 @@ def home(request):
         admin = request.COOKIES['admin']
         user = request.COOKIES['user_id']
         project = ast.literal_eval(project)
-
         # based on the user filtering the data
         try:
             key_mess_data = get_key_msg_or_details_data(user, KEY_MESSAGE_TABLE)
-            if key_mess_data:
+            if key_mess_data and key_mess_data.get('project') in project:
                 project.remove(key_mess_data.get('project'))
                 project.insert(0, key_mess_data.get('project'))
                 key_mess_data['project'] = project
@@ -111,14 +113,12 @@ def home(request):
 
         try:
             details_data = get_key_msg_or_details_data(user, DETAILS_TABLE)
-            if details_data:
+            if details_data and details_data.get('project') in project:
                 project.remove(details_data.get('project'))
                 project.insert(0, details_data.get('project'))
                 details_data['project'] = project
         except TypeError:
             details_data = None
-
-        print(key_mess_data, details_data)
         return render(request, 'intel_app/index.html', {'project': project,
                                                         'key_mess_data': key_mess_data,
                                                         'details_data': details_data
@@ -209,7 +209,7 @@ def key_program(request):
         comments = request.POST['comments']
         project = request.POST['project']
 
-        user = request.session['meta_data'].get('user_id')
+        user = request.COOKIES['user_id']
         metric_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         load_key_program_metric_data([(metric, fv_target, current_week_actual,
@@ -261,7 +261,7 @@ def details(request):
     if request.method == "POST":
         message = request.POST['details_message']
         project = request.POST['details_project']
-        user = request.session['meta_data'].get('user_id')
+        user = request.COOKIES['user_id']
         details_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         load_details_data(details_id, user, message, project)
@@ -278,7 +278,7 @@ def schedule(request):
         comments = request.POST['comments']
         project = request.POST['project']
 
-        user = request.session['meta_data'].get('user_id')
+        user = request.COOKIES['user_id']
         schedule_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, project)
@@ -326,7 +326,7 @@ def links(request):
         links_url = request.POST['links_url']
         comments = request.POST['comments_links']
         project = request.POST['project']
-        user = request.session['meta_data'].get('user_id')
+        user = request.COOKIES['user_id']
 
         if links_url == '' or comments == '' or project == '':
             raise Exception('fill the fields!!!!!!!!')
@@ -367,6 +367,6 @@ def bbox(request):
         print(process)
         return HttpResponseRedirect(reverse("bbox"))
     else:
-        project = request.session['meta_data'].get('project')
-
+        project = request.COOKIES['project']
+        project = ast.literal_eval(project)
         return render(request, 'intel_app/bbox.html', {'project': project})

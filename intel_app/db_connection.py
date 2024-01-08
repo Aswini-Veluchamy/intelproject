@@ -2,6 +2,7 @@ import mysql.connector
 from .config import HOST, PORT, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
 from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE
+import json
 
 
 def db_connection():
@@ -183,7 +184,8 @@ def register_user(username, password, project, admin_status):
     try:
         conn, cursor = db_connection()
         query = "INSERT INTO users (username, password, project, admin_status) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (username, password, project, admin_status))
+        project_json = json.dumps(project)
+        cursor.execute(query, (username, password, project_json, admin_status))
         conn.commit()
         print("User registered successfully!")
     except mysql.connector.Error as err:
@@ -201,6 +203,36 @@ def login_user(username, password):
             columns = [col[0] for col in cursor.description]
             result = dict(zip(columns, user))
             return user, result
+        else:
+            return None, None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
+def create_project(project):
+    """Register a new project."""
+    try:
+        conn, cursor = db_connection()
+        query = f"INSERT INTO project_data (project) VALUES (%s)"
+        data = (project,)
+        cursor.execute(query, data)
+        conn.commit()
+        print("project created successfully!")
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
+def get_projects():
+    """Register a new project."""
+    try:
+        conn, cursor = db_connection()
+        query = "SELECT project FROM project_data"
+        cursor.execute(query)
+        project = cursor.fetchall()
+        if project:
+            columns = [col[0] for col in cursor.description]
+            result = dict(zip(columns, project))
+            return result
         else:
             return None
     except mysql.connector.Error as err:
