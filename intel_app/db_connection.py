@@ -48,23 +48,27 @@ def load_risk_data(data):
     conn.commit()
     conn.close()
 
-def get_key_message_data(user):
+
+def get_key_msg_or_details_data(user, table):
     conn, cursor = db_connection()
-    cursor.execute(f'SELECT * FROM key_message where user="{user}" ORDER BY ts DESC LIMIT 1;')
+    cursor.execute(f'SELECT * FROM {table} where user="{user}" ORDER BY ts DESC LIMIT 1;')
     columns = [col[0] for col in cursor.description]
     result = dict(zip(columns, cursor.fetchone()))
     conn.commit()
     conn.close()
     return result
+
+
 def get_data(user, table):
     conn, cursor = db_connection()
-    cursor.execute(f'SELECT * FROM {table} where user="{user}"')
+    cursor.execute(f"SELECT * FROM {table} where user='{user}'")
     records = cursor.fetchall()
     columns = [col[0] for col in cursor.description]
     result = [dict(zip(columns, record)) for record in records]
     conn.commit()
     conn.close()
     return result
+
 
 def update_risk_data(data):
     conn, cursor = db_connection()
@@ -154,12 +158,21 @@ def update_schedule_data(data):
     conn.close()
 
 
-def load_links_data():
+def load_links_data(links_url, comments, links_id, project, user):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {LINKS_TABLE} (milestone, por_commit, por_trend, status, comments, schedule_id,\
-            user, project) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (milestone, por_commit, por_trend, status, comments, schedule_id, user, proj)
+    sql = f"INSERT INTO {LINKS_TABLE} (links_url, comments_links, links_id, project, user) VALUES (%s, %s, %s, %s, %s)"
+    val = (links_url, comments, links_id, project, user)
     cursor.execute(sql, val)
-    print(f'data inserted in {SCHEDULE_TABLE} ....')
+    print(f'data inserted in {LINKS_TABLE} ....')
+    conn.commit()
+    conn.close()
+
+
+def update_links_data(links_url, comments, links_id):
+    conn, cursor = db_connection()
+    sql = (f"UPDATE {LINKS_TABLE} SET links_url = '{links_url}', comments_links = '{comments}', \
+            WHERE links_id='{links_id}'")
+    cursor.execute(sql)
+    print(f'data updated in {links_id} ....')
     conn.commit()
     conn.close()
