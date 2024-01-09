@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate
@@ -248,11 +248,7 @@ def key_program_edit(request, pk):
 
 @csrf_exempt
 def key_program_delete(request, pk):
-    tab = KeyProgramMetricTable.objects.filter(pk=pk)
-    # delete the data from external database
-    delete_key_program_metric_data(tab[0].metric_id)
-    # delete the data from local db
-    tab.delete()
+    delete_key_program_metric_data(pk)
     return HttpResponseRedirect(reverse("key_program"))
 
 

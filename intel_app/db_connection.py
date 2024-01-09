@@ -171,8 +171,8 @@ def load_links_data(links_url, comments, links_id, project, user):
 
 def update_links_data(links_url, comments, links_id):
     conn, cursor = db_connection()
-    sql = (f"UPDATE {LINKS_TABLE} SET links_url = '{links_url}', comments_links = '{comments}', \
-            WHERE links_id='{links_id}'")
+    sql = (f"UPDATE {LINKS_TABLE} SET links_url = '{links_url}', comments_links = '{comments}' WHERE links_id='{links_id}'")
+    print(sql)
     cursor.execute(sql)
     print(f'data updated in {links_id} ....')
     conn.commit()
