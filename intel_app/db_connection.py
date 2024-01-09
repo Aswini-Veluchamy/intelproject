@@ -230,8 +230,7 @@ def get_projects():
         cursor.execute(query)
         project = cursor.fetchall()
         if project:
-            columns = [col[0] for col in cursor.description]
-            result = dict(zip(columns, project))
+            result = [i[0] for i in project]
             return result
         else:
             return None
