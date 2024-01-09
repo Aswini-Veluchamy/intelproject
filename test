@@ -350,3 +350,17 @@ CREATE TABLE project_data(
  project VARCHAR(50) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE key_program_metric_table(
+ metric MEDIUMTEXT NOT NULL,
+ fv_target MEDIUMTEXT NOT NULL,
+ current_week_actual MEDIUMTEXT NOT NULL,
+ current_week_plan MEDIUMTEXT NOT NULL,
+ status VARCHAR(50) NOT NULL,
+ comments VARCHAR(250) NOT NULL,
+ metric_id VARCHAR(250) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ user VARCHAR(50) NOT NULL
+);
