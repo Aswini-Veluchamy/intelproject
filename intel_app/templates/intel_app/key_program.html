@@ -141,7 +141,7 @@
                                 <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
                             </td>
                             <td class="text-center">
-                                <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
+                                <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
                                     <i class="fa-solid fa-check"></i>
                                 </button>
                                 <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Metric">
@@ -150,7 +150,7 @@
                             </td>
                         </tr>
                         {% for i in data %}
-                        <tr data-n-id="{{ i.id }}" data-non-edit="true">
+                        <tr data-n-id="{{ i.metric_id }}" data-non-edit="true">
                             <td nowrap class="project">{{ i.project }}</td>
                             <td nowrap class="status">{{ i.status.0 }}</td>
                             <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
@@ -159,17 +159,17 @@
                             <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
                             <td nowrap class="comments">{{ i.comments | linebreaks }}</td>
                             <td class="text-center">
-                                <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
+                                <button data-id="{{ i.metric_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button type="button" class="btn btn-danger btn-sm" title="Delete Metric">
-                                    <a style="text-decoration:none;color:#fff;" href="{% url 'key_program_delete' pk=i.id %}" onclick="return confirmDelete()">
+                                    <a style="text-decoration:none;color:#fff;" href="{% url 'key_program_delete' pk=i.metric_id %}" onclick="return confirmDelete()">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </button>
                             </td>
                         </tr>
-                        <tr data-e-id="{{ i.id }}" data-edit="false">
+                        <tr data-e-id="{{ i.metric_id }}" data-edit="false">
                             <td class="project">
                                 <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
                             </td>
@@ -197,10 +197,10 @@
                             </td>
                             <div class="text-center">
                                 <td>
-                                    <button data-id="{{ i.id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Metric">
+                                    <button data-id="{{ i.metric_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Metric">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button data-id="{{ i.id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Metric">
+                                    <button data-id="{{ i.metric_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Metric">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>

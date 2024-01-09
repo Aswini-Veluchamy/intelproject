@@ -121,7 +121,7 @@
                                     <textarea class="form-control" data-prop="comments_links" name="comments_links" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="text-center">
-                                    <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Links">
+                                    <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Links">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
                                     <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Links">
@@ -130,16 +130,16 @@
                                 </td>
                             </tr>
                             {% for i in data %}
-                            <tr data-n-id="{{ i.id }}" data-non-edit="true">
+                            <tr data-n-id="{{ i.links_id }}" data-non-edit="true">
                                 <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="links_url">{{ i.links_url }}</td>
                                 <td nowrap class="comments_links">{{ i.comments_links }}</td>
                                 <td>
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links">
+                                    <button data-id="{{ i.links_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links">
                                         <i class="fas fa-edit"></i></button>
                                 </td>
                             </tr>
-                            <tr data-e-id="{{ i.id }}" data-edit="false">
+                            <tr data-e-id="{{ i.links_id }}" data-edit="false">
                                 <td class="project">
                                     <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
                                 </td>
@@ -153,10 +153,10 @@
                                 </td>
                                 <div class="text-center">
                                     <td>
-                                        <button data-id="{{ i.id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Links">
+                                        <button data-id="{{ i.links_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Links">
                                             <i class="fa-solid fa-check"></i>
                                         </button>
-                                        <button data-id="{{ i.id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Links">
+                                        <button data-id="{{ i.links_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Links">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </td>
