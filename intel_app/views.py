@@ -8,7 +8,7 @@ import time
 from .models import KeyProgramMetricTable
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
-from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES
+from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, BBOX_TABLE
 
 from .db_connection import load_key_message_data
 from .db_connection import load_risk_data
@@ -25,6 +25,8 @@ from .db_connection import register_user
 from .db_connection import login_user
 from .db_connection import create_project
 from .db_connection import get_projects
+from .db_connection import load_bbox_data
+from .db_connection import update_bbox_data
 
 import ast
 
@@ -360,9 +362,31 @@ def bbox(request):
         perf_target = request.POST['perf_target']
         cdyn = request.POST['cdyn']
         schedule_bbox = request.POST['schedule_bbox']
-        print(process)
+        user = request.COOKIES['user_id']
+        bbox_id = str(int(time.time() * 1000)) + '_' + user
+        load_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+                       project, user)
         return HttpResponseRedirect(reverse("bbox"))
     else:
         project = request.COOKIES['project']
         project = ast.literal_eval(project)
-        return render(request, 'intel_app/bbox.html', {'project': project})
+        user = request.COOKIES['user_id']
+        result = get_data(user, BBOX_TABLE)
+        return render(request, 'intel_app/bbox.html', {'project': project, 'data': result})
+
+
+@csrf_exempt
+def bbox_edit(request, pk):
+    if request.method == "POST":
+        project = request.POST['project']
+        process = request.POST['process']
+        die_area = request.POST['die_area']
+        config = request.POST['config']
+        pv_freq = request.POST['pv_freq']
+        perf_target = request.POST['perf_target']
+        cdyn = request.POST['cdyn']
+        schedule_bbox = request.POST['schedule_bbox']
+        user = request.COOKIES['user_id']
+        # update the values in external database
+        update_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
+        return HttpResponseRedirect(reverse("bbox"))

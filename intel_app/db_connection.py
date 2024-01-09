@@ -1,7 +1,7 @@
 import mysql.connector
 from .config import HOST, PORT, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
-from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE
+from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE
 import json
 
 
@@ -238,3 +238,27 @@ def get_projects():
     except mysql.connector.Error as err:
         print(f"Error: {err}")
 
+
+def load_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+                   project, user):
+    conn, cursor = db_connection()
+    sql = f"INSERT INTO {BBOX_TABLE} (process, die_area, config, pv_freq, perf_target, cdyn,\
+            schedule_bbox, bbox_id, project, user) \
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id, project, user)
+    cursor.execute(sql, val)
+    print(f'data inserted in {BBOX_TABLE} ....')
+    conn.commit()
+    conn.close()
+
+
+def update_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id):
+    conn, cursor = db_connection()
+    sql = (f"UPDATE {BBOX_TABLE} SET process = '{process}', die_area = '{die_area}', \
+            config = '{config}', pv_freq = '{pv_freq}', perf_target = '{perf_target}', cdyn = '{cdyn}', \
+            schedule_bbox = '{schedule_bbox}' \
+            WHERE bbox_id='{bbox_id}'")
+    cursor.execute(sql)
+    print(f'data updated in {BBOX_TABLE} ....')
+    conn.commit()
+    conn.close()
