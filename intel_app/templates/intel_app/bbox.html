@@ -147,7 +147,7 @@
                                     <textarea class="form-control" data-prop="schedule_bbox" name="schedule_bbox" placeholder="Enter Schedule" cols="10" rows="6" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="text-center">
-                                    <button data-id="new-save" type="submit" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
+                                    <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
                                     <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Metric">
@@ -156,8 +156,12 @@
                                 </td>
                             </tr>
                             {% for i in data %}
-                            <tr data-n-id="{{ i.id }}" data-non-edit="true">
-                                <td nowrap class="category">{{ i.category }}</td>
+                            <tr data-n-id="{{ i.bbox_id }}" data-non-edit="true">
+                                <td style="white-space:pre-wrap; word-wrap:break-word;" nowrap class="category">
+                                    Plan
+                                    Actual
+                                    Grading
+                                </td>
                                 <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="process">{{ i.process | linebreaks }}</td>
                                 <td nowrap class="die_area">{{ i.die_area | linebreaks }}</td>
@@ -167,14 +171,15 @@
                                 <td nowrap class="cdyn">{{ i.cdyn | linebreaks }}</td>
                                 <td nowrap class="schedule_bbox">{{ i.schedule_bbox | linebreaks }}</td>
                                 <td class="text-center">
-                                    <button data-id="{{ i.id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
+                                    <button data-id="{{ i.bbox_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 </td>
                             </tr>
-                            <tr data-e-id="{{ i.id }}" data-edit="false">
+                            <tr data-e-id="{{ i.bbox_id }}" data-edit="false">
                                 <td class="category">
-                                    <textarea class="form-control" data-prop="category" name="category" cols="10" rows="6" maxlength="250" disabled>Plan
+                                    <textarea class="form-control" data-prop="category" name="category" cols="10" rows="6" maxlength="250" disabled>
+                                    Plan
                                     Actual
                                     Grading
                                     </textarea>
@@ -205,10 +210,10 @@
                                 </td>
                                 <div class="text-center">
                                     <td>
-                                        <button data-id="{{ i.id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Metric">
+                                        <button data-id="{{ i.bbox_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Metric">
                                             <i class="fa-solid fa-check"></i>
                                         </button>
-                                        <button data-id="{{ i.id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Metric">
+                                        <button data-id="{{ i.bbox_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Metric">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </td>
