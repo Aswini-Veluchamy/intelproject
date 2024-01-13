@@ -91,7 +91,7 @@
                                 <select class="selectpicker" multiple="multiple" name="project_name" id="project" data-live-search="true">
                                     {% if projects %}
                                     <option value="" selected disabled>Select Project</option>
-                                    {% for i in projects.project %}
+                                    {% for i in projects %}
                                     <option value="{{i}}">{{i}}</option>
                                     {% endfor %}
                                     {% endif %}

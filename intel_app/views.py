@@ -129,7 +129,7 @@ def home(request):
             details_data = None
         return render(request, 'intel_app/index.html', {'project': project,
                                                         'key_mess_data': key_mess_data,
-                                                        'details_data': details_data
+                                                        'details_data': details_data, 'user': user
                                                         })
     except KeyError:
         return HttpResponseRedirect(reverse('login'))
@@ -183,7 +183,8 @@ def risks(request):
                     i['status'] = update_queryset_values(status, i['status'])
                     i['severity'] = update_queryset_values(severity, i['severity']) if i['severity'] else severity
                     i['impact'] = update_queryset_values(impact, i['impact'])
-            return render(request, 'intel_app/risk_table.html', {'data': result, 'project': project})
+            return render(request, 'intel_app/risk_table.html', {'data': result, 'project': project,
+                                                                 'user': user})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
@@ -234,7 +235,8 @@ def key_program(request):
                 status = ['R', 'G', 'B', 'Y']
                 for i in result:
                     i['status'] = update_queryset_values(status, i['status'])
-            return render(request, 'intel_app/key_program.html', {'data': result, 'project': project})
+            return render(request, 'intel_app/key_program.html', {'data': result, 'project': project,
+                                                                  'user': user})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
@@ -298,7 +300,8 @@ def schedule(request):
                 status = ['R', 'G', 'B', 'Y']
                 for i in result:
                     i['status'] = update_queryset_values(status, i['status'])
-            return render(request, 'intel_app/schedule.html', {'data': result, 'project': project})
+            return render(request, 'intel_app/schedule.html', {'data': result, 'project': project,
+                                                               'user': user})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
@@ -344,7 +347,8 @@ def links(request):
         user = request.COOKIES['user_id']
         project = ast.literal_eval(project)
         result = get_data(user, LINKS_TABLE)
-        return render(request, 'intel_app/links.html', {'project': project, 'data': result})
+        return render(request, 'intel_app/links.html', {'project': project, 'data': result,
+                                                        'user': user})
 
 
 @csrf_exempt
@@ -378,7 +382,8 @@ def bbox(request):
         project = ast.literal_eval(project)
         user = request.COOKIES['user_id']
         result = get_data(user, BBOX_TABLE)
-        return render(request, 'intel_app/bbox.html', {'project': project, 'data': result})
+        return render(request, 'intel_app/bbox.html', {'project': project, 'data': result,
+                                                       'user': user})
 
 
 @csrf_exempt
