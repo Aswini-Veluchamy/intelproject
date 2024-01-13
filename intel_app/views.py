@@ -94,7 +94,13 @@ def user_logout(request):
 
 
 def forgot_password(request):
-    return render(request, 'intel_app/forgot_password.html')
+    if request.method == "POST":
+        forgot_username = request.POST['forgot_username']
+        forgot_password = request.POST['forgot_password']
+        print(forgot_username,forgot_password)
+        return HttpResponseRedirect(reverse('login'))
+    else:
+        return render(request, 'intel_app/forgot_password.html')
 
 
 def home(request):

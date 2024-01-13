@@ -46,6 +46,14 @@ input {
   border: solid 1px #ccc;
   padding: 0 11px;
 }
+select {
+  height: 40px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: none;
+  border: solid 1px #ccc;
+  padding: 0 11px;
+}
 input:disabled {
   cursor: not-allowed;
   border: solid 1px #eee;
