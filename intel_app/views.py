@@ -27,6 +27,8 @@ from .db_connection import create_project
 from .db_connection import get_projects
 from .db_connection import load_bbox_data
 from .db_connection import update_bbox_data
+from .db_connection import update_password
+from .db_connection import get_users
 
 import ast
 
@@ -67,10 +69,17 @@ def user_create(request):
         project_name = request.POST.getlist('project_name')
         status = request.POST.get('status', 'False')
         password = request.POST['password']
-        # registering the user
-        register_user(username, password, project_name, bool(status))
-        response = HttpResponseRedirect(reverse('login'))
-        return response
+        # user validation
+        users = get_users()
+        if users and username in users:
+            messages = f'user already exists .....{username}'
+        else:
+            # registering the user
+            register_user(username, password, project_name, bool(status))
+            messages = f'user created successfully .....{username}'
+        # projects
+        projects = get_projects()
+        return render(request, 'intel_app/user_create.html', {'projects': projects, 'messages': messages})
     else:
         projects = get_projects()
         return render(request, 'intel_app/user_create.html', {'projects': projects})
@@ -79,8 +88,13 @@ def user_create(request):
 def project(request):
     if request.method == "POST":
         project = request.POST['project']
-        create_project(project)
-        return render(request, 'intel_app/project.html')
+        projects = get_projects()
+        if project in projects:
+            messages = f'project already exists ......{project}'
+        else:
+            create_project(project)
+            messages = f'project created successfully ....{project}'
+        return render(request, 'intel_app/project.html', {'messages': messages})
     else:
         return render(request, 'intel_app/project.html')
 
@@ -95,10 +109,17 @@ def user_logout(request):
 
 def forgot_password(request):
     if request.method == "POST":
-        forgot_username = request.POST['forgot_username']
-        forgot_password = request.POST['forgot_password']
-        print(forgot_username,forgot_password)
-        return HttpResponseRedirect(reverse('login'))
+        username = request.POST['forgot_username']
+        password = request.POST['forgot_password']
+        ''' updating password'''
+        check = update_password(username, password)
+        print(check)
+        if check:
+            message = 'Password updated successfully...'
+        else:
+            message = 'Provide valid username ....!!!!'
+        print(message)
+        return render(request, 'intel_app/forgot_password.html', {'messages': message})
     else:
         return render(request, 'intel_app/forgot_password.html')
 

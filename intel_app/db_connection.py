@@ -238,6 +238,22 @@ def get_projects():
         print(f"Error: {err}")
 
 
+def get_users():
+    """Register a new project."""
+    try:
+        conn, cursor = db_connection()
+        query = "select distinct(username) from users"
+        cursor.execute(query)
+        users = cursor.fetchall()
+        if users:
+            result = [i[0] for i in users]
+            return result
+        else:
+            return None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
 def load_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
                    project, user):
     conn, cursor = db_connection()
@@ -261,3 +277,21 @@ def update_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, sche
     print(f'data updated in {BBOX_TABLE} ....')
     conn.commit()
     conn.close()
+
+
+def update_password(user_id, password):
+    try:
+        conn, cursor = db_connection()
+        get_user_query = f"select * from users where username='{user_id}'"
+        cursor.execute(get_user_query)
+        users = cursor.fetchall()
+        if users:
+            sql = f"UPDATE users SET password = '{password}' WHERE username='{user_id}'"
+            cursor.execute(sql)
+            conn.commit()
+            conn.close()
+            return True
+        else:
+            raise Exception("Username not exists.................")
+    except Exception as ex:
+        return False
