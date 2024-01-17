@@ -3,6 +3,7 @@ from .config import HOST, PORT, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
 from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE
 import json
+import bcrypt
 
 
 def db_connection():
@@ -196,13 +197,18 @@ def login_user(username, password):
     """Login an existing user."""
     try:
         conn, cursor = db_connection()
-        query = "SELECT * FROM users WHERE username = %s AND password = %s"
-        cursor.execute(query, (username, password))
+        query = "SELECT username, password FROM users WHERE username = %s"
+        cursor.execute(query, (username,))
         user = cursor.fetchone()
         if user:
-            columns = [col[0] for col in cursor.description]
-            result = dict(zip(columns, user))
-            return user, result
+            stored_hashed_password = user[1]
+            # Verify the entered password against the stored hash
+            if bcrypt.checkpw(password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
+                columns = [col[0] for col in cursor.description]
+                result = dict(zip(columns, user))
+                return user[0], result
+            else:
+                return None, None
         else:
             return None, None
     except mysql.connector.Error as err:
@@ -295,3 +301,9 @@ def update_password(user_id, password):
             raise Exception("Username not exists.................")
     except Exception as ex:
         return False
+
+
+def encrypt_password(password):
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password

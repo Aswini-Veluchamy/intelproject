@@ -2,10 +2,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth import authenticate
 from .db_connection import get_data, get_key_msg_or_details_data
 import time
-from .models import KeyProgramMetricTable
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
 from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, BBOX_TABLE
@@ -28,7 +26,7 @@ from .db_connection import get_projects
 from .db_connection import load_bbox_data
 from .db_connection import update_bbox_data
 from .db_connection import update_password
-from .db_connection import get_users
+from .db_connection import get_users, encrypt_password
 
 import ast
 
@@ -75,7 +73,8 @@ def user_create(request):
             messages = f'user already exists .....{username}'
         else:
             # registering the user
-            register_user(username, password, project_name, bool(status))
+            encrypt_pwd = encrypt_password(password)
+            register_user(username, encrypt_pwd, project_name, bool(status))
             messages = f'user created successfully .....{username}'
         # projects
         projects = get_projects()
