@@ -6,7 +6,7 @@ from .db_connection import get_data, get_key_msg_or_details_data
 import time
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
-from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, BBOX_TABLE
+from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, BBOX_TABLE, ISSUES_TABLE
 
 from .db_connection import load_key_message_data
 from .db_connection import load_risk_data
@@ -27,7 +27,8 @@ from .db_connection import load_bbox_data
 from .db_connection import update_bbox_data
 from .db_connection import update_password
 from .db_connection import get_users, encrypt_password
-
+from .db_connection import load_issues_data
+from .db_connection import update_issues_data
 import ast
 
 from copy import deepcopy
@@ -88,7 +89,7 @@ def project(request):
     if request.method == "POST":
         project = request.POST['project']
         projects = get_projects()
-        if project in projects:
+        if projects and project in projects:
             messages = f'project already exists ......{project}'
         else:
             create_project(project)
@@ -170,22 +171,25 @@ def key_message(request):
 @csrf_exempt
 def risks(request):
     if request.method == "POST":
-        display = request.POST.get('switch_button', 'Off')
-        problem_statement = request.POST['problem_statement']
+        risk_summary = request.POST['risk_summary']
+        risk_area = 'test'
         status = request.POST['status']
         owner = request.POST['owner']
-        message = request.POST['message']
+        consequence = request.POST['consequence']
+        mitigations = request.POST['mitigations']
         eta = request.POST['eta']
-        risk = request.POST['risk']
-        severity = request.POST['severity']
+        age = request.POST['age']
+        trigger_date = request.POST['trigger_date']
+        risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
         project = request.POST['project']
         user = request.COOKIES['user_id']
         risk_id = str(int(time.time() * 1000)) + '_' + user
+        print(risk_summary,risk_area)
         ''' storing data into database'''
         # load risk data to external database
         load_risk_data([
-            (problem_statement, status, owner, message, eta, risk, severity, impact, risk_id, project, user, display)
+            (risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, risk_id, project, user)
         ])
         return HttpResponseRedirect(reverse("risk"))
     else:
@@ -195,15 +199,14 @@ def risks(request):
             user = request.COOKIES['user_id']
             project = ast.literal_eval(project)
             result = get_data(user, RISK_TABLE)
+
             if result:
-                status = ['R', 'G', 'B', 'Y']
-                impact = ['PPA', 'Functionality', 'Quality']
-                severity = ['None', 'Mgt']
+                status = ['Open', 'Closed']
+                impact = ['Low', 'Medium', 'High']
                 for i in result:
                     i['status'] = update_queryset_values(status, i['status'])
-                    i['severity'] = update_queryset_values(severity, i['severity']) if i['severity'] else severity
                     i['impact'] = update_queryset_values(impact, i['impact'])
-            return render(request, 'intel_app/risk_table.html', {'data': result, 'project': project,
+            return render(request, 'intel_app/risk_table.html', {'data':result, 'project': project,
                                                                  'user': user})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
@@ -213,17 +216,18 @@ def risks(request):
 def risk_edit_table(request, pk):
     if request.method == "POST":
         print(pk)
-        ps = request.POST['problem_statement']
+        risk_summary = request.POST['risk_summary']
+        risk_area = 'test'
         status = request.POST['status']
         owner = request.POST['owner']
-        msg = request.POST['message']
+        consequence = request.POST['consequence']
+        mitigations = request.POST['mitigations']
         eta = request.POST['eta']
-        risk = request.POST['risk']
-        severity = request.POST['severity']
+        age = request.POST['age']
+        trigger_date = request.POST['trigger_date']
+        risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
-        if severity == 'None':
-            severity = ''
-        update_risk_data([(ps, status, owner, msg, eta, risk, severity, impact, pk)])
+        update_risk_data([(risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, pk)])
         return HttpResponseRedirect(reverse("risk"))
 
 
@@ -421,3 +425,61 @@ def bbox_edit(request, pk):
         # update the values in external database
         update_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
         return HttpResponseRedirect(reverse("bbox"))
+
+@csrf_exempt
+def project_change(request, func_name):
+    return HttpResponseRedirect(reverse(func_name))
+
+@csrf_exempt
+def issues(request):
+    if request.method == "POST":
+        issues_summary = request.POST['issues_summary']
+        status = request.POST['status']
+        owner = request.POST['owner']
+        eta = request.POST['eta']
+        age = request.POST['age']
+        trigger_date = request.POST['trigger_date']
+        issues_initiated = request.POST['issues_initiated']
+        severity = request.POST['severity']
+        project = request.POST['project']
+        user = request.COOKIES['user_id']
+        issues_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
+        # load risk data to external database
+        load_issues_data([
+            (issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, issues_id, project, user)
+        ])
+        return HttpResponseRedirect(reverse("issues"))
+    else:
+        try:
+            project = request.COOKIES['project']
+            admin = request.COOKIES['admin']
+            user = request.COOKIES['user_id']
+            project = ast.literal_eval(project)
+            result = get_data(user, ISSUES_TABLE)
+
+            if result:
+                status = ['Open', 'Closed']
+                severity = ['Low', 'Medium', 'High']
+                for i in result:
+                    i['status'] = update_queryset_values(status, i['status'])
+                    i['severity'] = update_queryset_values(severity, i['severity'])
+            return render(request, 'intel_app/issues.html', {'data':result, 'project': project,
+                                                                 'user': user})
+        except KeyError:
+            return HttpResponseRedirect(reverse('login'))
+
+@csrf_exempt
+def issues_edit_table(request, pk):
+    if request.method == "POST":
+        print(pk)
+        issues_summary = request.POST['issues_summary']
+        status = request.POST['status']
+        owner = request.POST['owner']
+        eta = request.POST['eta']
+        age = request.POST['age']
+        trigger_date = request.POST['trigger_date']
+        issues_initiated = request.POST['issues_initiated']
+        severity = request.POST['severity']
+        update_issues_data([(issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, pk)])
+        return HttpResponseRedirect(reverse("issues"))

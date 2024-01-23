@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Risks</title>
+    <title>Issues</title>
     <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
     <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
@@ -77,11 +77,11 @@
         <div class="container"><!--style="max-width:100%;"-->
             <div class="card">
                 <div class="card-header">
-                    <b>Risks</b>
+                    <b>Issues</b>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary btn-sm add-btn"
                             style="float:right;">
-                        Add Risk
+                        Add Issues
                     </button>
                 </div>
                 <div class="card-body">
@@ -100,36 +100,22 @@
                                data-buttons-class="primary btn-sm">
                             <thead>
                             <tr>
-                                <th scope="col" nowrap data-field="risk_summary" class="w-50 p-3 risk_summary">Risk Summary</th>
-                                <th scope="col" nowrap data-field="risk_area" class="w-50 p-3 risk_area">Risk Area</th>
+                                <th scope="col" nowrap data-field="issues_summary" class="w-50 p-3 issues_summary">Issues Summary</th>
                                 <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
                                 <th scope="col" nowrap data-field="owner" class="w-50 p-3 owner">Owner</th>
-                                <th scope="col" nowrap data-field="consequence" class="w-50 p-3 consequence">Consequence</th>
-                                <th scope="col" nowrap data-field="mitigations" class="w-50 p-3 mitigations">Mitigations</th>
                                 <th scope="col" nowrap data-field="eta" class="w-50 p-3 eta">Next Steps with ETA &nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="age" class="w-50 p-3 age">Age &nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="trigger_date" class="w-50 p-3 trigger_date">Trigger Date</th>
-                                <th scope="col" nowrap data-field="risk_initiated" class="w-50 p-3 risk_initiated">Risk Initiated</th>
-                                <th scope="col" nowrap data-field="impact" class="w-50 p-3 impact" data-formatter="nameFormatter">Impact</th>
+                                <th scope="col" nowrap data-field="issues_initiated" class="w-50 p-3 issues_initiated">Issues Initiated</th>
+                                <th scope="col" nowrap data-field="severity" class="w-50 p-3 severity" data-formatter="nameFormatter">Severity</th>
                                 <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                             </tr>
                             </thead>
-                            <tbody data-body="risk">
+                            <tbody data-body="issues">
                             <tr data-a-id="new" data-add="false">
-                                <td class="risk_summary">
-                                    <textarea class="form-control" data-prop="risk_summary" name="risk_summary" placeholder="Enter Risk Summary" cols="3" maxlength="250" required="required"></textarea>
-                                </td>
-                                <td class="risk_area">
-                                    <select class="selectpicker" multiple="multiple" name="risk_area" id="risk_area" required="required">
-                                        <option value="" selected disabled>Select Risk Area</option>
-                                        <option value="Cost">Cost</option>
-                                        <option value="Schedule">Schedule</option>
-                                        <option value="Functionality">Functionality</option>
-                                        <option value="Performance">Performance</option>
-                                        <option value="Power">Power</option>
-                                        <option value="Area">Area</option>
-                                    </select>
+                                <td class="issues_summary">
+                                    <textarea class="form-control" data-prop="issues_summary" name="issues_summary" placeholder="Enter Issues Summary" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="project">
                                     <select class="form-select" name="project" data-prop='project' required="required">
@@ -141,84 +127,68 @@
                                 </td>
                                 <td class="status">
                                     <select class="form-select" data-prop="status" name="status" required="required">
-                                        <option value="" disabled="disabled" selected="selected" >Select Status</option>
+                                        <option value="" disabled="disabled" selected="selected">Select Status</option>
                                         <option value="Open">Open</option>
                                         <option value="Closed">Closed</option>
                                     </select>
                                 </td>
                                 <td class="owner">
                                     <input class="form-control" data-prop="owner" name="owner" type="text"
-                                        required="required" placeholder="Enter Owner" />
-                                </td>
-                                <td class="consequence">
-                                    <textarea class="form-control" data-prop="consequence" name="consequence" placeholder="Enter Consequence" cols="3" maxlength="250" required="required"></textarea>
-                                </td>
-                                <td class="mitigations">
-                                    <textarea class="form-control" data-prop="mitigations" name="mitigations" placeholder="Enter Mitigations" cols="3" maxlength="250" required="required"></textarea>
+                                           placeholder="Enter Owner" required="required" />
                                 </td>
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" name="eta" type="date"
-                                       required="required" placeholder="Enter ETA" />
+                                           placeholder="Enter ETA" required="required" />
                                 </td>
                                 <td class="age">
                                     <input class="form-control" data-prop="age" name="age" type="number"
-                                        required="required" placeholder="Enter Age" />
+                                           placeholder="Enter Age" required="required" />
                                 </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" name="trigger_date" type="date"
-                                         required="required" placeholder="Enter Trigger Date" />
+                                           placeholder="Enter Trigger Date" required="required" />
                                 </td>
-                                <td class="risk_initiated">
-                                    <input class="form-control" data-prop="risk_initiated" name="risk_initiated" type="date"
-                                         required="required" placeholder="Enter Risk Initiated" />
+                                <td class="issues_initiated">
+                                    <input class="form-control" data-prop="issues_initiated" name="issues_initiated" type="date"
+                                           placeholder="Enter Issues Initiated" required="required" />
                                 </td>
-                                <td class="impact">
-                                    <select class="form-select" data-prop="impact" name="impact" required="required">
-                                        <option value="" disabled="disabled" selected="selected">Select Impact</option>
+                                <td class="severity">
+                                    <select class="form-select" data-prop="severity" name="severity" required="required">
+                                        <option value="" disabled="disabled" selected="selected">Select Severity</option>
                                         <option value="High">High</option>
                                         <option value="Medium">Medium</option>
                                         <option value="Low">Low</option>
                                     </select>
                                 </td>
                                 <td class="text-center">
-                                    <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Risk">
+                                    <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Issues">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Risk">
+                                    <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Issues">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
                             </tr>
                             {% for i in data %}
-                            <tr data-n-id="{{ i.risk_id }}" data-non-edit="true">
-                                <td nowrap class="risk_summary">{{ i.risk_summary }}</td>
-                                <td nowrap class="risk_area">{{ i.risk_area }}</td>
+                            <tr data-n-id="{{ i.issues_id }}" data-non-edit="true">
+                                <td nowrap class="issues_summary">{{ i.issues_summary }}</td>
                                 <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="status">{{ i.status.0 }}</td>
                                 <td nowrap class="owner">{{ i.owner }}</td>
-                                <td nowrap class="consequence">{{ i.consequence }}</td>
-                                <td nowrap class="mitigations">{{ i.mitigations }}</td>
                                 <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
                                 <td nowrap class="age">{{ i.age }}</td>
                                 <td nowrap class="trigger_date">{{ i.trigger_date | date:'Y-m-d' }}</td>
-                                <td nowrap class="risk_initiated">{{ i.risk_initiated | date:'Y-m-d' }}</td>
-                                <td nowrap class="impact">{{ i.impact.0 }}</td>
+                                <td nowrap class="issues_initiated">{{ i.issues_initiated | date:'Y-m-d' }}</td>
+                                <td nowrap class="severity">{{ i.severity.0 }}</td>
                                 <td nowrap class="action">
-                                    <button data-id="{{ i.risk_id }}" type="button" class="btn btn-info btn-sm edit-btn"
-                                            title="Edit Risk"><i
+                                    <button data-id="{{ i.issues_id }}" type="button" class="btn btn-info btn-sm edit-btn"
+                                            title="Edit Issues"><i
                                             class="fas fa-edit"></i></button>
                                 </td>
                             </tr>
-                            <tr data-e-id="{{ i.risk_id }}" data-edit="false">
-                                <td class="risk_summary">
-                                    <textarea class="form-control" data-prop="risk_summary" name="risk_summary" cols="3" maxlength="250" required="required">{{i.risk_summary}}</textarea>
-                                </td>
-                                <td class="risk_area">
-                                    <select class="selectpicker" multiple="multiple" data-prop="risk_area" name="risk_area" required="required">
-                                        {% for i in i.risk_area %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
+                            <tr data-e-id="{{ i.issues_id }}" data-edit="false">
+                                <td class="issues_summary">
+                                    <textarea class="form-control" data-prop="issues_summary" name="issues_summary" cols="3" maxlength="250" required="required">{{i.issues_summary}}</textarea>
                                 </td>
                                 <td class="project">
                                     <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
@@ -234,12 +204,6 @@
                                     <input class="form-control" data-prop="owner" id="owner" name="owner" type="text"
                                            required="required" value="{{i.owner}}" />
                                 </td>
-                                <td class="consequence">
-                                    <textarea class="form-control" data-prop="consequence" id="consequence" name="consequence" cols="3" maxlength="250">{{ i.consequence }}</textarea>
-                                </td>
-                                <td class="mitigations">
-                                    <textarea class="form-control" data-prop="mitigations" id="mitigations" name="mitigations" cols="3" maxlength="250">{{ i.mitigations }}</textarea>
-                                </td>
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" id="eta" name="eta" type="date"
                                            required="required" value="{{ i.eta | date:'Y-m-d' }}" />
@@ -252,23 +216,23 @@
                                     <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" type="date"
                                            required="required" value="{{ i.trigger_date | date:'Y-m-d' }}" />
                                 </td>
-                                <td class="risk_initiated">
-                                    <input class="form-control" data-prop="risk_initiated" id="risk_initiated" name="risk_initiated" type="date"
-                                           required="required" value="{{ i.risk_initiated | date:'Y-m-d' }}" />
+                                <td class="issues_initiated">
+                                    <input class="form-control" data-prop="issues_initiated" id="issues_initiated" name="issues_initiated" type="date"
+                                           required="required" value="{{ i.issues_initiated | date:'Y-m-d' }}" />
                                 </td>
-                                <td class="impact">
-                                    <select class="form-select" data-prop="impact" name="impact" required="required">
-                                        {% for j in i.impact %}
+                                <td class="severity">
+                                    <select class="form-select" data-prop="severity" name="severity" required="required">
+                                        {% for j in i.severity %}
                                         <option value="{{j}}">{{j}}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
                                 <div>
                                     <td>
-                                        <button data-id="{{ i.risk_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Risk">
+                                        <button data-id="{{ i.issues_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Issues">
                                             <i class="fa-solid fa-check"></i>
                                         </button>
-                                        <button data-id="{{ i.risk_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Risk">
+                                        <button data-id="{{ i.issues_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Issues">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </td>
@@ -297,15 +261,10 @@
 <script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
 <script>
-$(function () {
-    $('#risk_area').selectpicker();
-});
-</script>
-<script>
     function nameFormatter(value, row) {
-      var icon = row.impact === 'Low'  ? 'fa-circle fa-sm text-primary' :
-      row.impact === 'Medium'  ? 'fa-circle fa-sm text-warning' :
-      row.impact === 'High'  ? 'fa-circle fa-sm text-danger' : 'none'
+      var icon = row.severity === 'Low'  ? 'fa-circle fa-sm text-primary' :
+      row.severity === 'Medium'  ? 'fa-circle fa-sm text-warning' :
+      row.severity === 'High'  ? 'fa-circle fa-sm text-danger' : 'none'
       return '<i class="fa ' + icon + '"></i> ' + value
     }
 
@@ -313,7 +272,7 @@ $(function () {
 <script>
     $('#example').bootstrapTable({
         exportOptions: {
-            fileName: 'Risks'
+            fileName: 'Issues'
         },
         exportTypes: ['excel'],
     });
@@ -337,24 +296,21 @@ $(function () {
 
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
-            const risk = {
-                risk_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
-                risk_area: $('tr[data-e-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
+            const issues = {
+                issues_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="issues_summary"]')[0].value,
                 project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                 status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-                consequence: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
-                mitigations: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
                 eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
                 age: $('tr[data-e-id="' + objectId + '"] input[data-prop="age"]')[0].value,
                 trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
-                risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
-                impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
+                issues_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="issues_initiated"]')[0].value,
+                severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value
             }
             $.ajax({
                 type: "POST",
-                url: "/risk_edit_table/" + objectId,
-                data: risk,
+                url: "/issues_edit_table/" + objectId,
+                data: issues,
                 success: function(data) {
                     window.location.reload()
                 }
@@ -367,26 +323,22 @@ $(function () {
 
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
-            const risk = {
-                risk_summary: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
-                risk_area: $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]').val() || 'default_value',
+            const issues = {
+                issues_summary: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="issues_summary"]')[0].value,
                 project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                 status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-                consequence: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
-                mitigations: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
                 eta: $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
                 age: $('tr[data-a-id="' + objectId + '"] input[data-prop="age"]')[0].value,
                 trigger_date: $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
-                risk_initiated: $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
-                impact: $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
+                issues_initiated: $('tr[data-a-id="' + objectId + '"] input[data-prop="issues_initiated"]')[0].value,
+                severity: $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
             }
             $.ajax({
                 type: "POST",
-                url: "/risk/",
-                data: risk,
+                url: "/issues/",
+                data: issues,
                 success: function(data) {
-                    console.log('Selected risk_area:', risk.risk_area);
                     window.location.reload()
                 }
             })

@@ -85,7 +85,7 @@
     <section>
         <div class="container"><!--style="max-width:100%;"-->
             <div class="alert alert-light alert-dismissible fade show" role="alert">
-                <strong>Welcome!</strong> A simple primary alert—check it out!
+                <strong>Welcome! {{user}}</strong> <a href="https://google.com" target="_blank">Readme.md</a>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
@@ -95,7 +95,7 @@
                 <input class="form-control mr-sm-2" id="filter" type="search" placeholder="Search" aria-label="Search"
                        autocomplete="off">
             </form>
-            <h4>Application Gallery</h4>
+            <h4>GHI Project Dashboard Edit Portal</h4>
             <br>
 
             <div id="mycard" class="row py-2">
@@ -173,7 +173,7 @@
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
                             <a class="btn btn-md btn-primary button arrow" href="{% url 'bbox' %}" role="button">
-                                <span>Add</span>
+                                <span>Update</span>
                             </a>
                         </div>
                     </div>
@@ -186,6 +186,19 @@
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandit lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
                             <a class="btn btn-md btn-dark button arrow" data-bs-toggle="modal" data-bs-target="#detailsModal" role="button">
+                                <span>Update</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
+                    <div class="card2 shadow-sm">
+                        <div class="card-body text-center p-4 p-xxl-5">
+                            <i class="fa-solid fa-link fa-2xl text-success mb-4"></i><br><br>
+                            <h5 class="mb-4">Issues</h5>
+                            <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandiht lacinia, nisi velit
+                                posuere nisl, vel placerat magna mauris mollis maximus est.</p>
+                            <a class="btn btn-md btn-success button arrow" href="{% url 'issues' %}" role="button">
                                 <span>Update</span>
                             </a>
                         </div>

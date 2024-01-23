@@ -11,6 +11,7 @@
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
     <link href="{% static 'intel_app/css/bootstrap-select.min.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
 
 </head>
 <body style="background-color:#ffffff!important;">
@@ -148,6 +149,20 @@
 <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
+
+{% if messages %}
+<script>
+swal({
+  title: "Alert!",
+  text: "{{messages}}",
+  showConfirmButton: true
+}, function(){
+      window.location.href = "{% url 'login' %}";
+});
+</script>
+{% endif %}
+
 <script>
     $(function () {
     $('select').selectpicker();

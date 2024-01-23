@@ -19,6 +19,9 @@ urlpatterns = [
     path('links_edit_table/<str:pk>', views.links_edit_table, name='links_edit_table'),
     path('bbox/', views.bbox, name='bbox'),
     path('bbox_edit/<str:pk>', views.bbox_edit, name='bbox_edit'),
+    path('issues/', views.issues, name='issues'),
+    path('issues_edit_table/<str:pk>', views.issues_edit_table, name='issues_edit_table'),
     path('user_create/', views.user_create, name='user_create'),
-    path('project/', views.project, name='project')
+    path('project/', views.project, name='project'),
+    path('project_change/<str:func_name>', views.project_change, name='project_change'),
 ]

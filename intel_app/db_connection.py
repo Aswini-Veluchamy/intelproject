@@ -1,7 +1,7 @@
 import mysql.connector
 from .config import HOST, PORT, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
-from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE
+from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE, ISSUES_TABLE
 import json
 import bcrypt
 
@@ -12,7 +12,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3406
+        port=3306
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -41,10 +41,12 @@ def update_key_message_data(data):
 
 def load_risk_data(data):
     conn, cursor = db_connection()
-    for ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user, display in data:
-        sql = f"INSERT INTO {RISK_TABLE} (problem_statement, status, owner, message, eta, risk, severity, impact, \
-            risk_id, project, user, display) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (ps, status, owner, msg, eta, risk, severity, impact, risk_id, proj, user, display)
+    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, \
+            risk_id, project, user in data:
+        sql = f"INSERT INTO {RISK_TABLE} (risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, \
+            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, \
+            risk_id, project, user)
         cursor.execute(sql, val)
     print(f'data inserted in {RISK_TABLE} ....')
     conn.commit()
@@ -74,9 +76,10 @@ def get_data(user, table):
 
 def update_risk_data(data):
     conn, cursor = db_connection()
-    for ps, status, owner, msg, eta, risk, severity, impact, risk_id in data:
-        sql = (f"UPDATE {RISK_TABLE} SET problem_statement = '{ps}', status = '{status}', owner = '{owner}', \
-                message = '{msg}', eta = '{eta}', risk = '{risk}', severity = '{severity}', impact = '{impact}' \
+    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, risk_id in data:
+        sql = (f"UPDATE {RISK_TABLE} SET risk_summary = '{risk_summary}',risk_area = '{risk_area}', status = '{status}', owner = '{owner}', \
+                consequence = '{consequence}',mitigations = '{mitigations}', eta = '{eta}', age = '{age}', trigger_date = '{trigger_date}', \
+                risk_initiated = '{risk_initiated}', impact = '{impact}' \
                 WHERE risk_id='{risk_id}'")
         cursor.execute(sql)
     print(f'data updated in {RISK_TABLE} ....')
@@ -197,7 +200,7 @@ def login_user(username, password):
     """Login an existing user."""
     try:
         conn, cursor = db_connection()
-        query = "SELECT username, password FROM users WHERE username = %s"
+        query = "SELECT username, password, project FROM users WHERE username = %s"
         cursor.execute(query, (username,))
         user = cursor.fetchone()
         if user:
@@ -307,3 +310,28 @@ def encrypt_password(password):
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed_password
+
+def load_issues_data(data):
+    conn, cursor = db_connection()
+    for issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, \
+            issues_id, project, user in data:
+        sql = f"INSERT INTO {ISSUES_TABLE} (issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, \
+            issues_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, \
+            issues_id, project, user)
+        cursor.execute(sql, val)
+    print(f'data inserted in {ISSUES_TABLE} ....')
+    conn.commit()
+    conn.close()
+
+def update_issues_data(data):
+    conn, cursor = db_connection()
+    for issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, issues_id in data:
+        sql = (f"UPDATE {ISSUES_TABLE} SET issues_summary = '{issues_summary}', status = '{status}', owner = '{owner}', \
+                eta = '{eta}', age = '{age}', trigger_date = '{trigger_date}', \
+                issues_initiated = '{issues_initiated}', severity = '{severity}' \
+                WHERE issues_id='{issues_id}'")
+        cursor.execute(sql)
+    print(f'data updated in {ISSUES_TABLE} ....')
+    conn.commit()
+    conn.close()
