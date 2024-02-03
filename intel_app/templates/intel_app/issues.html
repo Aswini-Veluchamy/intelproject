@@ -17,6 +17,7 @@
     <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/bootstrap-select.min.css' %}" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
+    <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
 
     <style>
         tr[data-non-edit="true"] {
@@ -50,6 +51,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-md-auto gap-2">
+                <form method="POST" action="{% url 'project_change' func_name='issues' %}" id="projectForm">
+                    {% csrf_token %}
+                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                        <option value="" disabled >Projects</option>
+                        {% for i in project %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <p style="display:none;">{{error}}</p>
+                </form>
                 <li class="nav-item rounded">
                     <a class="nav-link ho" href="{% url 'home' %}">
                         <i class="fa fa-home"></i>
@@ -115,7 +126,7 @@
                             <tbody data-body="issues">
                             <tr data-a-id="new" data-add="false">
                                 <td class="issues_summary">
-                                    <textarea class="form-control" data-prop="issues_summary" name="issues_summary" placeholder="Enter Issues Summary" cols="3" maxlength="250" required="required"></textarea>
+                                    <textarea class="form-control" data-prop="issues_summary" name="issues_summary" placeholder="Enter Issues Summary" title="What’s the problem statement?" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="project">
                                     <select class="form-select" name="project" data-prop='project' required="required">
@@ -134,11 +145,11 @@
                                 </td>
                                 <td class="owner">
                                     <input class="form-control" data-prop="owner" name="owner" type="text"
-                                           placeholder="Enter Owner" required="required" />
+                                           placeholder="Enter Owner" title="IDSID of owner" required="required" />
                                 </td>
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" name="eta" type="date"
-                                           placeholder="Enter ETA" required="required" />
+                                           placeholder="Enter ETA" title="What’s being done to resolve the issue? Should have ETA for each step" required="required" />
                                 </td>
                                 <td class="age">
                                     <input class="form-control" data-prop="age" name="age" type="number"
@@ -146,14 +157,18 @@
                                 </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" name="trigger_date" type="date"
-                                           placeholder="Enter Trigger Date" required="required" />
+                                           placeholder="Enter Trigger Date" title="By when does the issue need to be resolved?" required="required" />
                                 </td>
                                 <td class="issues_initiated">
                                     <input class="form-control" data-prop="issues_initiated" name="issues_initiated" type="date"
-                                           placeholder="Enter Issues Initiated" required="required" />
+                                           placeholder="Enter Issues Initiated" title="When did the issue first come to light and start to get tracked?" required="required" />
                                 </td>
                                 <td class="severity">
-                                    <select class="form-select" data-prop="severity" name="severity" required="required">
+                                    <select class="form-select" data-prop="severity" name="severity"
+                                            title="•Low – well under control, path to closure exists.
+•Medium – viable path to resolution is available and being pursued.
+•High – no path to resolution available or resolution path is complex. Urgent help required"
+                                            required="required">
                                         <option value="" disabled="disabled" selected="selected">Select Severity</option>
                                         <option value="High">High</option>
                                         <option value="Medium">Medium</option>
@@ -260,6 +275,8 @@
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
+<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+
 <script>
     function nameFormatter(value, row) {
       var icon = row.severity === 'Low'  ? 'fa-circle fa-sm text-primary' :
@@ -348,6 +365,26 @@
             $('tr[data-a-id="new"]').attr('data-add', false);
         });
     });
+</script>
+<script>
+    $('#projectdata').change(function(event){
+        var selectedcategory = $(this).children("option:selected").val();
+        sessionStorage.setItem("itemName",selectedcategory);
+    });
+
+    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
+</script>
+<script>
+    tail.select("#projectdata", {
+    animate: true,
+    deselect: false,
+    disabled: false,
+    height: 350,
+    multiple: false,
+    placeholder: "Projects",
+    search: false,
+    width: 170
+});
 </script>
 </body>
 </head>

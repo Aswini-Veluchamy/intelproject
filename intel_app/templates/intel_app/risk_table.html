@@ -17,6 +17,7 @@
     <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/bootstrap-select.min.css' %}" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
+    <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
 
     <style>
         tr[data-non-edit="true"] {
@@ -50,6 +51,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-md-auto gap-2">
+                <form method="POST" action="{% url 'project_change' func_name='risk' %}" id="projectForm">
+                    {% csrf_token %}
+                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                        <option value="" disabled >Projects</option>
+                        {% for i in project %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <p style="display:none;">{{error}}</p>
+                </form>
                 <li class="nav-item rounded">
                     <a class="nav-link ho" href="{% url 'home' %}">
                         <i class="fa fa-home"></i>
@@ -121,7 +132,7 @@
                                     <textarea class="form-control" data-prop="risk_summary" name="risk_summary" placeholder="Enter Risk Summary" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="risk_area">
-                                    <select class="selectpicker" multiple="multiple" name="risk_area" id="risk_area" required="required">
+                                    <select class="form-select" data-prop="risk_area" name="risk_area" title="What’s the event or scenario that we’re trying to avoid?" id="risk_area" required="required">
                                         <option value="" selected disabled>Select Risk Area</option>
                                         <option value="Cost">Cost</option>
                                         <option value="Schedule">Schedule</option>
@@ -147,33 +158,39 @@
                                     </select>
                                 </td>
                                 <td class="owner">
-                                    <input class="form-control" data-prop="owner" name="owner" type="text"
-                                        required="required" placeholder="Enter Owner" />
+                                    <input class="form-control" data-prop="owner" name="owner" title="IDSID of owner" type="text"
+                                           required="required" placeholder="Enter Owner" />
                                 </td>
                                 <td class="consequence">
-                                    <textarea class="form-control" data-prop="consequence" name="consequence" placeholder="Enter Consequence" cols="3" maxlength="250" required="required"></textarea>
+                                    <textarea class="form-control" data-prop="consequence" name="consequence" title="What is the consequence if the risk materializes?" placeholder="Enter Consequence" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="mitigations">
                                     <textarea class="form-control" data-prop="mitigations" name="mitigations" placeholder="Enter Mitigations" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" name="eta" type="date"
-                                       required="required" placeholder="Enter ETA" />
+                                           required="required" placeholder="Enter ETA" />
                                 </td>
                                 <td class="age">
                                     <input class="form-control" data-prop="age" name="age" type="number"
-                                        required="required" placeholder="Enter Age" />
+                                           required="required" placeholder="Enter Age" />
                                 </td>
                                 <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" name="trigger_date" type="date"
-                                         required="required" placeholder="Enter Trigger Date" />
+                                    <input class="form-control" data-prop="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
+                                           required="required" placeholder="Enter Trigger Date" />
                                 </td>
                                 <td class="risk_initiated">
-                                    <input class="form-control" data-prop="risk_initiated" name="risk_initiated" type="date"
-                                         required="required" placeholder="Enter Risk Initiated" />
+                                    <input class="form-control" data-prop="risk_initiated" name="risk_initiated" title="Date when the risk was identified and started to be tracked" type="date"
+                                           required="required" placeholder="Enter Risk Initiated" />
                                 </td>
                                 <td class="impact">
-                                    <select class="form-select" data-prop="impact" name="impact" required="required">
+                                    <select class="form-select" data-prop="impact" name="impact"
+                                            title="Measures level of impact of risk happening
+o    Low – low impact to schedule/cost/quality. Tracked only to ensure risk level is kept under control
+o    Medium – potentially high impact to milestones, but there is a viable path to avoidance
+o    High – potentially high impact to milestones + path to avoidance is complex/unclear. Urgent help required
+(probability is not being documented/tracked)"
+                                            required="required">
                                         <option value="" disabled="disabled" selected="selected">Select Impact</option>
                                         <option value="High">High</option>
                                         <option value="Medium">Medium</option>
@@ -192,7 +209,7 @@
                             {% for i in data %}
                             <tr data-n-id="{{ i.risk_id }}" data-non-edit="true">
                                 <td nowrap class="risk_summary">{{ i.risk_summary }}</td>
-                                <td nowrap class="risk_area">{{ i.risk_area }}</td>
+                                <td nowrap class="risk_area">{{ i.risk_area.0 }}</td>
                                 <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="status">{{ i.status.0 }}</td>
                                 <td nowrap class="owner">{{ i.owner }}</td>
@@ -214,7 +231,7 @@
                                     <textarea class="form-control" data-prop="risk_summary" name="risk_summary" cols="3" maxlength="250" required="required">{{i.risk_summary}}</textarea>
                                 </td>
                                 <td class="risk_area">
-                                    <select class="selectpicker" multiple="multiple" data-prop="risk_area" name="risk_area" required="required">
+                                    <select class="form-select" data-prop="risk_area" name="risk_area" title="What’s the event or scenario that we’re trying to avoid?" required="required">
                                         {% for i in i.risk_area %}
                                         <option value="{{i}}">{{i}}</option>
                                         {% endfor %}
@@ -231,14 +248,14 @@
                                     </select>
                                 </td>
                                 <td class="owner">
-                                    <input class="form-control" data-prop="owner" id="owner" name="owner" type="text"
+                                    <input class="form-control" data-prop="owner" id="owner" name="owner" title="IDSID of owner" type="text"
                                            required="required" value="{{i.owner}}" />
                                 </td>
                                 <td class="consequence">
-                                    <textarea class="form-control" data-prop="consequence" id="consequence" name="consequence" cols="3" maxlength="250">{{ i.consequence }}</textarea>
+                                    <textarea class="form-control" data-prop="consequence" id="consequence" name="consequence" title="What is the consequence if the risk materializes?" cols="3" maxlength="250" required="required">{{ i.consequence }}</textarea>
                                 </td>
                                 <td class="mitigations">
-                                    <textarea class="form-control" data-prop="mitigations" id="mitigations" name="mitigations" cols="3" maxlength="250">{{ i.mitigations }}</textarea>
+                                    <textarea class="form-control" data-prop="mitigations" id="mitigations" name="mitigations" cols="3" maxlength="250" required="required">{{ i.mitigations }}</textarea>
                                 </td>
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" id="eta" name="eta" type="date"
@@ -249,15 +266,21 @@
                                            required="required" value="{{ i.age }}" />
                                 </td>
                                 <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" type="date"
+                                    <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
                                            required="required" value="{{ i.trigger_date | date:'Y-m-d' }}" />
                                 </td>
                                 <td class="risk_initiated">
-                                    <input class="form-control" data-prop="risk_initiated" id="risk_initiated" name="risk_initiated" type="date"
+                                    <input class="form-control" data-prop="risk_initiated" id="risk_initiated" name="risk_initiated" title="Date when the risk was identified and started to be tracked" type="date"
                                            required="required" value="{{ i.risk_initiated | date:'Y-m-d' }}" />
                                 </td>
                                 <td class="impact">
-                                    <select class="form-select" data-prop="impact" name="impact" required="required">
+                                    <select class="form-select" data-prop="impact" name="impact"
+                                            title="Measures level of impact of risk happening
+o    Low – low impact to schedule/cost/quality. Tracked only to ensure risk level is kept under control
+o    Medium – potentially high impact to milestones, but there is a viable path to avoidance
+o    High – potentially high impact to milestones + path to avoidance is complex/unclear. Urgent help required
+(probability is not being documented/tracked)"
+                                            required="required">
                                         {% for j in i.impact %}
                                         <option value="{{j}}">{{j}}</option>
                                         {% endfor %}
@@ -296,11 +319,8 @@
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
-<script>
-$(function () {
-    $('#risk_area').selectpicker();
-});
-</script>
+<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+
 <script>
     function nameFormatter(value, row) {
       var icon = row.impact === 'Low'  ? 'fa-circle fa-sm text-primary' :
@@ -369,7 +389,7 @@ $(function () {
             let objectId = "new";
             const risk = {
                 risk_summary: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
-                risk_area: $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]').val() || 'default_value',
+                risk_area: $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
                 project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                 status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
@@ -386,7 +406,6 @@ $(function () {
                 url: "/risk/",
                 data: risk,
                 success: function(data) {
-                    console.log('Selected risk_area:', risk.risk_area);
                     window.location.reload()
                 }
             })
@@ -396,6 +415,26 @@ $(function () {
             $('tr[data-a-id="new"]').attr('data-add', false);
         });
     });
+</script>
+<script>
+    $('#projectdata').change(function(event){
+        var selectedcategory = $(this).children("option:selected").val();
+        sessionStorage.setItem("itemName",selectedcategory);
+    });
+
+    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
+</script>
+<script>
+    tail.select("#projectdata", {
+    animate: true,
+    deselect: false,
+    disabled: false,
+    height: 350,
+    multiple: false,
+    placeholder: "Projects",
+    search: false,
+    width: 170
+});
 </script>
 </body>
 </head>

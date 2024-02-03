@@ -14,6 +14,8 @@
     <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+
     <style>
         div .aa { border-bottom : 1px solid #000; margin : 2px 0;}
                 tr[data-non-edit="true"] {
@@ -47,6 +49,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-md-auto gap-2">
+                <form method="POST" action="{% url 'project_change' func_name='bbox' %}" id="projectForm">
+                    {% csrf_token %}
+                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                        <option value="" disabled >Projects</option>
+                        {% for i in project %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <p style="display:none;">{{error}}</p>
+                </form>
                 <li class="nav-item rounded">
                     <a class="nav-link ho" href="{% url 'home' %}">
                         <i class="fa fa-home"></i>
@@ -238,6 +250,8 @@
 <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+
 <script>
     function nameFormatter(value, row) {
       var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
@@ -325,6 +339,26 @@
             $('tr[data-a-id="new"]').attr('data-add', false);
         });
     });
+</script>
+<script>
+    $('#projectdata').change(function(event){
+        var selectedcategory = $(this).children("option:selected").val();
+        sessionStorage.setItem("itemName",selectedcategory);
+    });
+
+    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
+</script>
+<script>
+    tail.select("#projectdata", {
+    animate: true,
+    deselect: false,
+    disabled: false,
+    height: 350,
+    multiple: false,
+    placeholder: "Projects",
+    search: false,
+    width: 170
+});
 </script>
 </body>
 </head>

@@ -11,21 +11,29 @@
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet" />
-    <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-    <script src="{% static 'intel_app/js/quill.js' %}"></script>
+    <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
     <style>
+        .btn-purple {
+            background-color: #6f42c1;
+            color: #ffffff;
+            border-color: #6f42c1;
+        }
+        .btn-purple:hover, .btn-purple:focus, .btn-purple:active, .btn-purple.active, .open>.dropdown-toggle.btn-purple {
+            background-color: #6f42c1;
+            color: #ffffff;
+            border-color: #6f42c1;
+        }
+        .text-purple {
+            color:  #6f42c1;
+        }
         .btn {
           transition: all 0.4s;
         }
-
         .btn span {
           display: inline-block;
           position: relative;
           transition: 0.4s;
         }
-
         .btn span:after {
           content: "\00bb";
           position: absolute;
@@ -34,11 +42,9 @@
           right: -1.375rem;
           transition: 0.4s;
         }
-
         .btn:hover span {
           padding-right: 2rem;
         }
-
         .btn:hover span:after {
           opacity: 1;
           right: 0;
@@ -59,6 +65,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-md-auto gap-2">
+                <form method="POST" action="{% url 'project_change' func_name='home' %}" id="projectForm">
+                    {% csrf_token %}
+                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                        <option value="" disabled >Projects</option>
+                        {% for i in project %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <p style="display:none;">{{error}}</p>
+                </form>
                 <li class="nav-item rounded">
                     <a class="nav-link ho" href="{% url 'home' %}">
                         <i class="fa fa-home"></i>
@@ -86,7 +102,7 @@
         <div class="container"><!--style="max-width:100%;"-->
             <div class="alert alert-light alert-dismissible fade show" role="alert">
                 <strong>Welcome! {{user}}</strong> <a href="https://google.com" target="_blank">Readme.md</a>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <!--<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
             </div>
         </div>
         <br>
@@ -194,11 +210,11 @@
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mx-auto py-2">
                     <div class="card2 shadow-sm">
                         <div class="card-body text-center p-4 p-xxl-5">
-                            <i class="fa-solid fa-link fa-2xl text-success mb-4"></i><br><br>
+                            <i class="fa-solid fa-bug fa-2xl text-purple mb-4"></i><br><br>
                             <h5 class="mb-4">Issues</h5>
                             <p class="mb-4 text-secondary">Vestibulum bibendum, lorem a blandiht lacinia, nisi velit
                                 posuere nisl, vel placerat magna mauris mollis maximus est.</p>
-                            <a class="btn btn-md btn-success button arrow" href="{% url 'issues' %}" role="button">
+                            <a class="btn btn-md btn-purple button arrow" href="{% url 'issues' %}" role="button">
                                 <span>Update</span>
                             </a>
                         </div>
@@ -215,18 +231,6 @@
             <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}" enctype="application/x-www-form-urlencoded">
                 <div class="modal-header">
                     <h6 class="modal-title" id="keymessageModalLabel" style="font-weight:600;">Key Message</h6>
-                    <select class="form-select pull-right" name="project" id='project' required="required" style="margin-left:490px; width: 150px;">
-                        {% if key_mess_data %}
-                        {% for i in key_mess_data.project %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                        {% else %}
-                        <option value="" disabled="disabled" selected="selected">Projects</option>
-                        {% for i in project %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                        {% endif %}
-                    </select>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -253,25 +257,12 @@
             <form method="post" id="detailsForm" autocomplete="off" action="{% url 'details' %}" enctype="application/x-www-form-urlencoded">
                 <div class="modal-header">
                     <h6 class="modal-title" id="detailsModalLabel" style="font-weight:600;">Details</h6>
-                    <select class="form-select" name="details_project" id='details_project' required="required" style="margin-left:490px; width: 150px;">
-                        {% if details_data %}
-                        {% for i in details_data.project %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                        {% else %}
-                        <option value="" disabled="disabled" selected="selected">Projects</option>
-                        {% for i in project %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                        {% endif %}
-                    </select>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Create the editor container -->
                     {% csrf_token %}
                     <!--<input type="text" value="" />-->
-                    <label class="form-label">Details Message: </label>
                     <div id="details_editor" style="height: 275px;">{{ details_data.message|safe }}</div>
                     <input type="hidden" name="details_message" id="details_message">
                     <p>{{error}}</p>
@@ -283,6 +274,12 @@
     </div>
 </div>
 <br><br>
+<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+<script src="{% static 'intel_app/js/quill.js' %}"></script>
+<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+
 
 <script>
     $("#filter").on("keyup", function() {
@@ -371,6 +368,24 @@
         detailsForm.submit();
     })
 </script>
-
+<script>
+    $('#projectdata').change(function(event){
+        var selectedcategory = $(this).children("option:selected").val();
+        sessionStorage.setItem("itemName",selectedcategory);
+    });
+    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
+</script>
+<script>
+    tail.select("#projectdata", {
+    animate: true,
+    deselect: false,
+    disabled: false,
+    height: 350,
+    multiple: false,
+    placeholder: "Projects",
+    search: false,
+    width: 170
+});
+</script>
 </body>
 </html>

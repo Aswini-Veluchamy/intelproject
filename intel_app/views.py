@@ -172,7 +172,7 @@ def key_message(request):
 def risks(request):
     if request.method == "POST":
         risk_summary = request.POST['risk_summary']
-        risk_area = 'test'
+        risk_area = request.POST['risk_area']
         status = request.POST['status']
         owner = request.POST['owner']
         consequence = request.POST['consequence']
@@ -203,9 +203,12 @@ def risks(request):
             if result:
                 status = ['Open', 'Closed']
                 impact = ['Low', 'Medium', 'High']
+                risk_area = ['Cost','Schedule','Functionality','Performance','Power','Area']
                 for i in result:
                     i['status'] = update_queryset_values(status, i['status'])
                     i['impact'] = update_queryset_values(impact, i['impact'])
+                    i['risk_area'] = update_queryset_values(risk_area, i['risk_area'])
+
             return render(request, 'intel_app/risk_table.html', {'data':result, 'project': project,
                                                                  'user': user})
         except KeyError:
@@ -217,7 +220,7 @@ def risk_edit_table(request, pk):
     if request.method == "POST":
         print(pk)
         risk_summary = request.POST['risk_summary']
-        risk_area = 'test'
+        risk_area = request.POST['risk_area']
         status = request.POST['status']
         owner = request.POST['owner']
         consequence = request.POST['consequence']
@@ -427,10 +430,6 @@ def bbox_edit(request, pk):
         return HttpResponseRedirect(reverse("bbox"))
 
 @csrf_exempt
-def project_change(request, func_name):
-    return HttpResponseRedirect(reverse(func_name))
-
-@csrf_exempt
 def issues(request):
     if request.method == "POST":
         issues_summary = request.POST['issues_summary']
@@ -483,3 +482,12 @@ def issues_edit_table(request, pk):
         severity = request.POST['severity']
         update_issues_data([(issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, pk)])
         return HttpResponseRedirect(reverse("issues"))
+
+@csrf_exempt
+def project_change(request, func_name):
+    print("****************************************")
+    print(request.POST)
+    print(func_name)
+    print("****************************************")
+    return HttpResponseRedirect(reverse(func_name))
+
