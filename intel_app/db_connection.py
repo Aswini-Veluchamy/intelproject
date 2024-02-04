@@ -12,7 +12,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3306
+        port=3406
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -29,33 +29,22 @@ def load_key_message_data(data):
     conn.close()
 
 
-def update_key_message_data(data):
-    conn, cursor = db_connection()
-    for msg_id, message in data:
-        sql = f"UPDATE {KEY_MESSAGE_TABLE} SET message = '{message}' WHERE message_id='{msg_id}'"
-        cursor.execute(sql)
-    print(f'data updated in {KEY_MESSAGE_TABLE} ....')
-    conn.commit()
-    conn.close()
-
-
 def load_risk_data(data):
     conn, cursor = db_connection()
-    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, \
+    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, \
             risk_id, project, user in data:
-        sql = f"INSERT INTO {RISK_TABLE} (risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, \
-            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, \
-            risk_id, project, user)
+        sql = f"INSERT INTO {RISK_TABLE} (risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, \
+            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, risk_id, project, user)
         cursor.execute(sql, val)
     print(f'data inserted in {RISK_TABLE} ....')
     conn.commit()
     conn.close()
 
 
-def get_key_msg_or_details_data(user, table):
+def get_key_msg_or_details_data(user, table, project):
     conn, cursor = db_connection()
-    cursor.execute(f'SELECT * FROM {table} where user="{user}" ORDER BY ts DESC LIMIT 1;')
+    cursor.execute(f'SELECT * FROM {table} where user="{user}" and project="{project}" ORDER BY ts DESC LIMIT 1;')
     columns = [col[0] for col in cursor.description]
     result = dict(zip(columns, cursor.fetchone()))
     conn.commit()
@@ -63,9 +52,9 @@ def get_key_msg_or_details_data(user, table):
     return result
 
 
-def get_data(user, table):
+def get_data(user, table, project):
     conn, cursor = db_connection()
-    cursor.execute(f"SELECT * FROM {table} where user='{user}'")
+    cursor.execute(f"SELECT * FROM {table} where user='{user}' and project='{project}'")
     records = cursor.fetchall()
     columns = [col[0] for col in cursor.description]
     result = [dict(zip(columns, record)) for record in records]
@@ -76,9 +65,9 @@ def get_data(user, table):
 
 def update_risk_data(data):
     conn, cursor = db_connection()
-    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, age, trigger_date, risk_initiated, impact, risk_id in data:
+    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, risk_id in data:
         sql = (f"UPDATE {RISK_TABLE} SET risk_summary = '{risk_summary}',risk_area = '{risk_area}', status = '{status}', owner = '{owner}', \
-                consequence = '{consequence}',mitigations = '{mitigations}', eta = '{eta}', age = '{age}', trigger_date = '{trigger_date}', \
+                consequence = '{consequence}',mitigations = '{mitigations}', eta = '{eta}',trigger_date = '{trigger_date}', \
                 risk_initiated = '{risk_initiated}', impact = '{impact}' \
                 WHERE risk_id='{risk_id}'")
         cursor.execute(sql)
@@ -175,8 +164,7 @@ def load_links_data(links_url, comments, links_id, project, user):
 
 def update_links_data(links_url, comments, links_id):
     conn, cursor = db_connection()
-    sql = (f"UPDATE {LINKS_TABLE} SET links_url = '{links_url}', comments_links = '{comments}' WHERE links_id='{links_id}'")
-    print(sql)
+    sql = f"UPDATE {LINKS_TABLE} SET links_url = '{links_url}', comments_links = '{comments}' WHERE links_id='{links_id}'"
     cursor.execute(sql)
     print(f'data updated in {links_id} ....')
     conn.commit()
@@ -311,24 +299,25 @@ def encrypt_password(password):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed_password
 
+
 def load_issues_data(data):
     conn, cursor = db_connection()
-    for issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, \
+    for issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, \
             issues_id, project, user in data:
-        sql = f"INSERT INTO {ISSUES_TABLE} (issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, \
-            issues_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, \
-            issues_id, project, user)
+        sql = f"INSERT INTO {ISSUES_TABLE} (issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, \
+            issues_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, issues_id, project, user)
         cursor.execute(sql, val)
     print(f'data inserted in {ISSUES_TABLE} ....')
     conn.commit()
     conn.close()
 
+
 def update_issues_data(data):
     conn, cursor = db_connection()
-    for issues_summary, status, owner, eta, age, trigger_date, issues_initiated, severity, issues_id in data:
+    for issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id in data:
         sql = (f"UPDATE {ISSUES_TABLE} SET issues_summary = '{issues_summary}', status = '{status}', owner = '{owner}', \
-                eta = '{eta}', age = '{age}', trigger_date = '{trigger_date}', \
+                eta = '{eta}', trigger_date = '{trigger_date}', \
                 issues_initiated = '{issues_initiated}', severity = '{severity}' \
                 WHERE issues_id='{issues_id}'")
         cursor.execute(sql)

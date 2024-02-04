@@ -109,7 +109,6 @@
                             <thead>
                             <tr>
                                 <th scope="col" nowrap data-field="milestone" class="w-50 p-3 milestone">Milestone</th>
-                                <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
                                 <th scope="col" nowrap data-field="por_commit" class="w-50 p-3 por_commit">POR Commit</th>
                                 <th scope="col" nowrap data-field="por_trend" class="w-50 p-3 por_trend">POR Trend</th>
@@ -121,14 +120,6 @@
                             <tr data-a-id="new" data-add="false">
                                 <td class="milestone">
                                     <textarea class="form-control" data-prop="milestone" name="milestone" placeholder="Enter Milestone" cols="3" maxlength="250" disabled>Milestone</textarea>
-                                </td>
-                                <td class="project">
-                                    <select class="form-select" name="project" data-prop='project' required="required">
-                                        <option value="" disabled="disabled" selected="selected">Projects</option>
-                                        {% for i in project %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
                                 </td>
                                 <td class="status">
                                     <select class="form-select" data-prop="status" name="status" required="required">
@@ -162,7 +153,6 @@
                             {% for i in data %}
                             <tr data-n-id="{{ i.schedule_id }}" data-non-edit="true">
                                 <td nowrap class="milestone">{{ i.milestone }}</td>
-                                <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="status">{{ i.status.0 }}</td>
                                 <td nowrap class="por_commit">{{ i.por_commit | date:'Y-m-d' }}</td>
                                 <td nowrap class="por_trend">{{ i.por_trend | date:'Y-m-d' }}</td>
@@ -175,9 +165,6 @@
                             <tr data-e-id="{{ i.schedule_id }}" data-edit="false">
                                 <td class="milestone">
                                     <textarea class="form-control" data-prop="milestone" name="milestone" cols="3" maxlength="250" disabled>{{i.milestone}}</textarea>
-                                </td>
-                                <td class="project">
-                                    <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
                                 </td>
                                 <td class="status">
                                     <select class="form-select" data-prop="status" name="status" required="required">
@@ -267,7 +254,6 @@
             let objectId = $(this).data('id');
             const schedule = {
                milestone : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
-               project : $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                por_commit : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
                por_trend : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
@@ -284,8 +270,6 @@
 
                         }
                      })
-
-            console.log(schedule);
         });
 
         $('.add-btn').on('click', function () {
@@ -297,7 +281,6 @@
             let objectId = "new";
             const schedule = {
                milestone : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
-               project : $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                status : $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                por_commit : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
                por_trend : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,

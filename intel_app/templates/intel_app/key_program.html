@@ -108,7 +108,6 @@
                            data-buttons-class="primary btn-sm">
                         <thead>
                         <tr>
-                            <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
                             <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
                             <th scope="col" nowrap data-field="metric" class="w-50 p-3 metric">Metric</th>
                             <th scope="col" nowrap data-field="target" class="w-50 p-3 target">FV Target</th>
@@ -120,14 +119,6 @@
                         </thead>
                         <tbody data-body="key_program">
                         <tr data-a-id="new" data-add="false">
-                            <td class="project">
-                                <select class="form-select" name="project" data-prop='project' required="required">
-                                    <option value="" disabled="disabled" selected="selected">Projects</option>
-                                    {% for i in project %}
-                                    <option value="{{i}}">{{i}}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
                             <td class="status">
                                 <select class="form-select" data-prop="status" name="status" required="required">
                                     <option value="" disabled="disabled" selected="selected">Select Status</option>
@@ -163,7 +154,6 @@
                         </tr>
                         {% for i in data %}
                         <tr data-n-id="{{ i.metric_id }}" data-non-edit="true">
-                            <td nowrap class="project">{{ i.project }}</td>
                             <td nowrap class="status">{{ i.status.0 }}</td>
                             <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
                             <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
@@ -182,9 +172,6 @@
                             </td>
                         </tr>
                         <tr data-e-id="{{ i.metric_id }}" data-edit="false">
-                            <td class="project">
-                                <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
-                            </td>
                             <td class="status">
                                 <select class="form-select" data-prop="status" name="status" required="required">
                                     {% for i in i.status %}
@@ -277,7 +264,6 @@
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
             const key_program = {
-                project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                 status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 metric: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="metric"]')[0].value,
                 target: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="target"]')[0].value,
@@ -302,7 +288,6 @@
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
             const key_program = {
-                project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                 status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 metric: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="metric"]')[0].value,
                 target: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]')[0].value,

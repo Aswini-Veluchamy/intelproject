@@ -113,13 +113,11 @@
                             <tr>
                                 <th scope="col" nowrap data-field="risk_summary" class="w-50 p-3 risk_summary">Risk Summary</th>
                                 <th scope="col" nowrap data-field="risk_area" class="w-50 p-3 risk_area">Risk Area</th>
-                                <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
                                 <th scope="col" nowrap data-field="owner" class="w-50 p-3 owner">Owner</th>
                                 <th scope="col" nowrap data-field="consequence" class="w-50 p-3 consequence">Consequence</th>
                                 <th scope="col" nowrap data-field="mitigations" class="w-50 p-3 mitigations">Mitigations</th>
                                 <th scope="col" nowrap data-field="eta" class="w-50 p-3 eta">Next Steps with ETA &nbsp;&nbsp;&nbsp;</th>
-                                <th scope="col" nowrap data-field="age" class="w-50 p-3 age">Age &nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="trigger_date" class="w-50 p-3 trigger_date">Trigger Date</th>
                                 <th scope="col" nowrap data-field="risk_initiated" class="w-50 p-3 risk_initiated">Risk Initiated</th>
                                 <th scope="col" nowrap data-field="impact" class="w-50 p-3 impact" data-formatter="nameFormatter">Impact</th>
@@ -142,14 +140,6 @@
                                         <option value="Area">Area</option>
                                     </select>
                                 </td>
-                                <td class="project">
-                                    <select class="form-select" name="project" data-prop='project' required="required">
-                                        <option value="" disabled="disabled" selected="selected">Projects</option>
-                                        {% for i in project %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
                                 <td class="status">
                                     <select class="form-select" data-prop="status" name="status" required="required">
                                         <option value="" disabled="disabled" selected="selected" >Select Status</option>
@@ -170,10 +160,6 @@
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" name="eta" type="date"
                                            required="required" placeholder="Enter ETA" />
-                                </td>
-                                <td class="age">
-                                    <input class="form-control" data-prop="age" name="age" type="number"
-                                           required="required" placeholder="Enter Age" />
                                 </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
@@ -210,13 +196,11 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                             <tr data-n-id="{{ i.risk_id }}" data-non-edit="true">
                                 <td nowrap class="risk_summary">{{ i.risk_summary }}</td>
                                 <td nowrap class="risk_area">{{ i.risk_area.0 }}</td>
-                                <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="status">{{ i.status.0 }}</td>
                                 <td nowrap class="owner">{{ i.owner }}</td>
                                 <td nowrap class="consequence">{{ i.consequence }}</td>
                                 <td nowrap class="mitigations">{{ i.mitigations }}</td>
                                 <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
-                                <td nowrap class="age">{{ i.age }}</td>
                                 <td nowrap class="trigger_date">{{ i.trigger_date | date:'Y-m-d' }}</td>
                                 <td nowrap class="risk_initiated">{{ i.risk_initiated | date:'Y-m-d' }}</td>
                                 <td nowrap class="impact">{{ i.impact.0 }}</td>
@@ -236,9 +220,6 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                         <option value="{{i}}">{{i}}</option>
                                         {% endfor %}
                                     </select>
-                                </td>
-                                <td class="project">
-                                    <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
                                 </td>
                                 <td class="status">
                                     <select class="form-select" data-prop="status" name="status" required="required">
@@ -260,10 +241,6 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" id="eta" name="eta" type="date"
                                            required="required" value="{{ i.eta | date:'Y-m-d' }}" />
-                                </td>
-                                <td class="age">
-                                    <input class="form-control" data-prop="age" name="age" type="number"
-                                           required="required" value="{{ i.age }}" />
                                 </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
@@ -360,13 +337,11 @@ o    High – potentially high impact to milestones + path to avoidance is compl
             const risk = {
                 risk_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
                 risk_area: $('tr[data-e-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
-                project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                 status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                 consequence: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
                 mitigations: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
                 eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-                age: $('tr[data-e-id="' + objectId + '"] input[data-prop="age"]')[0].value,
                 trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
                 impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
@@ -390,13 +365,11 @@ o    High – potentially high impact to milestones + path to avoidance is compl
             const risk = {
                 risk_summary: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
                 risk_area: $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
-                project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                 status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                 consequence: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
                 mitigations: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
                 eta: $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-                age: $('tr[data-a-id="' + objectId + '"] input[data-prop="age"]')[0].value,
                 trigger_date: $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 risk_initiated: $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
                 impact: $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,

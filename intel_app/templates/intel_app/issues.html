@@ -112,11 +112,9 @@
                             <thead>
                             <tr>
                                 <th scope="col" nowrap data-field="issues_summary" class="w-50 p-3 issues_summary">Issues Summary</th>
-                                <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project&nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
                                 <th scope="col" nowrap data-field="owner" class="w-50 p-3 owner">Owner</th>
                                 <th scope="col" nowrap data-field="eta" class="w-50 p-3 eta">Next Steps with ETA &nbsp;&nbsp;&nbsp;</th>
-                                <th scope="col" nowrap data-field="age" class="w-50 p-3 age">Age &nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="trigger_date" class="w-50 p-3 trigger_date">Trigger Date</th>
                                 <th scope="col" nowrap data-field="issues_initiated" class="w-50 p-3 issues_initiated">Issues Initiated</th>
                                 <th scope="col" nowrap data-field="severity" class="w-50 p-3 severity" data-formatter="nameFormatter">Severity</th>
@@ -127,14 +125,6 @@
                             <tr data-a-id="new" data-add="false">
                                 <td class="issues_summary">
                                     <textarea class="form-control" data-prop="issues_summary" name="issues_summary" placeholder="Enter Issues Summary" title="What’s the problem statement?" cols="3" maxlength="250" required="required"></textarea>
-                                </td>
-                                <td class="project">
-                                    <select class="form-select" name="project" data-prop='project' required="required">
-                                        <option value="" disabled="disabled" selected="selected">Projects</option>
-                                        {% for i in project %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
                                 </td>
                                 <td class="status">
                                     <select class="form-select" data-prop="status" name="status" required="required">
@@ -150,10 +140,6 @@
                                 <td class="eta">
                                     <input class="form-control" data-prop="eta" name="eta" type="date"
                                            placeholder="Enter ETA" title="What’s being done to resolve the issue? Should have ETA for each step" required="required" />
-                                </td>
-                                <td class="age">
-                                    <input class="form-control" data-prop="age" name="age" type="number"
-                                           placeholder="Enter Age" required="required" />
                                 </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" name="trigger_date" type="date"
@@ -187,11 +173,9 @@
                             {% for i in data %}
                             <tr data-n-id="{{ i.issues_id }}" data-non-edit="true">
                                 <td nowrap class="issues_summary">{{ i.issues_summary }}</td>
-                                <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="status">{{ i.status.0 }}</td>
                                 <td nowrap class="owner">{{ i.owner }}</td>
                                 <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
-                                <td nowrap class="age">{{ i.age }}</td>
                                 <td nowrap class="trigger_date">{{ i.trigger_date | date:'Y-m-d' }}</td>
                                 <td nowrap class="issues_initiated">{{ i.issues_initiated | date:'Y-m-d' }}</td>
                                 <td nowrap class="severity">{{ i.severity.0 }}</td>
@@ -204,9 +188,6 @@
                             <tr data-e-id="{{ i.issues_id }}" data-edit="false">
                                 <td class="issues_summary">
                                     <textarea class="form-control" data-prop="issues_summary" name="issues_summary" cols="3" maxlength="250" required="required">{{i.issues_summary}}</textarea>
-                                </td>
-                                <td class="project">
-                                    <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
                                 </td>
                                 <td class="status">
                                     <select class="form-select" data-prop="status" name="status" required="required">
@@ -223,10 +204,7 @@
                                     <input class="form-control" data-prop="eta" id="eta" name="eta" type="date"
                                            required="required" value="{{ i.eta | date:'Y-m-d' }}" />
                                 </td>
-                                <td class="age">
-                                    <input class="form-control" data-prop="age" name="age" type="number"
-                                           required="required" value="{{ i.age }}" />
-                                </td>
+
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" type="date"
                                            required="required" value="{{ i.trigger_date | date:'Y-m-d' }}" />
@@ -315,11 +293,9 @@
             let objectId = $(this).data('id');
             const issues = {
                 issues_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="issues_summary"]')[0].value,
-                project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                 status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                 eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-                age: $('tr[data-e-id="' + objectId + '"] input[data-prop="age"]')[0].value,
                 trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 issues_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="issues_initiated"]')[0].value,
                 severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value
@@ -342,11 +318,9 @@
             let objectId = "new";
             const issues = {
                 issues_summary: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="issues_summary"]')[0].value,
-                project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                 status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                 eta: $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-                age: $('tr[data-a-id="' + objectId + '"] input[data-prop="age"]')[0].value,
                 trigger_date: $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 issues_initiated: $('tr[data-a-id="' + objectId + '"] input[data-prop="issues_initiated"]')[0].value,
                 severity: $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]')[0].value,

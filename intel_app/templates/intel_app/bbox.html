@@ -110,7 +110,6 @@
                             <thead>
                             <tr>
                                 <th scope="col" nowrap data-field="category" class="w-50 p-3 category">&nbsp;&nbsp;&nbsp;</th>
-                                <th scope="col" nowrap data-field="project" class="w-50 p-3 project">Project</th>
                                 <th scope="col" nowrap data-field="process" class="w-50 p-3 process">Process</th>
                                 <th scope="col" nowrap data-field="die_area" class="w-50 p-3 die_area">Die Area</th>
                                 <th scope="col" nowrap data-field="config" class="w-50 p-3 config">Config</th>
@@ -128,14 +127,6 @@
                                     Actual
                                     Grading
                                     </textarea>
-                                </td>
-                                <td class="project">
-                                    <select class="form-select" name="project" data-prop='project' required="required">
-                                        <option value="" disabled="disabled" selected="selected">Projects</option>
-                                        {% for i in project %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
                                 </td>
                                 <td class="process">
                                     <textarea class="form-control" data-prop="process" name="process" placeholder="Enter Process" cols="10" rows="6" maxlength="250" required="required"></textarea>
@@ -174,7 +165,6 @@
                                     Actual
                                     Grading
                                 </td>
-                                <td nowrap class="project">{{ i.project }}</td>
                                 <td nowrap class="process">{{ i.process | linebreaks }}</td>
                                 <td nowrap class="die_area">{{ i.die_area | linebreaks }}</td>
                                 <td nowrap class="config">{{ i.config | linebreaks }}</td>
@@ -195,9 +185,6 @@
                                     Actual
                                     Grading
                                     </textarea>
-                                </td>
-                                <td class="project">
-                                    <input class="form-control" type="text" name="project" data-prop="project" value="{{i.project}}" disabled />
                                 </td>
                                 <td class="process">
                                     <textarea class="form-control" data-prop="process" name="process" cols="10" rows="6" maxlength="250" required="required">{{ i.process }}</textarea>
@@ -289,7 +276,6 @@
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
             const bbox = {
-                project: $('tr[data-e-id="' + objectId + '"] input[data-prop="project"]')[0].value,
                 process: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="process"]')[0].value,
                 die_area: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="die_area"]')[0].value,
                 config: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="config"]')[0].value,
@@ -315,7 +301,6 @@
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
             const bbox = {
-                project: $('tr[data-a-id="' + objectId + '"] select[data-prop="project"]')[0].value,
                 process: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="process"]')[0].value,
                 die_area: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="die_area"]')[0].value,
                 config: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="config"]')[0].value,
@@ -332,7 +317,6 @@
                     window.location.reload()
                 }
             })
-            console.log(bbox);
         });
 
         $('.add-cancel-btn').click(function() {
