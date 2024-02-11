@@ -369,6 +369,7 @@ def links_edit_table(request, pk):
 def bbox(request):
     if request.method == "POST":
         primary_project = request.COOKIES['primary_project']
+        category = request.POST['category']
         process = request.POST['process']
         die_area = request.POST['die_area']
         config = request.POST['config']
@@ -378,7 +379,7 @@ def bbox(request):
         schedule_bbox = request.POST['schedule_bbox']
         user = request.COOKIES['user_id']
         bbox_id = str(int(time.time() * 1000)) + '_' + user
-        load_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+        load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
                        primary_project, user)
         return HttpResponseRedirect(reverse("bbox"))
     else:
@@ -386,6 +387,10 @@ def bbox(request):
         user_projects = ast.literal_eval(user_projects)
         user = request.COOKIES['user_id']
         result = get_data(user, BBOX_TABLE, request.COOKIES['primary_project'])
+        if result:
+            category = ['Plan', 'Actual', 'Grading']
+            for i in result:
+                i['category'] = update_queryset_values(category, i['category'])
         return render(request, 'intel_app/bbox.html', {'project': user_projects, 'data': result,
                                                        'user': user})
 
@@ -393,6 +398,7 @@ def bbox(request):
 @csrf_exempt
 def bbox_edit(request, pk):
     if request.method == "POST":
+        category = request.POST['category']
         process = request.POST['process']
         die_area = request.POST['die_area']
         config = request.POST['config']
@@ -401,7 +407,7 @@ def bbox_edit(request, pk):
         cdyn = request.POST['cdyn']
         schedule_bbox = request.POST['schedule_bbox']
         # update the values in external database
-        update_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
+        update_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
         return HttpResponseRedirect(reverse("bbox"))
 
 

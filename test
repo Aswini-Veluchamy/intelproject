@@ -386,6 +386,7 @@ CREATE TABLE key_program_metric_table(
 
 
 CREATE TABLE bbox(
+ category VARCHAR(200) NOT NULL,
  process MEDIUMTEXT NOT NULL,
  die_area MEDIUMTEXT NOT NULL,
  config MEDIUMTEXT NOT NULL,
@@ -468,3 +469,24 @@ bbox.html
 new file
 css tail-select
 js tail-select
+
+******************************************************************
+CREATE TABLE bbox(
+ category VARCHAR(200) NOT NULL,
+ process MEDIUMTEXT NOT NULL,
+ die_area MEDIUMTEXT NOT NULL,
+ config MEDIUMTEXT NOT NULL,
+ pv_freq MEDIUMTEXT NOT NULL,
+ perf_target MEDIUMTEXT NOT NULL,
+ cdyn MEDIUMTEXT NOT NULL,
+ schedule_bbox MEDIUMTEXT NOT NULL,
+ bbox_id VARCHAR(250) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+bbox
+key_program - delete removed
+views (bbox)
+db connection - db

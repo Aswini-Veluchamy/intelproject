@@ -109,7 +109,7 @@
                                data-buttons-class="primary btn-sm">
                             <thead>
                             <tr>
-                                <th scope="col" nowrap data-field="category" class="w-50 p-3 category">&nbsp;&nbsp;&nbsp;</th>
+                                <th scope="col" nowrap data-field="category" class="w-50 p-3 category">Category</th>
                                 <th scope="col" nowrap data-field="process" class="w-50 p-3 process">Process</th>
                                 <th scope="col" nowrap data-field="die_area" class="w-50 p-3 die_area">Die Area</th>
                                 <th scope="col" nowrap data-field="config" class="w-50 p-3 config">Config</th>
@@ -122,32 +122,34 @@
                             </thead>
                             <tbody data-body="bbox">
                             <tr data-a-id="new" data-add="false">
-                                 <td class="category">
-                                    <textarea class="form-control" data-prop="category" name="category" cols="10" rows="6" maxlength="250" disabled>Plan
-                                    Actual
-                                    Grading
-                                    </textarea>
+                                <td class="category">
+                                    <select class="form-select" data-prop="category" name="category" required="required">
+                                        <option value="" disabled="disabled" selected="selected">Select Category</option>
+                                        <option value="Plan">Plan</option>
+                                        <option value="Actual">Actual</option>
+                                        <option value="Grading">Grading</option>
+                                    </select>
                                 </td>
                                 <td class="process">
-                                    <textarea class="form-control" data-prop="process" name="process" placeholder="Enter Process" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                    <input type="text" class="form-control" data-prop="process" name="process" placeholder="Enter Process" required="required" />
                                 </td>
                                 <td class="die_area">
-                                    <textarea class="form-control" data-prop="die_area" name="die_area" placeholder="Enter Die Area" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                    <input type="text" class="form-control" data-prop="die_area" name="die_area" placeholder="Enter Die Area" required="required" />
                                 </td>
                                 <td class="config">
-                                    <textarea class="form-control" data-prop="config" name="config" placeholder="Enter Config" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                    <input type="text" class="form-control" data-prop="config" name="config" placeholder="Enter Config" required="required" />
                                 </td>
                                 <td class="pv_freq">
-                                    <textarea class="form-control" data-prop="pv_freq" name="pv_freq" placeholder="Enter PV Freq" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                    <input type="text" class="form-control" data-prop="pv_freq" name="pv_freq" placeholder="Enter PV Freq" required="required" />
                                 </td>
                                 <td class="perf_target">
-                                    <textarea class="form-control" data-prop="perf_target" name="perf_target" placeholder="Enter Perf Target" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                    <input type="text" class="form-control" data-prop="perf_target" name="perf_target" placeholder="Enter Perf Target" required="required" />
                                 </td>
                                 <td class="cdyn">
-                                    <textarea class="form-control" data-prop="cdyn" name="cdyn" placeholder="Enter Cdyn" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                    <input type="text" class="form-control" data-prop="cdyn" name="cdyn" placeholder="Enter Cdyn" required="required" />
                                 </td>
                                 <td class="schedule_bbox">
-                                    <textarea class="form-control" data-prop="schedule_bbox" name="schedule_bbox" placeholder="Enter Schedule" cols="10" rows="6" maxlength="250" required="required"></textarea>
+                                    <input type="text" class="form-control" data-prop="schedule_bbox" name="schedule_bbox" placeholder="Enter Schedule" required="required" />
                                 </td>
                                 <td class="text-center">
                                     <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
@@ -160,18 +162,14 @@
                             </tr>
                             {% for i in data %}
                             <tr data-n-id="{{ i.bbox_id }}" data-non-edit="true">
-                                <td style="white-space:pre-wrap; word-wrap:break-word;" nowrap class="category">
-                                    Plan
-                                    Actual
-                                    Grading
-                                </td>
-                                <td nowrap class="process">{{ i.process | linebreaks }}</td>
-                                <td nowrap class="die_area">{{ i.die_area | linebreaks }}</td>
-                                <td nowrap class="config">{{ i.config | linebreaks }}</td>
-                                <td nowrap class="pv_freq">{{ i.pv_freq | linebreaks }}</td>
-                                <td nowrap class="perf_target">{{ i.perf_target | linebreaks }}</td>
-                                <td nowrap class="cdyn">{{ i.cdyn | linebreaks }}</td>
-                                <td nowrap class="schedule_bbox">{{ i.schedule_bbox | linebreaks }}</td>
+                                <td nowrap class="category">{{ i.category.0 }}</td>
+                                <td nowrap class="process">{{ i.process }}</td>
+                                <td nowrap class="die_area">{{ i.die_area }}</td>
+                                <td nowrap class="config">{{ i.config }}</td>
+                                <td nowrap class="pv_freq">{{ i.pv_freq }}</td>
+                                <td nowrap class="perf_target">{{ i.perf_target }}</td>
+                                <td nowrap class="cdyn">{{ i.cdyn }}</td>
+                                <td nowrap class="schedule_bbox">{{ i.schedule_bbox }}</td>
                                 <td class="text-center">
                                     <button data-id="{{ i.bbox_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                         <i class="fas fa-edit"></i>
@@ -180,32 +178,32 @@
                             </tr>
                             <tr data-e-id="{{ i.bbox_id }}" data-edit="false">
                                 <td class="category">
-                                    <textarea class="form-control" data-prop="category" name="category" cols="10" rows="6" maxlength="250" disabled>
-                                    Plan
-                                    Actual
-                                    Grading
-                                    </textarea>
+                                    <select class="form-select" data-prop="category" name="category" required="required">
+                                        {% for i in i.category %}
+                                        <option value="{{i}}">{{i}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </td>
                                 <td class="process">
-                                    <textarea class="form-control" data-prop="process" name="process" cols="10" rows="6" maxlength="250" required="required">{{ i.process }}</textarea>
+                                    <input type="text" class="form-control" data-prop="process" name="process" placeholder="Enter Process" value="{{ i.process }}" required="required" />
                                 </td>
                                 <td class="die_area">
-                                    <textarea class="form-control" data-prop="die_area" name="die_area" cols="10" rows="6" maxlength="250" required="required">{{ i.die_area }}</textarea>
+                                    <input type="text" class="form-control" data-prop="die_area" name="die_area" placeholder="Enter Die Area" value="{{ i.die_area }}" required="required" />
                                 </td>
                                 <td class="config">
-                                    <textarea class="form-control" data-prop="config" name="config" cols="10" rows="6" maxlength="250" required="required">{{ i.config }}</textarea>
+                                    <input type="text" class="form-control" data-prop="config" name="config" placeholder="Enter Config" value="{{ i.config }}" required="required" />
                                 </td>
                                 <td class="pv_freq">
-                                    <textarea class="form-control" data-prop="pv_freq" name="pv_freq" cols="10" rows="6" maxlength="250" required="required">{{ i.pv_freq }}</textarea>
+                                    <input type="text" class="form-control" data-prop="pv_freq" name="pv_freq" placeholder="Enter PV Freq" value="{{ i.pv_freq }}" required="required" />
                                 </td>
                                 <td class="perf_target">
-                                    <textarea class="form-control" data-prop="perf_target" name="perf_target" cols="10" rows="6" maxlength="250" required="required">{{i.perf_target}}</textarea>
+                                    <input type="text" class="form-control" data-prop="perf_target" name="perf_target" placeholder="Enter Perf Target" value="{{i.perf_target}}" required="required" />
                                 </td>
                                 <td class="cdyn">
-                                    <textarea class="form-control" data-prop="cdyn" name="cdyn" cols="10" rows="6" maxlength="250" required="required">{{ i.cdyn }}</textarea>
+                                    <input type="text" class="form-control" data-prop="cdyn" name="cdyn" placeholder="Enter Cdyn" value="{{ i.cdyn }}" required="required" />
                                 </td>
                                 <td class="schedule_bbox">
-                                    <textarea class="form-control" data-prop="schedule_bbox" name="schedule_bbox" cols="10" rows="6" maxlength="250" required="required">{{ i.schedule_bbox }}</textarea>
+                                    <input type="text" class="form-control" data-prop="schedule_bbox" name="schedule_bbox" placeholder="Enter Schedule" value="{{ i.schedule_bbox }}" required="required" />
                                 </td>
                                 <div class="text-center">
                                     <td>
@@ -276,13 +274,14 @@
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
             const bbox = {
-                process: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="process"]')[0].value,
-                die_area: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="die_area"]')[0].value,
-                config: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="config"]')[0].value,
-                pv_freq: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="pv_freq"]')[0].value,
-                perf_target: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="perf_target"]')[0].value,
-                cdyn: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="cdyn"]')[0].value,
-                schedule_bbox: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="schedule_bbox"]')[0].value,
+                category: $('tr[data-e-id="' + objectId + '"] select[data-prop="category"]')[0].value,
+                process: $('tr[data-e-id="' + objectId + '"] input[data-prop="process"]')[0].value,
+                die_area: $('tr[data-e-id="' + objectId + '"] input[data-prop="die_area"]')[0].value,
+                config: $('tr[data-e-id="' + objectId + '"] input[data-prop="config"]')[0].value,
+                pv_freq: $('tr[data-e-id="' + objectId + '"] input[data-prop="pv_freq"]')[0].value,
+                perf_target: $('tr[data-e-id="' + objectId + '"] input[data-prop="perf_target"]')[0].value,
+                cdyn: $('tr[data-e-id="' + objectId + '"] input[data-prop="cdyn"]')[0].value,
+                schedule_bbox: $('tr[data-e-id="' + objectId + '"] input[data-prop="schedule_bbox"]')[0].value,
             }
             $.ajax({
                 type: "POST",
@@ -301,13 +300,14 @@
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
             const bbox = {
-                process: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="process"]')[0].value,
-                die_area: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="die_area"]')[0].value,
-                config: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="config"]')[0].value,
-                pv_freq: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="pv_freq"]')[0].value,
-                perf_target: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="perf_target"]')[0].value,
-                cdyn: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="cdyn"]')[0].value,
-                schedule_bbox: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="schedule_bbox"]')[0].value,
+                category: $('tr[data-a-id="' + objectId + '"] select[data-prop="category"]')[0].value,
+                process: $('tr[data-a-id="' + objectId + '"] input[data-prop="process"]')[0].value,
+                die_area: $('tr[data-a-id="' + objectId + '"] input[data-prop="die_area"]')[0].value,
+                config: $('tr[data-a-id="' + objectId + '"] input[data-prop="config"]')[0].value,
+                pv_freq: $('tr[data-a-id="' + objectId + '"] input[data-prop="pv_freq"]')[0].value,
+                perf_target: $('tr[data-a-id="' + objectId + '"] input[data-prop="perf_target"]')[0].value,
+                cdyn: $('tr[data-a-id="' + objectId + '"] input[data-prop="cdyn"]')[0].value,
+                schedule_bbox: $('tr[data-a-id="' + objectId + '"] input[data-prop="schedule_bbox"]')[0].value,
             }
             $.ajax({
                 type: "POST",

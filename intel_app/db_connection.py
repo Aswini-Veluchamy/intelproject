@@ -12,7 +12,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3406
+        port=3306
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -251,22 +251,22 @@ def get_users():
         print(f"Error: {err}")
 
 
-def load_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+def load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
                    project, user):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {BBOX_TABLE} (process, die_area, config, pv_freq, perf_target, cdyn,\
+    sql = f"INSERT INTO {BBOX_TABLE} (category, process, die_area, config, pv_freq, perf_target, cdyn,\
             schedule_bbox, bbox_id, project, user) \
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id, project, user)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id, project, user)
     cursor.execute(sql, val)
     print(f'data inserted in {BBOX_TABLE} ....')
     conn.commit()
     conn.close()
 
 
-def update_bbox_data(process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id):
+def update_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id):
     conn, cursor = db_connection()
-    sql = (f"UPDATE {BBOX_TABLE} SET process = '{process}', die_area = '{die_area}', \
+    sql = (f"UPDATE {BBOX_TABLE} SET category = '{category}', process = '{process}', die_area = '{die_area}', \
             config = '{config}', pv_freq = '{pv_freq}', perf_target = '{perf_target}', cdyn = '{cdyn}', \
             schedule_bbox = '{schedule_bbox}' \
             WHERE bbox_id='{bbox_id}'")
