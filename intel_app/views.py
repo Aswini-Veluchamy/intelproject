@@ -152,6 +152,8 @@ def key_message(request):
 @csrf_exempt
 def risks(request):
     if request.method == "POST":
+        display = request.POST['switch_button']
+        print(display)
         risk_summary = request.POST['risk_summary']
         risk_area = request.POST['risk_area']
         status = request.POST['status']
@@ -168,7 +170,7 @@ def risks(request):
         ''' storing data into database'''
         # load risk data to external database
         load_risk_data([
-            (risk_summary, risk_area, status, owner, consequence, mitigations,
+            (display, risk_summary, risk_area, status, owner, consequence, mitigations,
              eta, trigger_date, risk_initiated, impact, risk_id, primary_project, user)
         ])
         return HttpResponseRedirect(reverse("risk"))
@@ -198,6 +200,7 @@ def risks(request):
 @csrf_exempt
 def risk_edit_table(request, pk):
     if request.method == "POST":
+        display = request.POST['switch_button']
         risk_summary = request.POST['risk_summary']
         risk_area = request.POST['risk_area']
         status = request.POST['status']
@@ -208,7 +211,7 @@ def risk_edit_table(request, pk):
         trigger_date = request.POST['trigger_date']
         risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
-        update_risk_data([(risk_summary, risk_area, status, owner, consequence, mitigations, eta,
+        update_risk_data([(display, risk_summary, risk_area, status, owner, consequence, mitigations, eta,
                            trigger_date, risk_initiated, impact, pk)])
         return HttpResponseRedirect(reverse("risk"))
 

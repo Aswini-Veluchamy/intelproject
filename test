@@ -413,6 +413,7 @@ pip install bcrypt
 
 --------------- 23/01/24
 CREATE TABLE risk_table(
+ display VARCHAR(20) NOT NULL,
  risk_summary VARCHAR(200) NOT NULL,
  risk_area VARCHAR(200) NOT NULL,
  status VARCHAR(50) NOT NULL,
@@ -490,3 +491,26 @@ bbox
 key_program - delete removed
 views (bbox)
 db connection - db
+
+********************************************
+CREATE TABLE risk_table(
+ display VARCHAR(20) NOT NULL,
+ risk_summary VARCHAR(200) NOT NULL,
+ risk_area VARCHAR(200) NOT NULL,
+ status VARCHAR(50) NOT NULL,
+ owner VARCHAR(100) NOT NULL,
+ consequence VARCHAR(200) NOT NULL,
+ mitigations VARCHAR(200) NOT NULL,
+ eta DATE,
+ trigger_date DATE,
+ risk_initiated DATE,
+ impact VARCHAR(200) NOT NULL,
+ risk_id VARCHAR(200) NOT NULL,
+ project VARCHAR(100) NOT NULL,
+ user VARCHAR(100) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+views.py
+risk_table.html
+db_connection.py

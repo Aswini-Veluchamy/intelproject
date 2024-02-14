@@ -31,11 +31,11 @@ def load_key_message_data(data):
 
 def load_risk_data(data):
     conn, cursor = db_connection()
-    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, \
+    for display, risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, \
             risk_id, project, user in data:
-        sql = f"INSERT INTO {RISK_TABLE} (risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, \
-            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, risk_id, project, user)
+        sql = f"INSERT INTO {RISK_TABLE} (display, risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, \
+            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (display, risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, risk_id, project, user)
         cursor.execute(sql, val)
     print(f'data inserted in {RISK_TABLE} ....')
     conn.commit()
@@ -65,8 +65,8 @@ def get_data(user, table, project):
 
 def update_risk_data(data):
     conn, cursor = db_connection()
-    for risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, risk_id in data:
-        sql = (f"UPDATE {RISK_TABLE} SET risk_summary = '{risk_summary}',risk_area = '{risk_area}', status = '{status}', owner = '{owner}', \
+    for display, risk_summary, risk_area, status, owner, consequence, mitigations, eta, trigger_date, risk_initiated, impact, risk_id in data:
+        sql = (f"UPDATE {RISK_TABLE} SET display = '{display}', risk_summary = '{risk_summary}',risk_area = '{risk_area}', status = '{status}', owner = '{owner}', \
                 consequence = '{consequence}',mitigations = '{mitigations}', eta = '{eta}',trigger_date = '{trigger_date}', \
                 risk_initiated = '{risk_initiated}', impact = '{impact}' \
                 WHERE risk_id='{risk_id}'")

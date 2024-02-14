@@ -111,6 +111,7 @@
                                data-buttons-class="primary btn-sm">
                             <thead>
                             <tr>
+                                <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
                                 <th scope="col" nowrap data-field="risk_summary" class="w-50 p-3 risk_summary">Risk Summary</th>
                                 <th scope="col" nowrap data-field="risk_area" class="w-50 p-3 risk_area">Risk Area</th>
                                 <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
@@ -126,6 +127,9 @@
                             </thead>
                             <tbody data-body="risk">
                             <tr data-a-id="new" data-add="false">
+                                <td class="switch_button">
+                                    <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
+                                </td>
                                 <td class="risk_summary">
                                     <textarea class="form-control" data-prop="risk_summary" name="risk_summary" placeholder="Enter Risk Summary" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
@@ -194,6 +198,7 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                             </tr>
                             {% for i in data %}
                             <tr data-n-id="{{ i.risk_id }}" data-non-edit="true">
+                                <td nowrap class="switch_button">{{ i.display }}</td>
                                 <td nowrap class="risk_summary">{{ i.risk_summary }}</td>
                                 <td nowrap class="risk_area">{{ i.risk_area.0 }}</td>
                                 <td nowrap class="status">{{ i.status.0 }}</td>
@@ -211,6 +216,9 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                 </td>
                             </tr>
                             <tr data-e-id="{{ i.risk_id }}" data-edit="false">
+                                <td class="switch_button">
+                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
+                                </td>
                                 <td class="risk_summary">
                                     <textarea class="form-control" data-prop="risk_summary" name="risk_summary" cols="3" maxlength="250" required="required">{{i.risk_summary}}</textarea>
                                 </td>
@@ -335,6 +343,7 @@ o    High – potentially high impact to milestones + path to avoidance is compl
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
             const risk = {
+                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 risk_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
                 risk_area: $('tr[data-e-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
                 status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
@@ -363,6 +372,7 @@ o    High – potentially high impact to milestones + path to avoidance is compl
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
             const risk = {
+                switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 risk_summary: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
                 risk_area: $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
                 status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
