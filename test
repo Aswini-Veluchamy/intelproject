@@ -514,3 +514,76 @@ CREATE TABLE risk_table(
 views.py
 risk_table.html
 db_connection.py
+
+
+
+=================================== new changes 24-feb =====================================
+
+CREATE TABLE schedule_table(
+ milestone VARCHAR(200) NOT NULL,
+ por_commit DATE,
+ por_trend DATE,
+ status VARCHAR(50) NOT NULL,
+ comments VARCHAR(200) NOT NULL,
+ schedule_id VARCHAR(50) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ deleted BOOLEAN,
+ deleted_by VARCHAR(200) NOT NULL,
+ deleted_on date,
+ sort_value int NOT NULL AUTO_INCREMENT,
+ PRIMARY KEY (sort_value)
+);
+
+CREATE TABLE issues_table(
+ issues_summary VARCHAR(200) NOT NULL,
+ status VARCHAR(50) NOT NULL,
+ owner VARCHAR(100) NOT NULL,
+ eta VARCHAR(200) NOT NULL,
+ age VARCHAR(200) NOT NULL,
+ trigger_date DATE,
+ issues_initiated DATE,
+ severity VARCHAR(200) NOT NULL,
+ issues_id VARCHAR(200) NOT NULL,
+ project VARCHAR(100) NOT NULL,
+ user VARCHAR(100) NOT NULL,
+ deleted BOOLEAN,
+ deleted_by VARCHAR(200) NOT NULL,
+ deleted_on date,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE bbox(
+ category VARCHAR(200) NOT NULL,
+ process MEDIUMTEXT NOT NULL,
+ die_area MEDIUMTEXT NOT NULL,
+ config MEDIUMTEXT NOT NULL,
+ pv_freq MEDIUMTEXT NOT NULL,
+ perf_target MEDIUMTEXT NOT NULL,
+ cdyn MEDIUMTEXT NOT NULL,
+ schedule_bbox MEDIUMTEXT NOT NULL,
+ bbox_id VARCHAR(250) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ deleted BOOLEAN,
+ deleted_by VARCHAR(200) NOT NULL,
+ deleted_on date,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE links_table(
+ links_url LONGTEXT NOT NULL,
+ comments_links VARCHAR(200) NOT NULL,
+ links_id VARCHAR(50) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ deleted BOOLEAN,
+ deleted_by VARCHAR(200) NOT NULL,
+ deleted_on date,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+view
+urls
+db_connection

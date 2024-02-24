@@ -13,11 +13,12 @@ from .db_connection import load_key_program_metric_data, update_key_program_metr
 from .db_connection import load_schedule_data, update_schedule_data, load_links_data, update_links_data, register_user
 from .db_connection import login_user, create_project, get_projects, load_bbox_data, update_bbox_data
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, encrypt_password
-from .db_connection import get_data, get_key_msg_or_details_data
+from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record
 
 import ast
 
 from copy import deepcopy
+from datetime import datetime
 
 
 @csrf_exempt
@@ -122,11 +123,11 @@ def home(request):
         primary_project = request.COOKIES['primary_project']
         # based on the user filtering the data
         try:
-            key_mess_data = get_key_msg_or_details_data(user, KEY_MESSAGE_TABLE, primary_project)
+            key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, primary_project)
         except TypeError:
             key_mess_data = None
         try:
-            details_data = get_key_msg_or_details_data(user, DETAILS_TABLE, primary_project)
+            details_data = get_key_msg_or_details_data(DETAILS_TABLE, primary_project)
         except TypeError:
             details_data = None
         # return the data to UI
@@ -294,7 +295,8 @@ def schedule(request):
         user = request.COOKIES['user_id']
         schedule_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
-        load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, primary_project)
+        load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, primary_project,
+                           False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("schedule"))
     else:
         try:
@@ -346,7 +348,8 @@ def links(request):
             raise Exception('fill the fields!!!!!!!!')
 
         links_id = str(int(time.time() * 1000)) + '_' + user
-        load_links_data(links_url, comments, links_id, primary_project, user)
+        load_links_data(links_url, comments, links_id, primary_project, user,
+                        False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("links"))
     else:
         user_project = request.COOKIES['project']
@@ -383,7 +386,7 @@ def bbox(request):
         user = request.COOKIES['user_id']
         bbox_id = str(int(time.time() * 1000)) + '_' + user
         load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
-                       primary_project, user)
+                       primary_project, user, False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("bbox"))
     else:
         user_projects = request.COOKIES['project']
@@ -431,7 +434,7 @@ def issues(request):
         # load isuues data to external database
         load_issues_data([
             (issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id,
-             primary_project, user)
+             primary_project, user, False, 'None', datetime.now().date())
         ])
         return HttpResponseRedirect(reverse("issues"))
     else:
@@ -473,3 +476,26 @@ def project_change(request, func_name):
     response.set_cookie('primary_project', request.POST.get('projectdata'))
     return response
 
+
+def delete_schedule_data(request, pk):
+    deleted_by = request.COOKIES['user_id']
+    update_deleted_record(SCHEDULE_TABLE, deleted_by, datetime.now().today(), 'schedule_id', pk)
+    return HttpResponseRedirect(reverse("schedule"))
+
+
+def delete_links_data(request, pk):
+    deleted_by = request.COOKIES['user_id']
+    update_deleted_record(LINKS_TABLE, deleted_by, datetime.now().today(), 'links_id', pk)
+    return HttpResponseRedirect(reverse("links"))
+
+
+def delete_bbox_data(request, pk):
+    deleted_by = request.COOKIES['user_id']
+    update_deleted_record(BBOX_TABLE, deleted_by, datetime.now().today(), 'bbox_id', pk)
+    return HttpResponseRedirect(reverse("bbox"))
+
+
+def delete_issues_data(request, pk):
+    deleted_by = request.COOKIES['user_id']
+    update_deleted_record(ISSUES_TABLE, deleted_by, datetime.now().today(), 'issues_id', pk)
+    return HttpResponseRedirect(reverse("issues"))
