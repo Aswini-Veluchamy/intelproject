@@ -15,6 +15,7 @@
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 
     <style>
         tr[data-non-edit="true"] {
@@ -108,6 +109,7 @@
                                data-buttons-class="primary btn-sm">
                             <thead>
                             <tr>
+                                <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
                                 <th scope="col" nowrap data-field="milestone" class="w-50 p-3 milestone">Milestone</th>
                                 <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
                                 <th scope="col" nowrap data-field="por_commit" class="w-50 p-3 por_commit">POR Commit</th>
@@ -118,6 +120,9 @@
                             </thead>
                             <tbody data-body="schedule">
                             <tr data-a-id="new" data-add="false">
+                                <td class="switch_button">
+                                    <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
+                                </td>
                                 <td class="milestone">
                                     <textarea class="form-control" data-prop="milestone" name="milestone" placeholder="Enter Milestone" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
@@ -152,6 +157,7 @@
                             </tr>
                             {% for i in data %}
                             <tr data-n-id="{{ i.schedule_id }}" data-non-edit="true">
+                                <td nowrap class="switch_button">{{ i.display }}</td>
                                 <td nowrap class="milestone">{{ i.milestone }}</td>
                                 <td nowrap class="status">{{ i.status.0 }}</td>
                                 <td nowrap class="por_commit">{{ i.por_commit | date:'Y-m-d' }}</td>
@@ -159,10 +165,19 @@
                                 <td nowrap class="comments">{{ i.comments }}</td>
                                 <td>
                                     <button data-id="{{ i.schedule_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Schedule">
-                                        <i class="fas fa-edit"></i></button>
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" title="Delete Schedule">
+                                        <a style="text-decoration:none;color:#fff;" href="{% url 'delete_schedule_data' pk=i.schedule_id %}" onclick="return confirmDelete()">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </button>
                                 </td>
                             </tr>
                             <tr data-e-id="{{ i.schedule_id }}" data-edit="false">
+                                <td class="switch_button">
+                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
+                                </td>
                                 <td class="milestone">
                                     <textarea class="form-control" data-prop="milestone" name="milestone" cols="3" maxlength="250" disabled>{{i.milestone}}</textarea>
                                 </td>
@@ -215,6 +230,7 @@
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 
 <script>
     function nameFormatter(value, row) {
@@ -253,6 +269,7 @@
         $('.save-btn').on('click', function () {
             let objectId = $(this).data('id');
             const schedule = {
+               switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                milestone : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
                status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                por_commit : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
@@ -280,6 +297,7 @@
 
             let objectId = "new";
             const schedule = {
+               switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                milestone : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
                status : $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                por_commit : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
@@ -300,6 +318,15 @@
             $('tr[data-a-id="new"]').attr('data-add', false);
         });
     });
+</script>
+<script>
+    function confirmDelete() {
+    if (confirm("Delete Record?") == true) {
+        return true;
+    } else {
+        return false;
+    }
+}
 </script>
 <script>
     $('#projectdata').change(function(event){

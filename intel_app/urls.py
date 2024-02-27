@@ -25,7 +25,7 @@ urlpatterns = [
     path('project/', views.project, name='project'),
     path('project_change/<str:func_name>', views.project_change, name='project_change'),
     path('delete_schedule_data/<str:pk>', views.delete_schedule_data, name='delete_schedule_data'),
-    path('delete_schedule_data/<str:pk>', views.delete_schedule_data, name='delete_schedule_data'),
+    path('delete_issues_data/<str:pk>', views.delete_issues_data, name='delete_issues_data'),
     path('delete_bbox_data/<str:pk>', views.delete_bbox_data, name='delete_bbox_data'),
     path('delete_links_data/<str:pk>', views.delete_links_data, name='delete_links_data')
 ]

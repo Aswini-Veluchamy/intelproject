@@ -12,7 +12,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3406
+        port=3306
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -52,9 +52,13 @@ def get_key_msg_or_details_data(table, project):
     return result
 
 
-def get_data(user, table, project):
+def get_data(user, table, project, deleted=None):
     conn, cursor = db_connection()
-    cursor.execute(f"SELECT * FROM {table} where user='{user}' and project='{project}'")
+    if deleted == False:
+        sql = f"SELECT * FROM {table} where user='{user}' and project='{project}' and deleted={deleted}"
+    else:
+        sql = f"SELECT * FROM {table} where user='{user}' and project='{project}'"
+    cursor.execute(sql)
     records = cursor.fetchall()
     columns = [col[0] for col in cursor.description]
     result = [dict(zip(columns, record)) for record in records]
@@ -78,11 +82,11 @@ def update_risk_data(data):
 
 def load_key_program_metric_data(data):
     conn, cursor = db_connection()
-    for metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user in data:
-        sql = f"INSERT INTO {KEY_PROGRAM_METRIC_TABLE} (metric, fv_target, current_week_actual,\
+    for display, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user in data:
+        sql = f"INSERT INTO {KEY_PROGRAM_METRIC_TABLE} (display, metric, fv_target, current_week_actual,\
                 current_week_plan, status, comments, metric_id, project, user) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (display, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user)
         cursor.execute(sql, val)
     print(f'data inserted in {KEY_PROGRAM_METRIC_TABLE} ....')
     conn.commit()
@@ -91,8 +95,8 @@ def load_key_program_metric_data(data):
 
 def update_key_program_metric_data(data):
     conn, cursor = db_connection()
-    for metric, fv_target, cwa, cwp, status, comments, metric_id in data:
-        sql = (f"UPDATE {KEY_PROGRAM_METRIC_TABLE} SET metric = '{metric}', fv_target = '{fv_target}', \
+    for display, metric, fv_target, cwa, cwp, status, comments, metric_id in data:
+        sql = (f"UPDATE {KEY_PROGRAM_METRIC_TABLE} SET display = '{display}', metric = '{metric}', fv_target = '{fv_target}', \
                 current_week_actual = '{cwa}', current_week_plan = '{cwp}', status = '{status}', comments = '{comments}' \
                 WHERE metric_id='{metric_id}'")
         cursor.execute(sql)
@@ -129,12 +133,12 @@ def update_details_data(details_id, message):
     conn.close()
 
 
-def load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, deleted, deleted_by,
+def load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, deleted, deleted_by,
                        deleted_on):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {SCHEDULE_TABLE} (milestone, por_commit, por_trend, status, comments, schedule_id,\
-            user, project, deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, deleted, deleted_by, deleted_on)
+    sql = f"INSERT INTO {SCHEDULE_TABLE} (display, milestone, por_commit, por_trend, status, comments, schedule_id,\
+            user, project, deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (display, milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, deleted, deleted_by, deleted_on)
     cursor.execute(sql, val)
     print(f'data inserted in {SCHEDULE_TABLE} ....')
     conn.commit()
@@ -143,8 +147,8 @@ def load_schedule_data(milestone, por_commit, por_trend, status, comments, sched
 
 def update_schedule_data(data):
     conn, cursor = db_connection()
-    for milestone, por_commit, por_trend, status, comments, schedule_id in data:
-        sql = (f"UPDATE {SCHEDULE_TABLE} SET milestone = '{milestone}', por_commit = '{por_commit}', \
+    for display, milestone, por_commit, por_trend, status, comments, schedule_id in data:
+        sql = (f"UPDATE {SCHEDULE_TABLE} SET display = '{display}', milestone = '{milestone}', por_commit = '{por_commit}', \
                 por_trend = '{por_trend}', status = '{status}', comments = '{comments}' \
                 WHERE schedule_id='{schedule_id}'")
         cursor.execute(sql)
@@ -153,20 +157,20 @@ def update_schedule_data(data):
     conn.close()
 
 
-def load_links_data(links_url, comments, links_id, project, user, deleted, deleted_by, deleted_on):
+def load_links_data(display, links_url, comments, links_id, project, user, deleted, deleted_by, deleted_on):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {LINKS_TABLE} (links_url, comments_links, links_id, project, user, deleted, deleted_by, deleted_on) \
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (links_url, comments, links_id, project, user, deleted, deleted_by, deleted_on)
+    sql = f"INSERT INTO {LINKS_TABLE} (display, links_url, comments_links, links_id, project, user, deleted, deleted_by, deleted_on) \
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (display, links_url, comments, links_id, project, user, deleted, deleted_by, deleted_on)
     cursor.execute(sql, val)
     print(f'data inserted in {LINKS_TABLE} ....')
     conn.commit()
     conn.close()
 
 
-def update_links_data(links_url, comments, links_id):
+def update_links_data(display, links_url, comments, links_id):
     conn, cursor = db_connection()
-    sql = f"UPDATE {LINKS_TABLE} SET links_url = '{links_url}', comments_links = '{comments}' WHERE links_id='{links_id}'"
+    sql = f"UPDATE {LINKS_TABLE} SET display = '{display}', links_url = '{links_url}', comments_links = '{comments}' WHERE links_id='{links_id}'"
     cursor.execute(sql)
     print(f'data updated in {links_id} ....')
     conn.commit()
@@ -253,13 +257,13 @@ def get_users():
         print(f"Error: {err}")
 
 
-def load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+def load_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
                    project, user, deleted, deleted_by, deleted_on):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {BBOX_TABLE} (category, process, die_area, config, pv_freq, perf_target, cdyn,\
+    sql = f"INSERT INTO {BBOX_TABLE} (display, category, process, die_area, config, pv_freq, perf_target, cdyn,\
             schedule_bbox, bbox_id, project, user, deleted, deleted_by, deleted_on) \
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id, project, user,
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id, project, user,
            deleted, deleted_by, deleted_on)
     cursor.execute(sql, val)
     print(f'data inserted in {BBOX_TABLE} ....')
@@ -267,9 +271,9 @@ def load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cd
     conn.close()
 
 
-def update_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id):
+def update_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id):
     conn, cursor = db_connection()
-    sql = (f"UPDATE {BBOX_TABLE} SET category = '{category}', process = '{process}', die_area = '{die_area}', \
+    sql = (f"UPDATE {BBOX_TABLE} SET display = '{display}', category = '{category}', process = '{process}', die_area = '{die_area}', \
             config = '{config}', pv_freq = '{pv_freq}', perf_target = '{perf_target}', cdyn = '{cdyn}', \
             schedule_bbox = '{schedule_bbox}' \
             WHERE bbox_id='{bbox_id}'")
@@ -305,11 +309,11 @@ def encrypt_password(password):
 
 def load_issues_data(data):
     conn, cursor = db_connection()
-    for issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, \
+    for display, issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, \
             issues_id, project, user, deleted, deleted_by, deleted_on in data:
-        sql = f"INSERT INTO {ISSUES_TABLE} (issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, \
-            issues_id, project, user, deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, issues_id, project, user,
+        sql = f"INSERT INTO {ISSUES_TABLE} (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, \
+            issues_id, project, user, deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (display, issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, issues_id, project, user,
                deleted, deleted_by, deleted_on)
         cursor.execute(sql, val)
     print(f'data inserted in {ISSUES_TABLE} ....')
@@ -319,8 +323,8 @@ def load_issues_data(data):
 
 def update_issues_data(data):
     conn, cursor = db_connection()
-    for issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id in data:
-        sql = (f"UPDATE {ISSUES_TABLE} SET issues_summary = '{issues_summary}', status = '{status}', owner = '{owner}', \
+    for display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id in data:
+        sql = (f"UPDATE {ISSUES_TABLE} SET display = '{display}', issues_summary = '{issues_summary}', status = '{status}', owner = '{owner}', \
                 eta = '{eta}', trigger_date = '{trigger_date}', \
                 issues_initiated = '{issues_initiated}', severity = '{severity}' \
                 WHERE issues_id='{issues_id}'")
@@ -333,9 +337,10 @@ def update_issues_data(data):
 def update_deleted_record(table, deleted_by, deleted_on, row_id, row_value):
     deleted = True
     conn, cursor = db_connection()
-    sql = (f"UPDATE {table} SET deleted = '{deleted}', deleted_by = '{deleted_by}', \
+    sql = (f"UPDATE {table} SET deleted = {deleted}, deleted_by = '{deleted_by}', \
             deleted_on = '{deleted_on}' WHERE {row_id}='{row_value}'")
+    print(sql)
     cursor.execute(sql)
-    print(f'data updated in {SCHEDULE_TABLE} ....')
+    print(f'data updated in {table} ....')
     conn.commit()
     conn.close()

@@ -220,6 +220,7 @@ def risk_edit_table(request, pk):
 @csrf_exempt
 def key_program(request):
     if request.method == "POST":
+        display = request.POST['switch_button']
         metric = request.POST['metric']
         fv_target = request.POST['target']
         current_week_actual = request.POST['actual']
@@ -230,7 +231,7 @@ def key_program(request):
         user = request.COOKIES['user_id']
         metric_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
-        load_key_program_metric_data([(metric, fv_target, current_week_actual,
+        load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
                                        current_week_plan, status, comments, metric_id, primary_project, user)])
         return HttpResponseRedirect(reverse("key_program"))
     else:
@@ -253,6 +254,7 @@ def key_program(request):
 @csrf_exempt
 def key_program_edit(request, pk):
     if request.method == "POST":
+        display = request.POST['switch_button']
         metric = request.POST['metric']
         fv_target = request.POST['target']
         current_week_actual = request.POST['actual']
@@ -260,7 +262,7 @@ def key_program_edit(request, pk):
         status = request.POST['status']
         comments = request.POST['comments']
         # update the values in external database
-        update_key_program_metric_data([(metric, fv_target, current_week_actual, current_week_plan,
+        update_key_program_metric_data([(display, metric, fv_target, current_week_actual, current_week_plan,
                                         status, comments, pk)])
         return HttpResponseRedirect(reverse("key_program"))
 
@@ -286,6 +288,7 @@ def details(request):
 @csrf_exempt
 def schedule(request):
     if request.method == "POST":
+        display = request.POST['switch_button']
         milestone = request.POST['milestone']
         por_commit = request.POST['por_commit']
         por_trend = request.POST['por_trend']
@@ -295,7 +298,7 @@ def schedule(request):
         user = request.COOKIES['user_id']
         schedule_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
-        load_schedule_data(milestone, por_commit, por_trend, status, comments, schedule_id, user, primary_project,
+        load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, primary_project,
                            False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("schedule"))
     else:
@@ -304,7 +307,7 @@ def schedule(request):
             admin = request.COOKIES['admin']
             user = request.COOKIES['user_id']
             user_projects = ast.literal_eval(user_projects)
-            result = get_data(user, SCHEDULE_TABLE, request.COOKIES['primary_project'])
+            result = get_data(user, SCHEDULE_TABLE, request.COOKIES['primary_project'], False)
             if result:
                 status = ['R', 'G', 'B', 'Y']
                 for i in result:
@@ -318,13 +321,14 @@ def schedule(request):
 @csrf_exempt
 def schedule_edit_table(request, pk):
     if request.method == "POST":
+        display = request.POST['switch_button']
         milestone = request.POST['milestone']
         por_commit = request.POST['por_commit']
         por_trend = request.POST['por_trend']
         status = request.POST['status']
         comments = request.POST['comments']
         # update the values in external database
-        update_schedule_data([(milestone, por_commit, por_trend, status, comments, pk)])
+        update_schedule_data([(display, milestone, por_commit, por_trend, status, comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
 
 
@@ -339,6 +343,7 @@ def update_queryset_values(data_list: list, input_value: str):
 @csrf_exempt
 def links(request):
     if request.method == "POST":
+        display = request.POST['switch_button']
         links_url = request.POST['links_url']
         comments = request.POST['comments_links']
         primary_project = request.COOKIES['primary_project']
@@ -348,7 +353,7 @@ def links(request):
             raise Exception('fill the fields!!!!!!!!')
 
         links_id = str(int(time.time() * 1000)) + '_' + user
-        load_links_data(links_url, comments, links_id, primary_project, user,
+        load_links_data(display, links_url, comments, links_id, primary_project, user,
                         False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("links"))
     else:
@@ -356,7 +361,7 @@ def links(request):
         admin = request.COOKIES['admin']
         user = request.COOKIES['user_id']
         user_project = ast.literal_eval(user_project)
-        result = get_data(user, LINKS_TABLE, request.COOKIES['primary_project'])
+        result = get_data(user, LINKS_TABLE, request.COOKIES['primary_project'], False)
         return render(request, 'intel_app/links.html', {'project': user_project, 'data': result,
                                                         'user': user})
 
@@ -364,16 +369,18 @@ def links(request):
 @csrf_exempt
 def links_edit_table(request, pk):
     if request.method == "POST":
+        display = request.POST['switch_button']
         links_url = request.POST['links_url']
         comments = request.POST['comments_links']
         # update the values in external database
-        update_links_data(links_url, comments, pk)
+        update_links_data(display, links_url, comments, pk)
         return HttpResponseRedirect(reverse("links"))
 
 
 @csrf_exempt
 def bbox(request):
     if request.method == "POST":
+        display = request.POST['switch_button']
         primary_project = request.COOKIES['primary_project']
         category = request.POST['category']
         process = request.POST['process']
@@ -385,14 +392,14 @@ def bbox(request):
         schedule_bbox = request.POST['schedule_bbox']
         user = request.COOKIES['user_id']
         bbox_id = str(int(time.time() * 1000)) + '_' + user
-        load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+        load_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
                        primary_project, user, False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("bbox"))
     else:
         user_projects = request.COOKIES['project']
         user_projects = ast.literal_eval(user_projects)
         user = request.COOKIES['user_id']
-        result = get_data(user, BBOX_TABLE, request.COOKIES['primary_project'])
+        result = get_data(user, BBOX_TABLE, request.COOKIES['primary_project'], False)
         if result:
             category = ['Plan', 'Actual', 'Grading']
             for i in result:
@@ -404,6 +411,7 @@ def bbox(request):
 @csrf_exempt
 def bbox_edit(request, pk):
     if request.method == "POST":
+        display = request.POST['switch_button']
         category = request.POST['category']
         process = request.POST['process']
         die_area = request.POST['die_area']
@@ -413,13 +421,14 @@ def bbox_edit(request, pk):
         cdyn = request.POST['cdyn']
         schedule_bbox = request.POST['schedule_bbox']
         # update the values in external database
-        update_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
+        update_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
         return HttpResponseRedirect(reverse("bbox"))
 
 
 @csrf_exempt
 def issues(request):
     if request.method == "POST":
+        display = request.POST['switch_button']
         issues_summary = request.POST['issues_summary']
         status = request.POST['status']
         owner = request.POST['owner']
@@ -433,7 +442,7 @@ def issues(request):
         ''' storing data into database'''
         # load isuues data to external database
         load_issues_data([
-            (issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id,
+            (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id,
              primary_project, user, False, 'None', datetime.now().date())
         ])
         return HttpResponseRedirect(reverse("issues"))
@@ -443,7 +452,7 @@ def issues(request):
             admin = request.COOKIES['admin']
             user = request.COOKIES['user_id']
             user_projects = ast.literal_eval(user_projects)
-            result = get_data(user, ISSUES_TABLE, request.COOKIES['primary_project'])
+            result = get_data(user, ISSUES_TABLE, request.COOKIES['primary_project'], False)
             if result:
                 status = ['Open', 'Closed']
                 severity = ['Low', 'Medium', 'High']
@@ -459,6 +468,7 @@ def issues(request):
 @csrf_exempt
 def issues_edit_table(request, pk):
     if request.method == "POST":
+        display = request.POST['switch_button']
         issues_summary = request.POST['issues_summary']
         status = request.POST['status']
         owner = request.POST['owner']
@@ -466,7 +476,7 @@ def issues_edit_table(request, pk):
         trigger_date = request.POST['trigger_date']
         issues_initiated = request.POST['issues_initiated']
         severity = request.POST['severity']
-        update_issues_data([(issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, pk)])
+        update_issues_data([(display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, pk)])
         return HttpResponseRedirect(reverse("issues"))
 
 

@@ -14,10 +14,10 @@
     <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/bootstrap-select.min.css' %}" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
     <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 
     <style>
         tr[data-non-edit="true"] {
@@ -162,7 +162,7 @@
                                     <textarea class="form-control" data-prop="mitigations" name="mitigations" placeholder="Enter Mitigations" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
                                 <td class="eta">
-                                    <input class="form-control" data-prop="eta" name="eta" type="date"
+                                    <input class="form-control" data-prop="eta" name="eta" type="text"
                                            required="required" placeholder="Enter ETA" />
                                 </td>
                                 <td class="trigger_date">
@@ -205,7 +205,7 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                 <td nowrap class="owner">{{ i.owner }}</td>
                                 <td nowrap class="consequence">{{ i.consequence }}</td>
                                 <td nowrap class="mitigations">{{ i.mitigations }}</td>
-                                <td nowrap class="eta">{{ i.eta | date:'Y-m-d' }}</td>
+                                <td nowrap class="eta">{{ i.eta }}</td>
                                 <td nowrap class="trigger_date">{{ i.trigger_date | date:'Y-m-d' }}</td>
                                 <td nowrap class="risk_initiated">{{ i.risk_initiated | date:'Y-m-d' }}</td>
                                 <td nowrap class="impact">{{ i.impact.0 }}</td>
@@ -247,8 +247,8 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                     <textarea class="form-control" data-prop="mitigations" id="mitigations" name="mitigations" cols="3" maxlength="250" required="required">{{ i.mitigations }}</textarea>
                                 </td>
                                 <td class="eta">
-                                    <input class="form-control" data-prop="eta" id="eta" name="eta" type="date"
-                                           required="required" value="{{ i.eta | date:'Y-m-d' }}" />
+                                    <input class="form-control" data-prop="eta" id="eta" name="eta" type="text"
+                                           required="required" value="{{ i.eta }}" />
                                 </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
@@ -301,10 +301,10 @@ o    High – potentially high impact to milestones + path to avoidance is compl
 <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 
 <script>
     function nameFormatter(value, row) {
@@ -398,6 +398,15 @@ o    High – potentially high impact to milestones + path to avoidance is compl
             $('tr[data-a-id="new"]').attr('data-add', false);
         });
     });
+</script>
+<script>
+    function confirmDelete() {
+    if (confirm("Delete Record?") == true) {
+        return true;
+    } else {
+        return false;
+    }
+}
 </script>
 <script>
     $('#projectdata').change(function(event){

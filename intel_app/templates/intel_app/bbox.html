@@ -15,6 +15,7 @@
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 
     <style>
         div .aa { border-bottom : 1px solid #000; margin : 2px 0;}
@@ -109,6 +110,7 @@
                                data-buttons-class="primary btn-sm">
                             <thead>
                             <tr>
+                                <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
                                 <th scope="col" nowrap data-field="category" class="w-50 p-3 category">Category</th>
                                 <th scope="col" nowrap data-field="process" class="w-50 p-3 process">Process</th>
                                 <th scope="col" nowrap data-field="die_area" class="w-50 p-3 die_area">Die Area</th>
@@ -122,6 +124,9 @@
                             </thead>
                             <tbody data-body="bbox">
                             <tr data-a-id="new" data-add="false">
+                                <td class="switch_button">
+                                    <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
+                                </td>
                                 <td class="category">
                                     <select class="form-select" data-prop="category" name="category" required="required">
                                         <option value="" disabled="disabled" selected="selected">Select Category</option>
@@ -162,6 +167,7 @@
                             </tr>
                             {% for i in data %}
                             <tr data-n-id="{{ i.bbox_id }}" data-non-edit="true">
+                                <td nowrap class="switch_button">{{ i.display }}</td>
                                 <td nowrap class="category">{{ i.category.0 }}</td>
                                 <td nowrap class="process">{{ i.process }}</td>
                                 <td nowrap class="die_area">{{ i.die_area }}</td>
@@ -174,9 +180,17 @@
                                     <button data-id="{{ i.bbox_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    <button type="button" class="btn btn-danger btn-sm" title="Delete Schedule">
+                                        <a style="text-decoration:none;color:#fff;" href="{% url 'delete_bbox_data' pk=i.bbox_id %}" onclick="return confirmDelete()">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </button>
                                 </td>
                             </tr>
                             <tr data-e-id="{{ i.bbox_id }}" data-edit="false">
+                                <td class="switch_button">
+                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
+                                </td>
                                 <td class="category">
                                     <select class="form-select" data-prop="category" name="category" required="required">
                                         {% for i in i.category %}
@@ -236,6 +250,7 @@
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 
 <script>
     function nameFormatter(value, row) {
@@ -274,6 +289,7 @@
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
             const bbox = {
+                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 category: $('tr[data-e-id="' + objectId + '"] select[data-prop="category"]')[0].value,
                 process: $('tr[data-e-id="' + objectId + '"] input[data-prop="process"]')[0].value,
                 die_area: $('tr[data-e-id="' + objectId + '"] input[data-prop="die_area"]')[0].value,
@@ -300,6 +316,7 @@
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
             const bbox = {
+                switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 category: $('tr[data-a-id="' + objectId + '"] select[data-prop="category"]')[0].value,
                 process: $('tr[data-a-id="' + objectId + '"] input[data-prop="process"]')[0].value,
                 die_area: $('tr[data-a-id="' + objectId + '"] input[data-prop="die_area"]')[0].value,
@@ -323,6 +340,15 @@
             $('tr[data-a-id="new"]').attr('data-add', false);
         });
     });
+</script>
+<script>
+    function confirmDelete() {
+    if (confirm("Delete Record?") == true) {
+        return true;
+    } else {
+        return false;
+    }
+}
 </script>
 <script>
     $('#projectdata').change(function(event){

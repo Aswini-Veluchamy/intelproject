@@ -15,6 +15,7 @@
     <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 
     <style>
         tr[data-non-edit="true"] {
@@ -108,6 +109,7 @@
                            data-buttons-class="primary btn-sm">
                         <thead>
                         <tr>
+                            <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
                             <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
                             <th scope="col" nowrap data-field="metric" class="w-50 p-3 metric">Metric</th>
                             <th scope="col" nowrap data-field="target" class="w-50 p-3 target">FV Target</th>
@@ -119,6 +121,9 @@
                         </thead>
                         <tbody data-body="key_program">
                         <tr data-a-id="new" data-add="false">
+                            <td class="switch_button">
+                                <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
+                            </td>
                             <td class="status">
                                 <select class="form-select" data-prop="status" name="status" required="required">
                                     <option value="" disabled="disabled" selected="selected">Select Status</option>
@@ -154,6 +159,7 @@
                         </tr>
                         {% for i in data %}
                         <tr data-n-id="{{ i.metric_id }}" data-non-edit="true">
+                            <td nowrap class="switch_button">{{ i.display }}</td>
                             <td nowrap class="status">{{ i.status.0 }}</td>
                             <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
                             <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
@@ -172,6 +178,9 @@
                             </td>
                         </tr>
                         <tr data-e-id="{{ i.metric_id }}" data-edit="false">
+                            <td class="switch_button">
+                                <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
+                            </td>
                             <td class="status">
                                 <select class="form-select" data-prop="status" name="status" required="required">
                                     {% for i in i.status %}
@@ -225,6 +234,7 @@
 <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 
 <script>
     function nameFormatter(value, row) {
@@ -264,6 +274,7 @@
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
             const key_program = {
+                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 metric: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="metric"]')[0].value,
                 target: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="target"]')[0].value,
@@ -288,6 +299,7 @@
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
             const key_program = {
+                switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                 metric: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="metric"]')[0].value,
                 target: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]')[0].value,
