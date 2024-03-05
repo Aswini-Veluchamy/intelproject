@@ -235,17 +235,16 @@
                 </div>
                 <div class="modal-body">
                     <!-- Create the editor container -->
-
                     {% csrf_token %}
                     <!--<input type="text" value="" />-->
                     <div id="editor" style="height: 275px;">{{ key_mess_data.message|safe }}</div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
-                    <div id="counter">Limited to 375 characters</div>
                     <p>{{error}}</p>
                     <button type="submit" id="btn_keymessage" class="btn btn-primary">Submit</button>
                     <button type="submit" class="btn btn-primary"><a href="{% url 'home' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
@@ -277,10 +276,8 @@
 <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-<script src="{% static 'intel_app/js/quill.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
-
-
+<script src="{% static 'intel_app/ckeditor/ckeditor.js' %}"></script>
 <script>
     $("#filter").on("keyup", function() {
        var value = $(this).val().toLowerCase();
@@ -290,84 +287,49 @@
     });
 </script>
 
-<!-- Initialize Quill editor for Key Message-->
 <script>
-    var toolbarOptions = [
-      ['bold', 'italic', 'underline'],        // toggled buttons
-      ['blockquote'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],  // custom dropdown
-      [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-      [{ 'align': [] }],
-      ['clean']                                         // remove formatting button
-    ];
-    var quill = new Quill('#editor', {
-      modules: {
-        toolbar: toolbarOptions
-      },
-      theme: 'snow' });
-</script>
+    // Replace textarea with CKEditor instance
+    CKEDITOR.replace('editor');
 
-<script>
-    var limit = 375;
-    quill.on('text-change', function (delta, old, source) {
-      if (quill.getLength() >= limit) {
-        quill.deleteText(limit, quill.getLength());
-      }
+    // Handle form submission
+    $('#btn_keymessage').on('click', (e) => {
+        // Get CKEditor instance
+        var editor = CKEDITOR.instances.editor;
+
+        // Get HTML content
+        var html = editor.getData();
+
+        // Copy HTML content to hidden input
+        $('#hiddenInput').val(html);
+
+        // Prevent default form submission
+        e.preventDefault();
+
+        // Submit the form
+        $('#myForm').submit();
     });
 </script>
 
 <script>
-    $('#btn_keymessage').on('click', () => {
+    CKEDITOR.replace('details_editor');
+    $('#btn_details').on('click', (e) => {
+        // Get CKEditor instance
+        var editor = CKEDITOR.instances.details_editor;
 
         // Get HTML content
-        var html = quill.root.innerHTML;
+        var html = editor.getData();
 
-        // Copy HTML content in hidden form
-        $('#hiddenInput').val( html )
+        // Copy HTML content to hidden input
+        $('#details_message').val(html);
 
+        // Prevent default form submission
         e.preventDefault();
 
-        // Post form
-        myForm.submit();
-    })
-</script>
-
-<!-- Initialize Quill editor for Details Page -->
-<script>
-    var toolbarOptions = [
-      ['bold', 'italic', 'underline'],        // toggled buttons
-      ['blockquote'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],  // custom dropdown
-      [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-      [{ 'align': [] }],
-      ['clean']                                         // remove formatting button
-    ];
-    var quill1 = new Quill('#details_editor', {
-      modules: {
-        toolbar: toolbarOptions
-      },
-      theme: 'snow' });
-</script>
-
-<script>
-    $('#btn_details').on('click', () => {
-
-        // Get HTML content
-        var html = quill1.root.innerHTML;
-
-        // Copy HTML content in hidden form
-        $('#details_message').val( html )
-
-        e.preventDefault();
-
-        // Post form
+        // Submit the form
         detailsForm.submit();
-    })
+    });
 </script>
+
 <script>
     $('#projectdata').change(function(event){
         var selectedcategory = $(this).children("option:selected").val();

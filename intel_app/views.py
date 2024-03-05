@@ -2,7 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
+import json
 import time
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
@@ -377,33 +377,35 @@ def links_edit_table(request, pk):
         return HttpResponseRedirect(reverse("links"))
 
 
+
 @csrf_exempt
 def bbox(request):
     if request.method == "POST":
-        display = request.POST['switch_button']
-        primary_project = request.COOKIES['primary_project']
-        category = request.POST['category']
-        process = request.POST['process']
-        die_area = request.POST['die_area']
-        config = request.POST['config']
-        pv_freq = request.POST['pv_freq']
-        perf_target = request.POST['perf_target']
-        cdyn = request.POST['cdyn']
-        schedule_bbox = request.POST['schedule_bbox']
-        user = request.COOKIES['user_id']
-        bbox_id = str(int(time.time() * 1000)) + '_' + user
-        load_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
-                       primary_project, user, False, 'None', datetime.now().date())
+        # Parse the JSON data from the request body
+        data = json.loads(request.body)
+        rows_data = data.get('data', [])
+        print(data)
+        for row_data in rows_data:
+            display = row_data.get('switch_button', '')
+            category = row_data.get('category', '')
+            process = row_data.get('process', '')
+            die_area = row_data.get('die_area', '')
+            config = row_data.get('config', '')
+            pv_freq = row_data.get('pv_freq', '')
+            perf_target = row_data.get('perf_target', '')
+            cdyn = row_data.get('cdyn', '')
+            schedule_bbox = row_data.get('schedule_bbox', '')
+            primary_project = request.COOKIES['primary_project']
+            user = request.COOKIES['user_id']
+            bbox_id = str(int(time.time() * 1000)) + '_' + user
+            load_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+                           primary_project, user, False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("bbox"))
     else:
         user_projects = request.COOKIES['project']
         user_projects = ast.literal_eval(user_projects)
         user = request.COOKIES['user_id']
         result = get_data(user, BBOX_TABLE, request.COOKIES['primary_project'], False)
-        if result:
-            category = ['Plan', 'Actual', 'Grading']
-            for i in result:
-                i['category'] = update_queryset_values(category, i['category'])
         return render(request, 'intel_app/bbox.html', {'project': user_projects, 'data': result,
                                                        'user': user})
 
