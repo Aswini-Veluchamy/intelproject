@@ -18,61 +18,22 @@
     <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 
     <style>
-        div .aa { border-bottom : 1px solid #000; margin : 2px 0;}
-                tr[data-non-edit="true"] {
+        tr[data-non-edit="true"] {
 
-                }
-                tr[data-non-edit="false"] {
-                    display : none;
-                }
-                tr[data-edit="true"] {
+        }
+        tr[data-non-edit="false"] {
+            display : none;
+        }
+        tr[data-edit="true"] {
 
-                }
-                tr[data-edit="false"] {
-                    display : none;
-                }
+        }
+        tr[data-edit="false"] {
+            display : none;
+        }
 
-                tr[data-add="false"] {
-                    display : none;
-                }
-        table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-    }
-
-    th, td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-
-    th {
-        position: sticky;
-        top: 0;
-        background-color: #f2f2f2;
-        z-index: 1;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    tbody {
-        display: block;
-        height: 400px;
-        overflow: auto;
-    }
-
-    thead, tbody tr {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
-    }
-
-    tbody tr:hover {
-        background-color: #ddd;
-    }
+        tr[data-add="false"] {
+            display : none;
+        }
     </style>
 <body style="background-color:#ffffff!important;">
 
