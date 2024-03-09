@@ -18,23 +18,25 @@
     <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 
     <style>
-        tr[data-non-edit="true"] {
+        div .aa { border-bottom : 1px solid #000; margin : 2px 0;}
+                tr[data-non-edit="true"] {
 
-        }
-        tr[data-non-edit="false"] {
-            display : none;
-        }
-        tr[data-edit="true"] {
+                }
+                tr[data-non-edit="false"] {
+                    display : none;
+                }
+                tr[data-edit="true"] {
 
-        }
-        tr[data-edit="false"] {
-            display : none;
-        }
+                }
+                tr[data-edit="false"] {
+                    display : none;
+                }
 
-        tr[data-add="false"] {
-            display : none;
-        }
+                tr[data-add="false"] {
+                    display : none;
+                }
     </style>
+</head>
 <body style="background-color:#ffffff!important;">
 
 <!-- Example Code -->
@@ -109,7 +111,6 @@
                                data-buttons-class="primary btn-sm">
                             <thead>
                             <tr>
-                                <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
                                 <th scope="col" nowrap data-field="category" class="w-50 p-3 category">Category</th>
                                 <th scope="col" nowrap data-field="process" class="w-50 p-3 process">Process</th>
                                 <th scope="col" nowrap data-field="die_area" class="w-50 p-3 die_area">Die Area</th>
@@ -118,13 +119,12 @@
                                 <th scope="col" nowrap data-field="perf_target" class="w-50 p-3 perf_target">Perf Target</th>
                                 <th scope="col" nowrap data-field="cdyn" class="w-50 p-3 cdyn">Cdyn</th>
                                 <th scope="col" nowrap data-field="schedule_bbox" class="w-50 p-3 schedule_bbox">Schedule</th>
-                                <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
+                                <th scope="col" nowrap data-field="action" class="w-50 p-3 action"style="display: none;">Action</th>
                             </tr>
                             </thead>
                             <tbody data-body="bbox">
                             {% for i in data %}
                             <tr data-n-id="{{ i.bbox_id }}" data-non-edit="true">
-                                <td nowrap class="switch_button">{{ i.display }}</td>
                                 <td nowrap class="category">{{ i.category }}</td>
                                 <td nowrap class="process">{{ i.process }}</td>
                                 <td nowrap class="die_area">{{ i.die_area }}</td>
@@ -138,22 +138,17 @@
                                         <button data-id="{{ i.bbox_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                             <i class="fas fa-edit"></i>
                                         </button>&nbsp;&nbsp;
-                                        <button type="button" class="btn btn-danger btn-sm" title="Delete Schedule">
+                                        <!--<button type="button" class="btn btn-danger btn-sm" title="Delete Schedule">
                                             <a style="text-decoration:none;color:#fff;" href="{% url 'delete_bbox_data' pk=i.bbox_id %}" onclick="return confirmDelete()">
                                                 <i class="fas fa-trash"></i>
                                             </a>
-                                        </button>
+                                        </button>-->
                                     </div>
                                 </td>
                             </tr>
                             <tr data-e-id="{{ i.bbox_id }}" data-edit="false">
-                                <td class="switch_button">
-                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
-                                </td>
                                 <td class="category">
-                                    <select class="form-select" data-prop="category" name="category" disabled="disabled">
-                                        <option value="{{ i.category }}">{{ i.category }}</option>
-                                    </select>
+                                    <input type="text" class="form-control" data-prop="category" name="category" value="{{ i.category }}" disabled />
                                 </td>
                                 <td class="process">
                                     <input type="text" class="form-control" data-prop="process" name="process" placeholder="Enter Process" value="{{ i.process }}" required="required" />
@@ -249,10 +244,10 @@
         });
 
         $('.save-btn').on('click', function() {
+            event.preventDefault(); // Prevent the default form submission behavior
             let objectId = $(this).data('id');
             const bbox = {
-                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-                category: $('tr[data-e-id="' + objectId + '"] select[data-prop="category"]')[0].value,
+                category: $('tr[data-e-id="' + objectId + '"] input[data-prop="category"]')[0].value,
                 process: $('tr[data-e-id="' + objectId + '"] input[data-prop="process"]')[0].value,
                 die_area: $('tr[data-e-id="' + objectId + '"] input[data-prop="die_area"]')[0].value,
                 config: $('tr[data-e-id="' + objectId + '"] input[data-prop="config"]')[0].value,
@@ -276,8 +271,7 @@
 
             $('tr[data-a-id^="new-"]').each(function() {
                 let rowData = {
-                    switch_button: $(this).find('input[data-prop="switch_button"]').prop('checked') ? 'On' : 'Off',
-                    category: $(this).find('select[data-prop="category"]').val(),
+                    category: $(this).find('input[data-prop="category"]').val(),
                     process: $(this).find('input[data-prop="process"]').val(),
                     die_area: $(this).find('input[data-prop="die_area"]').val(),
                     config: $(this).find('input[data-prop="config"]').val(),
@@ -318,41 +312,42 @@
 <script>
 $('.add-btn').on('click', function() {
     let rowsToAdd = '';
+    let values = ['Plan', 'Actual', 'Grading', 'Comments'];
+    let process_placeholders = ['Enter Process', 'Enter Process', 'Enter RGBY Value', 'Enter Comments'];
+    let die_area_placeholders = ['Enter Die Area', 'Enter Die Area', 'Enter RGBY Value', 'Enter Comments'];
+    let config_placeholders = ['Enter Config', 'Enter Config', 'Enter RGBY Value', 'Enter Comments'];
+    let pv_freq_placeholders = ['Enter PV Freq', 'Enter PV Freq', 'Enter RGBY Value', 'Enter Comments'];
+    let perf_target_placeholders = ['Enter Perf Target', 'Enter Perf Target', 'Enter RGBY Value', 'Enter Comments'];
+    let cdyn_placeholders = ['Enter CDYN', 'Enter CDYN', 'Enter RGBY Value', 'Enter Comments'];
+    let schedule_bbox_placeholders = ['Enter Schedule Bbox', 'Enter Schedule Bbox', 'Enter RGBY Value', 'Enter Comments'];
+
     let rowCount = $('#example tbody tr[data-a-id="new"]').length + 1; // Get the current count of new rows
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
         rowsToAdd += `
         <tr data-a-id="new-${rowCount}" data-add="false">
-            <td class="switch_button">
-                <input type="checkbox" class="form-control switch-toggle" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
-            </td>
             <td class="category">
-                <select class="form-select" data-prop="category" name="category" required="required">
-                    <option value="" disabled="disabled" selected="selected">Select Category</option>
-                    <option value="Plan">Plan</option>
-                    <option value="Actual">Actual</option>
-                    <option value="Grading">Grading</option>
-                </select>
+                <input type="text" class="form-control" data-prop="category" name="category" value="${values[i]}" disabled="disabled" />
             </td>
             <td class="process">
-                <input type="text" class="form-control" data-prop="process" name="process" placeholder="Enter Process" required="required" />
+                <input type="text" class="form-control" data-prop="process" name="process" placeholder="${process_placeholders[i]}" required="required" />
             </td>
             <td class="die_area">
-                <input type="text" class="form-control" data-prop="die_area" name="die_area" placeholder="Enter Die Area" required="required" />
+                <input type="text" class="form-control" data-prop="die_area" name="die_area" placeholder="${die_area_placeholders[i]}" required="required" />
             </td>
             <td class="config">
-                <input type="text" class="form-control" data-prop="config" name="config" placeholder="Enter Config" required="required" />
+                <input type="text" class="form-control" data-prop="config" name="config" placeholder="${config_placeholders[i]}" required="required" />
             </td>
             <td class="pv_freq">
-                <input type="text" class="form-control" data-prop="pv_freq" name="pv_freq" placeholder="Enter PV Freq" required="required" />
+                <input type="text" class="form-control" data-prop="pv_freq" name="pv_freq" placeholder="${pv_freq_placeholders[i]}" required="required" />
             </td>
             <td class="perf_target">
-                <input type="text" class="form-control" data-prop="perf_target" name="perf_target" placeholder="Enter Perf Target" required="required" />
+                <input type="text" class="form-control" data-prop="perf_target" name="perf_target" placeholder="${perf_target_placeholders[i]}" required="required" />
             </td>
             <td class="cdyn">
-                <input type="text" class="form-control" data-prop="cdyn" name="cdyn" placeholder="Enter Cdyn" required="required" />
+                <input type="text" class="form-control" data-prop="cdyn" name="cdyn" placeholder="${cdyn_placeholders[i]}" required="required" />
             </td>
             <td class="schedule_bbox">
-                <input type="text" class="form-control" data-prop="schedule_bbox" name="schedule_bbox" placeholder="Enter Schedule" required="required" />
+                <input type="text" class="form-control" data-prop="schedule_bbox" name="schedule_bbox" placeholder="${schedule_bbox_placeholders[i]}" required="required" />
             </td>
         </tr>`;
         rowCount++;
@@ -377,44 +372,7 @@ $('.add-btn').on('click', function() {
 
     // Show the newly added rows
     $('#example tbody tr[data-a-id^="new-"]').show();
-});
 
-
-$(document).ready(function() {
-    // Array to store selected options
-    var selectedOptions = [];
-
-    // Update select options based on selected options
-    function updateSelectOptions() {
-        // Enable all options
-        $('select[data-prop="category"] option').prop('disabled', false);
-
-        // Disable selected options
-        selectedOptions.forEach(function(option) {
-            $('select[data-prop="category"] option[value="' + option + '"]').prop('disabled', true);
-        });
-    }
-
-    // Update selectedOptions and select options on change
-    $(document).on('change', 'select[data-prop="category"]', function() {
-        // Get the current row index
-        var rowIndex = $(this).closest('tr').index();
-
-        // Clear selectedOptions after the current row index
-        selectedOptions.splice(rowIndex);
-
-        // Update selectedOptions
-        var selectedOption = $(this).val();
-        if (selectedOption) {
-            selectedOptions.push(selectedOption);
-        }
-
-        // Update select options
-        updateSelectOptions();
-    });
-
-    // Initial update
-    updateSelectOptions();
 });
 </script>
 <script>
@@ -435,6 +393,36 @@ $(document).ready(function() {
     $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
 </script>
 <script>
+    // Show action column header when editing or displaying
+function showActionColumnHeader() {
+    $('th[data-field="action"]').css('display', '');
+}
+
+// Hide action column header when adding a row
+function hideActionColumnHeader() {
+    $('th[data-field="action"]').css('display', 'none');
+}
+
+// Add button click event to hide action column header and add row
+$('.add-btn').on('click', function() {
+    hideActionColumnHeader();
+    // Add row logic here
+});
+
+// Edit button click event to show action column header and edit row
+$(document).on('click', '.edit-btn', function() {
+    showActionColumnHeader();
+    // Edit row logic here
+});
+
+// Display button click event to show action column header and display row
+$(document).on('click', '.display-btn', function() {
+    showActionColumnHeader();
+    // Display row logic here
+});
+
+</script>
+<script>
     tail.select("#projectdata", {
     animate: true,
     deselect: false,
@@ -447,5 +435,4 @@ $(document).ready(function() {
 });
 </script>
 </body>
-</head>
 </html>

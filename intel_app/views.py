@@ -161,7 +161,6 @@ def risks(request):
         owner = request.POST['owner']
         consequence = request.POST['consequence']
         mitigations = request.POST['mitigations']
-        eta = request.POST['eta']
         trigger_date = request.POST['trigger_date']
         risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
@@ -172,7 +171,7 @@ def risks(request):
         # load risk data to external database
         load_risk_data([
             (display, risk_summary, risk_area, status, owner, consequence, mitigations,
-             eta, trigger_date, risk_initiated, impact, risk_id, primary_project, user)
+             trigger_date, risk_initiated, impact, risk_id, primary_project, user)
         ])
         return HttpResponseRedirect(reverse("risk"))
     else:
@@ -207,12 +206,10 @@ def risk_edit_table(request, pk):
         status = request.POST['status']
         owner = request.POST['owner']
         consequence = request.POST['consequence']
-        mitigations = request.POST['mitigations']
-        eta = request.POST['eta']
         trigger_date = request.POST['trigger_date']
         risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
-        update_risk_data([(display, risk_summary, risk_area, status, owner, consequence, mitigations, eta,
+        update_risk_data([(display, risk_summary, risk_area, status, owner, consequence, mitigations,
                            trigger_date, risk_initiated, impact, pk)])
         return HttpResponseRedirect(reverse("risk"))
 
@@ -386,7 +383,6 @@ def bbox(request):
         rows_data = data.get('data', [])
         print(data)
         for row_data in rows_data:
-            display = row_data.get('switch_button', '')
             category = row_data.get('category', '')
             process = row_data.get('process', '')
             die_area = row_data.get('die_area', '')
@@ -398,7 +394,7 @@ def bbox(request):
             primary_project = request.COOKIES['primary_project']
             user = request.COOKIES['user_id']
             bbox_id = str(int(time.time() * 1000)) + '_' + user
-            load_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
+            load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
                            primary_project, user, False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("bbox"))
     else:
@@ -413,7 +409,6 @@ def bbox(request):
 @csrf_exempt
 def bbox_edit(request, pk):
     if request.method == "POST":
-        display = request.POST['switch_button']
         category = request.POST['category']
         process = request.POST['process']
         die_area = request.POST['die_area']
@@ -423,7 +418,7 @@ def bbox_edit(request, pk):
         cdyn = request.POST['cdyn']
         schedule_bbox = request.POST['schedule_bbox']
         # update the values in external database
-        update_bbox_data(display, category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
+        update_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
         return HttpResponseRedirect(reverse("bbox"))
 
 

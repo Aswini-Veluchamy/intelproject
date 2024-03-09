@@ -118,7 +118,6 @@
                                 <th scope="col" nowrap data-field="owner" class="w-50 p-3 owner">Owner</th>
                                 <th scope="col" nowrap data-field="consequence" class="w-50 p-3 consequence">Consequence</th>
                                 <th scope="col" nowrap data-field="mitigations" class="w-50 p-3 mitigations">Mitigations</th>
-                                <th scope="col" nowrap data-field="eta" class="w-50 p-3 eta">Next Steps with ETA &nbsp;&nbsp;&nbsp;</th>
                                 <th scope="col" nowrap data-field="trigger_date" class="w-50 p-3 trigger_date">Trigger Date</th>
                                 <th scope="col" nowrap data-field="risk_initiated" class="w-50 p-3 risk_initiated">Risk Initiated</th>
                                 <th scope="col" nowrap data-field="impact" class="w-50 p-3 impact" data-formatter="nameFormatter">Impact</th>
@@ -161,10 +160,6 @@
                                 <td class="mitigations">
                                     <textarea class="form-control" data-prop="mitigations" name="mitigations" placeholder="Enter Mitigations" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
-                                <td class="eta">
-                                    <input class="form-control" data-prop="eta" name="eta" type="text"
-                                           required="required" placeholder="Enter ETA" />
-                                </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
                                            required="required" placeholder="Enter Trigger Date" />
@@ -205,7 +200,6 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                 <td nowrap class="owner">{{ i.owner }}</td>
                                 <td nowrap class="consequence">{{ i.consequence }}</td>
                                 <td nowrap class="mitigations">{{ i.mitigations }}</td>
-                                <td nowrap class="eta">{{ i.eta }}</td>
                                 <td nowrap class="trigger_date">{{ i.trigger_date | date:'Y-m-d' }}</td>
                                 <td nowrap class="risk_initiated">{{ i.risk_initiated | date:'Y-m-d' }}</td>
                                 <td nowrap class="impact">{{ i.impact.0 }}</td>
@@ -245,10 +239,6 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                 </td>
                                 <td class="mitigations">
                                     <textarea class="form-control" data-prop="mitigations" id="mitigations" name="mitigations" cols="3" maxlength="250" required="required">{{ i.mitigations }}</textarea>
-                                </td>
-                                <td class="eta">
-                                    <input class="form-control" data-prop="eta" id="eta" name="eta" type="text"
-                                           required="required" value="{{ i.eta }}" />
                                 </td>
                                 <td class="trigger_date">
                                     <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
@@ -350,7 +340,6 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                 consequence: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
                 mitigations: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
-                eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
                 trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
                 impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
@@ -379,7 +368,6 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
                 consequence: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
                 mitigations: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
-                eta: $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
                 trigger_date: $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 risk_initiated: $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
                 impact: $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
