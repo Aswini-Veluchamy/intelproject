@@ -11,9 +11,9 @@ from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, BBOX_
 from .db_connection import load_key_message_data, load_risk_data, update_risk_data, load_details_data
 from .db_connection import load_key_program_metric_data, update_key_program_metric_data, delete_key_program_metric_data
 from .db_connection import load_schedule_data, update_schedule_data, load_links_data, update_links_data, register_user
-from .db_connection import login_user, create_project, get_projects, load_bbox_data, update_bbox_data
+from .db_connection import login_user, create_project, get_projects, load_bbox_data
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, encrypt_password
-from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record
+from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
 
 import ast
 
@@ -154,7 +154,6 @@ def key_message(request):
 def risks(request):
     if request.method == "POST":
         display = request.POST['switch_button']
-        print(display)
         risk_summary = request.POST['risk_summary']
         risk_area = request.POST['risk_area']
         status = request.POST['status']
@@ -177,11 +176,9 @@ def risks(request):
     else:
         try:
             user_project = request.COOKIES['project']
-            admin = request.COOKIES['admin']
             user = request.COOKIES['user_id']
             user_project = ast.literal_eval(user_project)
             result = get_data(user, RISK_TABLE, request.COOKIES['primary_project'])
-
             if result:
                 status = ['Open', 'Closed']
                 impact = ['Low', 'Medium', 'High']
@@ -206,6 +203,7 @@ def risk_edit_table(request, pk):
         status = request.POST['status']
         owner = request.POST['owner']
         consequence = request.POST['consequence']
+        mitigations = request.POST['mitigations']
         trigger_date = request.POST['trigger_date']
         risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
@@ -234,7 +232,6 @@ def key_program(request):
     else:
         try:
             user_projects = request.COOKIES['project']
-            admin = request.COOKIES['admin']
             user = request.COOKIES['user_id']
             user_projects = ast.literal_eval(user_projects)
             result = get_data(user, KEY_PROGRAM_METRIC_TABLE,  request.COOKIES['primary_project'])
@@ -301,7 +298,6 @@ def schedule(request):
     else:
         try:
             user_projects = request.COOKIES['project']
-            admin = request.COOKIES['admin']
             user = request.COOKIES['user_id']
             user_projects = ast.literal_eval(user_projects)
             result = get_data(user, SCHEDULE_TABLE, request.COOKIES['primary_project'], False)
@@ -355,7 +351,6 @@ def links(request):
         return HttpResponseRedirect(reverse("links"))
     else:
         user_project = request.COOKIES['project']
-        admin = request.COOKIES['admin']
         user = request.COOKIES['user_id']
         user_project = ast.literal_eval(user_project)
         result = get_data(user, LINKS_TABLE, request.COOKIES['primary_project'], False)
@@ -374,51 +369,72 @@ def links_edit_table(request, pk):
         return HttpResponseRedirect(reverse("links"))
 
 
-
 @csrf_exempt
 def bbox(request):
     if request.method == "POST":
         # Parse the JSON data from the request body
         data = json.loads(request.body)
         rows_data = data.get('data', [])
-        print(data)
-        for row_data in rows_data:
-            category = row_data.get('category', '')
-            process = row_data.get('process', '')
-            die_area = row_data.get('die_area', '')
-            config = row_data.get('config', '')
-            pv_freq = row_data.get('pv_freq', '')
-            perf_target = row_data.get('perf_target', '')
-            cdyn = row_data.get('cdyn', '')
-            schedule_bbox = row_data.get('schedule_bbox', '')
-            primary_project = request.COOKIES['primary_project']
-            user = request.COOKIES['user_id']
-            bbox_id = str(int(time.time() * 1000)) + '_' + user
-            load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
-                           primary_project, user, False, 'None', datetime.now().date())
+        primary_project = request.COOKIES['primary_project']
+        user = request.COOKIES['user_id']
+        load_bbox_data(rows_data, primary_project, user)
         return HttpResponseRedirect(reverse("bbox"))
     else:
         user_projects = request.COOKIES['project']
         user_projects = ast.literal_eval(user_projects)
         user = request.COOKIES['user_id']
-        result = get_data(user, BBOX_TABLE, request.COOKIES['primary_project'], False)
+        result = get_bbox_data(request.COOKIES['primary_project'])
+        count = len(result)
+        if count > 1:
+            result = sort_data(result)
         return render(request, 'intel_app/bbox.html', {'project': user_projects, 'data': result,
-                                                       'user': user})
+                                                       'user': user, 'count': count})
+
+
+def sort_data(result):
+    data = []
+    a = True
+    while a:
+        for i in result:
+            if i['category'] == 'Plan' and len(data) == 0:
+                data.insert(0, i)
+            elif i['category'] == 'Actual' and len(data) == 1:
+                data.insert(1, i)
+            elif i['category'] == 'Grading' and len(data) == 2:
+                data.insert(2, i)
+            elif i['category'] == 'Comments' and len(data) == 3:
+                data.insert(3, i)
+                a = False
+    return data
 
 
 @csrf_exempt
 def bbox_edit(request, pk):
     if request.method == "POST":
-        category = request.POST['category']
-        process = request.POST['process']
-        die_area = request.POST['die_area']
-        config = request.POST['config']
-        pv_freq = request.POST['pv_freq']
-        perf_target = request.POST['perf_target']
-        cdyn = request.POST['cdyn']
-        schedule_bbox = request.POST['schedule_bbox']
+        category = request.POST.get('category', '')
+        process = request.POST.get('process', '')
+        die_area = request.POST.get('die_area', '')
+        config = request.POST.get('config', '')
+        pv_freq = request.POST.get('pv_freq', '')
+        perf_target = request.POST.get('perf_target', '')
+        cdyn = request.POST.get('cdyn', '')
+        schedule_bbox = request.POST.get('schedule_bbox', '')
+        primary_project = request.COOKIES['primary_project']
+        user = request.COOKIES['user_id']
+        rows_data = [
+            {
+                'category': category,
+                'process': process,
+                'die_area': die_area,
+                'config': config,
+                'pv_freq': pv_freq,
+                'perf_target': perf_target,
+                'cdyn': cdyn,
+                'schedule_bbox': schedule_bbox
+            }
+        ]
         # update the values in external database
-        update_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, pk)
+        load_bbox_data(rows_data, primary_project, user)
         return HttpResponseRedirect(reverse("bbox"))
 
 
@@ -446,7 +462,6 @@ def issues(request):
     else:
         try:
             user_projects = request.COOKIES['project']
-            admin = request.COOKIES['admin']
             user = request.COOKIES['user_id']
             user_projects = ast.literal_eval(user_projects)
             result = get_data(user, ISSUES_TABLE, request.COOKIES['primary_project'], False)
@@ -494,12 +509,6 @@ def delete_links_data(request, pk):
     deleted_by = request.COOKIES['user_id']
     update_deleted_record(LINKS_TABLE, deleted_by, datetime.now().today(), 'links_id', pk)
     return HttpResponseRedirect(reverse("links"))
-
-
-def delete_bbox_data(request, pk):
-    deleted_by = request.COOKIES['user_id']
-    update_deleted_record(BBOX_TABLE, deleted_by, datetime.now().today(), 'bbox_id', pk)
-    return HttpResponseRedirect(reverse("bbox"))
 
 
 def delete_issues_data(request, pk):

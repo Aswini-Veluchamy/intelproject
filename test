@@ -667,11 +667,13 @@ CREATE TABLE bbox(
  perf_target MEDIUMTEXT NOT NULL,
  cdyn MEDIUMTEXT NOT NULL,
  schedule_bbox MEDIUMTEXT NOT NULL,
- bbox_id VARCHAR(250) NOT NULL,
  project VARCHAR(20) NOT NULL,
  user VARCHAR(50) NOT NULL,
- deleted BOOLEAN,
- deleted_by VARCHAR(200) NOT NULL,
- deleted_on date,
- ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+ bbox_id VARCHAR(250) NOT NULL,
+ created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+bbox
+db_connection
+urls
+views
