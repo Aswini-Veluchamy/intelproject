@@ -4,6 +4,7 @@ from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
 from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE, ISSUES_TABLE
 import json
 import bcrypt
+import time
 
 
 def db_connection():
@@ -257,28 +258,22 @@ def get_users():
         print(f"Error: {err}")
 
 
-def load_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id,
-                   project, user, deleted, deleted_by, deleted_on):
+def load_bbox_data(data, project, user):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {BBOX_TABLE} (category, process, die_area, config, pv_freq, perf_target, cdyn,\
-            schedule_bbox, bbox_id, project, user, deleted, deleted_by, deleted_on) \
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id, project, user,
-           deleted, deleted_by, deleted_on)
-    cursor.execute(sql, val)
+    for row_data in data:
+        category = row_data.get('category', '')
+        process = row_data.get('process', '')
+        die_area = row_data.get('die_area', '')
+        config = row_data.get('config', '')
+        pv_freq = row_data.get('pv_freq', '')
+        perf_target = row_data.get('perf_target', '')
+        cdyn = row_data.get('cdyn', '')
+        schedule_bbox = row_data.get('schedule_bbox', '')
+        bbox_id = f"{str(int(time.time() * 1000))}_{user}_{category}"
+        sql = f"INSERT INTO {BBOX_TABLE} (category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, project, user, bbox_id) \
+        VALUES ('{category}', '{process}', '{die_area}',  '{config}', '{pv_freq}', '{perf_target}', '{cdyn}', '{schedule_bbox}', '{project}', '{user}', '{bbox_id}')"
+        cursor.execute(sql)
     print(f'data inserted in {BBOX_TABLE} ....')
-    conn.commit()
-    conn.close()
-
-
-def update_bbox_data(category, process, die_area, config, pv_freq, perf_target, cdyn, schedule_bbox, bbox_id):
-    conn, cursor = db_connection()
-    sql = (f"UPDATE {BBOX_TABLE} SET category = '{category}', process = '{process}', die_area = '{die_area}', \
-            config = '{config}', pv_freq = '{pv_freq}', perf_target = '{perf_target}', cdyn = '{cdyn}', \
-            schedule_bbox = '{schedule_bbox}' \
-            WHERE bbox_id='{bbox_id}'")
-    cursor.execute(sql)
-    print(f'data updated in {BBOX_TABLE} ....')
     conn.commit()
     conn.close()
 
@@ -344,3 +339,25 @@ def update_deleted_record(table, deleted_by, deleted_on, row_id, row_value):
     print(f'data updated in {table} ....')
     conn.commit()
     conn.close()
+
+
+def get_bbox_data(project):
+    conn, cursor = db_connection()
+    sql = f"""SELECT t.*
+    FROM bbox t
+    JOIN (
+        SELECT category, MAX(created_on) AS max_created_at
+        FROM bbox
+        WHERE category IN ('Plan', 'Actual', 'Grading', 'Comments')
+        GROUP BY category
+    ) AS max_timestamps
+    ON t.category = max_timestamps.category
+    AND t.project = '{project}'
+    AND t.created_on = max_timestamps.max_created_at;"""
+    cursor.execute(sql)
+    records = cursor.fetchall()
+    columns = [col[0] for col in cursor.description]
+    result = [dict(zip(columns, record)) for record in records]
+    conn.commit()
+    conn.close()
+    return result

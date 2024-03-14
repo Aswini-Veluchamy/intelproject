@@ -90,10 +90,12 @@
                 <div class="card-header">
                     <b>BBox</b>
                     <!-- Button trigger modal -->
+                    {% if count < 1 %}
                     <button type="button" class="btn btn-primary btn-sm add-btn"
                             style="float:right;">
                         Add BBox
                     </button>
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <form>
@@ -137,12 +139,7 @@
                                     <div class="btn-group" role="group" aria-label="Button group">
                                         <button data-id="{{ i.bbox_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
                                             <i class="fas fa-edit"></i>
-                                        </button>&nbsp;&nbsp;
-                                        <!--<button type="button" class="btn btn-danger btn-sm" title="Delete Schedule">
-                                            <a style="text-decoration:none;color:#fff;" href="{% url 'delete_bbox_data' pk=i.bbox_id %}" onclick="return confirmDelete()">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </button>-->
+                                        </button>&nbsp;&nbsp
                                     </div>
                                 </td>
                             </tr>
@@ -374,15 +371,6 @@ $('.add-btn').on('click', function() {
     $('#example tbody tr[data-a-id^="new-"]').show();
 
 });
-</script>
-<script>
-    function confirmDelete() {
-    if (confirm("Delete Record?") == true) {
-        return true;
-    } else {
-        return false;
-    }
-}
 </script>
 <script>
     $('#projectdata').change(function(event){
