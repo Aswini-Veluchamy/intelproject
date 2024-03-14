@@ -306,7 +306,7 @@ def schedule(request):
             user_projects = ast.literal_eval(user_projects)
             result = get_data(user, SCHEDULE_TABLE, request.COOKIES['primary_project'], False)
             if result:
-                status = ['R', 'G', 'B', 'Y']
+                status = ['R', 'G', 'B', 'Y', 'Done']
                 for i in result:
                     i['status'] = update_queryset_values(status, i['status'])
             return render(request, 'intel_app/schedule.html', {'data': result, 'project': user_projects,

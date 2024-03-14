@@ -519,24 +519,6 @@ db_connection.py
 
 =================================== new changes 24-feb =====================================
 
-CREATE TABLE schedule_table(
- display VARCHAR(20) NOT NULL,
- milestone VARCHAR(200) NOT NULL,
- por_commit DATE,
- por_trend DATE,
- status VARCHAR(50) NOT NULL,
- comments VARCHAR(200) NOT NULL,
- schedule_id VARCHAR(50) NOT NULL,
- user VARCHAR(50) NOT NULL,
- project VARCHAR(20) NOT NULL,
- ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
- deleted BOOLEAN,
- deleted_by VARCHAR(200) NOT NULL,
- deleted_on date,
- sort_value int NOT NULL AUTO_INCREMENT,
- PRIMARY KEY (sort_value)
-);
-
 CREATE TABLE issues_table(
  display VARCHAR(20) NOT NULL,
  issues_summary VARCHAR(200) NOT NULL,
@@ -675,3 +657,25 @@ CREATE TABLE bbox(
  deleted_on date,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+***********************************************
+CREATE TABLE schedule_table(
+ display VARCHAR(20) NOT NULL,
+ milestone VARCHAR(200) NOT NULL,
+ por_commit VARCHAR(50) NOT NULL,
+ por_trend VARCHAR(50) NOT NULL,
+ status VARCHAR(50) NOT NULL,
+ comments VARCHAR(200) NOT NULL,
+ schedule_id VARCHAR(50) NOT NULL,
+ user VARCHAR(50) NOT NULL,
+ project VARCHAR(20) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ deleted BOOLEAN,
+ deleted_by VARCHAR(200) NOT NULL,
+ deleted_on date,
+ sort_value int NOT NULL AUTO_INCREMENT,
+ PRIMARY KEY (sort_value)
+);
+
+schedule.html
+views.py

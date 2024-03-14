@@ -133,14 +133,15 @@
                                         <option value="G">G</option>
                                         <option value="B">B</option>
                                         <option value="Y">Y</option>
+                                        <option value="Done" style="color:green; font-weight: 600;">&#x2714;</option>
                                     </select>
                                 </td>
                                 <td class="por_commit">
-                                    <input class="form-control" data-prop="por_commit" name="por_commit" type="date"
+                                    <input class="form-control" data-prop="por_commit" name="por_commit" type="text"
                                            placeholder="Enter POR Commit" required="required" />
                                 </td>
                                 <td class="por_trend">
-                                    <input class="form-control" data-prop="por_trend" name="por_trend" type="date"
+                                    <input class="form-control" data-prop="por_trend" name="por_trend" type="text"
                                            placeholder="Enter POR Trend" required="required" />
                                 </td>
                                 <td class="comments">
@@ -159,9 +160,15 @@
                             <tr data-n-id="{{ i.schedule_id }}" data-non-edit="true">
                                 <td nowrap class="switch_button">{{ i.display }}</td>
                                 <td nowrap class="milestone">{{ i.milestone }}</td>
-                                <td nowrap class="status">{{ i.status.0 }}</td>
-                                <td nowrap class="por_commit">{{ i.por_commit | date:'Y-m-d' }}</td>
-                                <td nowrap class="por_trend">{{ i.por_trend | date:'Y-m-d' }}</td>
+                                <td nowrap class="status" style="color: {% if i.status.0 == 'Done' %} green; font-weight: 600; {% else %} black; {% endif %}">
+                                    {% if i.status.0 == 'Done' %}
+                                        &#x2714;
+                                    {% else %}
+                                        {{ i.status.0 }}
+                                    {% endif %}
+                                </td>
+                                <td nowrap class="por_commit">{{ i.por_commit }}</td>
+                                <td nowrap class="por_trend">{{ i.por_trend }}</td>
                                 <td nowrap class="comments">{{ i.comments }}</td>
                                 <td>
                                     <button data-id="{{ i.schedule_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Schedule">
@@ -182,19 +189,24 @@
                                     <textarea class="form-control" data-prop="milestone" name="milestone" cols="3" maxlength="250" disabled>{{i.milestone}}</textarea>
                                 </td>
                                 <td class="status">
-                                    <select class="form-select" data-prop="status" name="status" required="required">
+                                    <span id="status-symbol"></span>
+                                    <select class="form-select" data-prop="status" name="status" required="required" onchange="updateSymbol(this)">
                                         {% for i in i.status %}
+                                        {% if i == 'Done' %}
+                                        <option value="Done" style="color:green; font-weight: 600;">&#x2714;</option>
+                                        {% else %}
                                         <option value="{{i}}">{{i}}</option>
+                                        {% endif %}
                                         {% endfor %}
                                     </select>
                                 </td>
                                 <td class="por_commit">
-                                    <input class="form-control" data-prop="por_commit" id="eta" name="por_commit" type="date"
-                                           required="required" value="{{ i.por_commit | date:'Y-m-d' }}" />
+                                    <input class="form-control" data-prop="por_commit" id="eta" name="por_commit" type="text"
+                                           required="required" value="{{ i.por_commit }}" />
                                 </td>
                                 <td class="por_trend">
-                                    <input class="form-control" data-prop="por_trend" name="por_trend" type="date"
-                                           required="required" value="{{ i.por_trend | date:'Y-m-d' }}" />
+                                    <input class="form-control" data-prop="por_trend" name="por_trend" type="text"
+                                           required="required" value="{{ i.por_trend }}" />
                                 </td>
                                 <td class="comments">
                                     <textarea class="form-control" data-prop="comments" name="comments" cols="3" maxlength="250" required="required">{{i.comments}}</textarea>
@@ -347,6 +359,13 @@
     search: false,
     width: 170
 });
+</script>
+<script>
+    function updateSymbol(select) {
+        var symbolElement = document.getElementById('status-symbol');
+        var selectedValue = select.value;
+        symbolElement.innerHTML = selectedValue === '&#x2714;' ? '&#x2714;' : '';
+    }
 </script>
 </body>
 </head>
