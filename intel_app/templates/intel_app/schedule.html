@@ -114,6 +114,7 @@
                                 <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
                                 <th scope="col" nowrap data-field="por_commit" class="w-50 p-3 por_commit">POR Commit</th>
                                 <th scope="col" nowrap data-field="por_trend" class="w-50 p-3 por_trend">POR Trend</th>
+                                <th scope="col" nowrap data-field="por_trend2" class="w-50 p-3 por_trend2">POR Trend2</th>
                                 <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
                                 <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                             </tr>
@@ -144,6 +145,10 @@
                                     <input class="form-control" data-prop="por_trend" name="por_trend" type="text"
                                            placeholder="Enter POR Trend" required="required" />
                                 </td>
+                                <td class="por_trend2">
+                                    <input class="form-control" data-prop="por_trend2" name="por_trend2" type="text"
+                                           placeholder="Enter POR Trend2" required="required" />
+                                </td>
                                 <td class="comments">
                                     <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
                                 </td>
@@ -169,6 +174,7 @@
                                 </td>
                                 <td nowrap class="por_commit">{{ i.por_commit }}</td>
                                 <td nowrap class="por_trend">{{ i.por_trend }}</td>
+                                <td nowrap class="por_trend2">{{ i.por_trend2 }}</td>
                                 <td nowrap class="comments">{{ i.comments }}</td>
                                 <td>
                                     <button data-id="{{ i.schedule_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Schedule">
@@ -207,6 +213,10 @@
                                 <td class="por_trend">
                                     <input class="form-control" data-prop="por_trend" name="por_trend" type="text"
                                            required="required" value="{{ i.por_trend }}" />
+                                </td>
+                                <td class="por_trend2">
+                                    <input class="form-control" data-prop="por_trend2" name="por_trend2" type="text"
+                                           required="required" value="{{ i.por_trend2 }}" />
                                 </td>
                                 <td class="comments">
                                     <textarea class="form-control" data-prop="comments" name="comments" cols="3" maxlength="250" required="required">{{i.comments}}</textarea>
@@ -286,6 +296,7 @@
                status : $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                por_commit : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
                por_trend : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
+               por_trend2 : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend2"]')[0].value,
                comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
             }
             $.ajax(
@@ -314,6 +325,7 @@
                status : $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
                por_commit : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
                por_trend : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
+               por_trend2 : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_trend2"]')[0].value,
                comments : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
             }
                 $.ajax({

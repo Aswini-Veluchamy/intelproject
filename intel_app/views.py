@@ -286,13 +286,14 @@ def schedule(request):
         milestone = request.POST['milestone']
         por_commit = request.POST['por_commit']
         por_trend = request.POST['por_trend']
+        por_trend2 = request.POST['por_trend2']
         status = request.POST['status']
         comments = request.POST['comments']
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         schedule_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
-        load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, primary_project,
+        load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, primary_project,
                            False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("schedule"))
     else:
@@ -318,10 +319,11 @@ def schedule_edit_table(request, pk):
         milestone = request.POST['milestone']
         por_commit = request.POST['por_commit']
         por_trend = request.POST['por_trend']
+        por_trend2 = request.POST['por_trend2']
         status = request.POST['status']
         comments = request.POST['comments']
         # update the values in external database
-        update_schedule_data([(display, milestone, por_commit, por_trend, status, comments, pk)])
+        update_schedule_data([(display, milestone, por_commit, por_trend, por_trend2, status, comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
 
 

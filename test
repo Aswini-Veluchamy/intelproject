@@ -677,12 +677,16 @@ CREATE TABLE bbox(
 );
 
 ***************************************************
+schedule
+views
+db connection
 
 CREATE TABLE schedule_table(
  display VARCHAR(20) NOT NULL,
  milestone VARCHAR(200) NOT NULL,
  por_commit VARCHAR(50) NOT NULL,
  por_trend VARCHAR(50) NOT NULL,
+ por_trend2 VARCHAR(50) NOT NULL,
  status VARCHAR(50) NOT NULL,
  comments VARCHAR(200) NOT NULL,
  schedule_id VARCHAR(50) NOT NULL,
