@@ -13,7 +13,7 @@ from .db_connection import load_key_program_metric_data, update_key_program_metr
 from .db_connection import load_schedule_data, update_schedule_data, load_links_data, update_links_data, register_user
 from .db_connection import login_user, create_project, get_projects, load_bbox_data
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, encrypt_password
-from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
+from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data, get_schedule_record
 
 import ast
 
@@ -292,6 +292,12 @@ def schedule(request):
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         schedule_id = str(int(time.time() * 1000)) + '_' + user
+
+        # verifying the values
+        por_commit = check_por_trend_values(por_commit)
+        por_trend = check_por_trend_values(por_trend)
+        por_trend2 = check_por_trend_values(por_trend2)
+
         ''' storing data into database'''
         load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, primary_project,
                            False, 'None', datetime.now().date())
@@ -312,6 +318,13 @@ def schedule(request):
             return HttpResponseRedirect(reverse('login'))
 
 
+def check_por_trend_values(input_string):
+    if '.' not in input_string and input_string:
+        return f'{input_string}.5'
+    else:
+        return input_string
+
+
 @csrf_exempt
 def schedule_edit_table(request, pk):
     if request.method == "POST":
@@ -323,7 +336,10 @@ def schedule_edit_table(request, pk):
         status = request.POST['status']
         comments = request.POST['comments']
         # update the values in external database
-        update_schedule_data([(display, milestone, por_commit, por_trend, por_trend2, status, comments, pk)])
+        por_commit = check_por_trend_values(por_commit)
+        record = get_schedule_record(pk)
+        update_schedule_data([(display, milestone, por_commit, record[0].get('por_commit'), record[0].get('por_trend'),
+                               status, comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
 
 

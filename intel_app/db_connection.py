@@ -68,6 +68,18 @@ def get_data(user, table, project, deleted=None):
     return result
 
 
+def get_schedule_record(pk):
+    conn, cursor = db_connection()
+    sql = f"SELECT * FROM {SCHEDULE_TABLE} where schedule_id='{pk}'"
+    cursor.execute(sql)
+    records = cursor.fetchall()
+    columns = [col[0] for col in cursor.description]
+    result = [dict(zip(columns, record)) for record in records]
+    conn.commit()
+    conn.close()
+    return result
+
+
 def update_risk_data(data):
     conn, cursor = db_connection()
     for display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, risk_id in data:
