@@ -30,15 +30,16 @@ def load_key_message_data(data):
     conn.close()
 
 
-def load_risk_data(data):
+def load_risk_data(data, table):
     conn, cursor = db_connection()
-    for display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, \
-            risk_id, project, user in data:
-        sql = f"INSERT INTO {RISK_TABLE} (display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, \
-            risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, risk_id, project, user)
-        cursor.execute(sql, val)
-    print(f'data inserted in {RISK_TABLE} ....')
+    print(data, table)
+    display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, risk_id, project, user = data
+    sql = f"INSERT INTO {table} (display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, \
+        risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, risk_id, project, user)
+    print(sql)
+    cursor.execute(sql, val)
+    print(f'data inserted in {table} ....')
     conn.commit()
     conn.close()
 
@@ -93,15 +94,15 @@ def update_risk_data(data):
     conn.close()
 
 
-def load_key_program_metric_data(data):
+def load_key_program_metric_data(data, table):
     conn, cursor = db_connection()
     for display, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user in data:
-        sql = f"INSERT INTO {KEY_PROGRAM_METRIC_TABLE} (display, metric, fv_target, current_week_actual,\
+        sql = f"INSERT INTO {table} (display, metric, fv_target, current_week_actual,\
                 current_week_plan, status, comments, metric_id, project, user) \
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         val = (display, metric, fv_target, cwa, cwp, status, comments, metric_id,  proj, user)
         cursor.execute(sql, val)
-    print(f'data inserted in {KEY_PROGRAM_METRIC_TABLE} ....')
+    print(f'data inserted in {table} ....')
     conn.commit()
     conn.close()
 
@@ -170,13 +171,20 @@ def update_schedule_data(data):
     conn.close()
 
 
-def load_links_data(display, links_url, comments, links_id, project, user, deleted, deleted_by, deleted_on):
+def load_links_data(table_name, display, links_url, comments, links_id, project, user, deleted=None,
+                    deleted_by=None, deleted_on=None):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {LINKS_TABLE} (display, links_url, comments_links, links_id, project, user, deleted, deleted_by, deleted_on) \
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (display, links_url, comments, links_id, project, user, deleted, deleted_by, deleted_on)
+    if table_name == LINKS_TABLE:
+        sql = f"INSERT INTO {table_name} (display, links_url, comments_links, links_id, project, user) \
+                        VALUES (%s, %s, %s, %s, %s, %s)"
+        val = (display, links_url, comments, links_id, project, user)
+    else:
+        sql = f"INSERT INTO {table_name} (display, links_url, comments_links, links_id, project, user, deleted, deleted_by, deleted_on) \
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (display, links_url, comments, links_id, project, user, deleted, deleted_by, deleted_on)
+
     cursor.execute(sql, val)
-    print(f'data inserted in {LINKS_TABLE} ....')
+    print(f'data inserted in {table_name} ....')
     conn.commit()
     conn.close()
 
@@ -314,16 +322,21 @@ def encrypt_password(password):
     return hashed_password
 
 
-def load_issues_data(data):
+def load_issues_data(table, data):
     conn, cursor = db_connection()
-    for display, issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, \
-            issues_id, project, user, deleted, deleted_by, deleted_on in data:
-        sql = f"INSERT INTO {ISSUES_TABLE} (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, \
+    if table == ISSUES_TABLE:
+        display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id, project, user = data
+        sql = f"INSERT INTO {table} (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, \
+                    issues_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id, project, user)
+    else:
+        display, issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, issues_id, project, user, deleted, deleted_by, deleted_on = data
+        sql = f"INSERT INTO {table} (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, \
             issues_id, project, user, deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (display, issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, issues_id, project, user,
-               deleted, deleted_by, deleted_on)
-        cursor.execute(sql, val)
-    print(f'data inserted in {ISSUES_TABLE} ....')
+        val = (display, issues_summary, status, owner, eta,  trigger_date, issues_initiated, severity, issues_id,
+               project, user, deleted, deleted_by, deleted_on)
+    cursor.execute(sql, val)
+    print(f'data inserted in {table} ....')
     conn.commit()
     conn.close()
 
@@ -373,3 +386,23 @@ def get_bbox_data(project):
     conn.commit()
     conn.close()
     return result
+
+
+def get_record(table, id_key, id_value):
+    conn, cursor = db_connection()
+    dict_cursor = conn.cursor(dictionary=True)
+    sql = f"SELECT * FROM {table} where {id_key}='{id_value}'"
+    dict_cursor.execute(sql)
+    record = dict_cursor.fetchone()
+    conn.close()
+    return record
+
+
+def delete_record(table, id_key, id_value):
+    conn, cursor = db_connection()
+    sql = f"delete from {table} where {id_key}='{id_value}'"
+    print(sql)
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+    print(f'record {id_key} deleted from {table} !!!!!')
