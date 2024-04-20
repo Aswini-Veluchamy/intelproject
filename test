@@ -812,3 +812,12 @@ CREATE TABLE key_program_metric_bkp_table(
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  user VARCHAR(50) NOT NULL
 );
+
+******************************************* 20/04/2024
+html
+project
+user_create
+user_list
+db_connection
+urls
+views

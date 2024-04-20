@@ -22,9 +22,12 @@ urlpatterns = [
     path('issues/', views.issues, name='issues'),
     path('issues_edit_table/<str:pk>', views.issues_edit_table, name='issues_edit_table'),
     path('user_create/', views.user_create, name='user_create'),
+    path('user_list/', views.user_list, name='user_list'),
     path('project/', views.project, name='project'),
     path('project_change/<str:func_name>', views.project_change, name='project_change'),
     path('delete_schedule_data/<str:pk>', views.delete_schedule_data, name='delete_schedule_data'),
     path('delete_issues_data/<str:pk>', views.delete_issues_data, name='delete_issues_data'),
-    path('delete_links_data/<str:pk>', views.delete_links_data, name='delete_links_data')
+    path('delete_links_data/<str:pk>', views.delete_links_data, name='delete_links_data'),
+    path('edit_projects/', views.edit_projects, name='edit_projects'),
+    path('delete_user/', views.delete_user, name='delete_user'),
 ]

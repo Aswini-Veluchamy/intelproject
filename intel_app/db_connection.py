@@ -388,6 +388,21 @@ def get_bbox_data(project):
     return result
 
 
+def get_users_data():
+    """Register a new project."""
+    try:
+        conn, cursor = db_connection()
+        query = "select username,project from users"
+        cursor.execute(query)
+        users = cursor.fetchall()
+        if users:
+            return users
+        else:
+            return None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
 def get_record(table, id_key, id_value):
     conn, cursor = db_connection()
     dict_cursor = conn.cursor(dictionary=True)

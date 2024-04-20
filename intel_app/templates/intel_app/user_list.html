@@ -1,0 +1,275 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard</title>
+    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
+    <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/bootstrap-select.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+
+</head>
+<body style="background-color:#ffffff!important;">
+
+<!-- Example Code -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand">
+            <span>Intel</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-md-auto gap-2">
+                <li class="nav-item rounded">
+                    <a class="nav-link ho" href="{% url 'home' %}">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown rounded">
+                    <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-user"></i>
+                        <span>{{request.user.username}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="row flex-nowrap">
+    <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+            <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <span class="fs-5 d-none d-sm-inline">Menu</span>
+            </a>
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                <li class="nav-item active">
+                    <a href="{% url 'user_create' %}" class="nav-link align-middle px-0">
+                        <span class="ms-1 d-none d-sm-inline">Create User</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="{% url 'user_list' %}" class="nav-link align-middle px-0">
+                        <span class="ms-1 d-none d-sm-inline">Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'project' %}" class="nav-link align-middle px-0">
+                        <span class="ms-1 d-none d-sm-inline">Projects</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col py-3">
+        <div class="card">
+            <div class="card-header">
+                <b>Create User</b>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped" id="example"
+                       data-toggle="table"
+                       data-search="true"
+                       data-search-align="left"
+                       data-show-columns="true"
+                       data-show-toggle="false"
+                       data-show-columns-toggle-all="true"
+                       data-show-export="true"
+                       data-export-data-type="all"
+                       data-response-handler="responseHandler"
+                       data-show-fullscreen="true"
+                       data-buttons-class="primary btn-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col" nowrap data-field="username" class="w-50 p-3 username">Username</th>
+                        <th scope="col" nowrap data-field="projects" class="w-50 p-3 projects">Projects</th>
+                        <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i,j in users %}
+                    <tr>
+                        <td nowrap class="username">{{ i }}</td>
+                        <td nowrap class="projects">{{ j }}</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links"
+                                    data-bs-toggle="modal" data-bs-target="#editModal"
+                                    data-username="{{ i }}" data-projects="{{ j }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm" title="Delete Link" onclick="deleteUser(this)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add this modal dialog at the end of your body -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Projects</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add your form for editing projects here -->
+                <form id="editForm" action="{% url 'edit_projects' %}" method="post">
+                    {% csrf_token %}
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" id="username" value="" readonly><br><br>
+                    <label for="project_name">Projects:</label>
+                    <select class="selectpicker" multiple="multiple" id="project_name" name="project_name" required>
+                        <option value="" selected disabled>Select Project</option>
+                        {% for i in projects %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select><br><br>
+                    <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modify the edit button to open the modal -->
+
+
+<!-- Include the Quill library -->
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
+<script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
+<script>
+    $('#example').bootstrapTable({
+        exportOptions: {
+            fileName: 'Users'
+        },
+        exportTypes: ['excel'],
+    });
+</script>
+{% if messages %}
+<script>
+    swal({
+      title: "Alert!",
+      text: "{{messages}}",
+      showConfirmButton: true
+    }, function(){
+          window.location.href = "{% url 'user_list' %}";
+    });
+</script>
+{% endif %}
+<script>
+function submitForm() {
+    var username = $('#username').val();
+    var projects = $('#project_name').val();
+
+    if (projects.length === 0) {
+        alert('Please select at least one project.');
+        return;
+    }
+
+    // Set the values to the corresponding form fields
+    $('#editForm input[name="username"]').val(username);
+    $('#editForm input[name="project_name"]').val(projects.join(',')); // Convert array to comma-separated string
+
+    // Submit the form
+    $('#editForm').submit();
+}
+</script>
+<script>
+    $('#editModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var username = button.data('username'); // Extract info from data-* attributes
+        var modal = $(this);
+        modal.find('.modal-body #username').val(username); // Populate data into modal inputs
+    });
+</script>
+<script>
+    function deleteUser(button) {
+    var row = $(button).closest('tr'); // Get the closest table row
+    var username = row.find('.username').text(); // Get the username from the row
+
+    // Get the CSRF token value from the cookie
+    var csrftoken = getCookie('csrftoken');
+
+    // Send an AJAX request to the backend
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'delete_user' %}', // Update the URL to your backend endpoint
+        headers: {
+            'X-CSRFToken': csrftoken // Include the CSRF token in the request headers
+        },
+        data: {
+            'username': username,
+            // Add any other data you need to send to the backend
+        },
+        success: function(response) {
+            // Handle the success response
+            console.log('User deleted:', username);
+            // Optionally, remove the table row from the DOM
+            row.remove();
+        },
+        error: function(xhr, status, error) {
+            // Handle the error response
+            console.error('Error deleting user:', error);
+        }
+    });
+}
+
+// Function to get the CSRF token from the cookie
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Check if the cookie name matches the CSRF cookie name
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                // Extract and decode the CSRF token value
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+</script>
+<script>
+    $(function () {
+    $('select').selectpicker();
+});
+</script>
+</body>
+</html>

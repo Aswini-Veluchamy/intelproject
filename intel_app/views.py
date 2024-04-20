@@ -6,14 +6,14 @@ import json
 import time
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
-from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, LINKS_BKP_TABLE
+from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, BBOX_TABLE, LINKS_BKP_TABLE
 from .config import ISSUES_BKP_TABLE, RISK_BKP_TABLE, KEY_PROGRAM_METRIC_BKP_TABLE
 
 from .db_connection import load_key_message_data, load_risk_data, update_risk_data, load_details_data
 from .db_connection import load_key_program_metric_data, update_key_program_metric_data, delete_key_program_metric_data
 from .db_connection import load_schedule_data, update_schedule_data, load_links_data, update_links_data, register_user
 from .db_connection import login_user, create_project, get_projects, load_bbox_data
-from .db_connection import update_password, load_issues_data, update_issues_data, get_users, encrypt_password
+from .db_connection import update_password, load_issues_data, update_issues_data, get_users, get_users_data, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
 from .db_connection import get_record, delete_record, get_schedule_record
 
@@ -590,3 +590,32 @@ def delete_issues_data(request, pk):
     # delete the record
     delete_record(ISSUES_TABLE, 'issues_id', pk)
     return HttpResponseRedirect(reverse("issues"))
+
+def user_list(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        project_name = request.POST.getlist('project_name')
+        # user validation
+        users = get_users()
+        # projects
+        projects = get_projects()
+        return render(request, 'intel_app/user_list.html', {'users': users, 'projects': projects, 'messages': messages})
+    else:
+        users = get_users_data()
+        projects = get_projects()
+        return render(request, 'intel_app/user_list.html', {'users': users, 'projects': projects})
+
+def edit_projects(request):
+    # Your view logic here
+    if request.method == "POST":
+        username = request.POST['username']
+        project_name = request.POST.getlist('project_name')
+        print(username,project_name)
+        return HttpResponseRedirect(reverse("user_list"))
+
+def delete_user(request):
+    # Your view logic here
+    if request.method == "POST":
+        username = request.POST['username']
+        print(username)
+        return HttpResponseRedirect(reverse("user_list"))
