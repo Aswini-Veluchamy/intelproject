@@ -6,7 +6,8 @@ import json
 import time
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
-from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, BBOX_TABLE, ISSUES_TABLE
+from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, LINKS_BKP_TABLE
+from .config import ISSUES_BKP_TABLE, RISK_BKP_TABLE, KEY_PROGRAM_METRIC_BKP_TABLE
 
 from .db_connection import load_key_message_data, load_risk_data, update_risk_data, load_details_data
 from .db_connection import load_key_program_metric_data, update_key_program_metric_data, delete_key_program_metric_data
@@ -14,6 +15,7 @@ from .db_connection import load_schedule_data, update_schedule_data, load_links_
 from .db_connection import login_user, create_project, get_projects, load_bbox_data
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
+from .db_connection import get_record, delete_record, get_schedule_record
 
 import ast
 
@@ -168,10 +170,12 @@ def risks(request):
         risk_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         # load risk data to external database
-        load_risk_data([
-            (display, risk_summary, risk_area, status, owner, consequence, mitigations,
-             trigger_date, risk_initiated, impact, risk_id, primary_project, user)
-        ])
+        load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
+             trigger_date, risk_initiated, impact, risk_id, primary_project, user), RISK_TABLE)
+
+        # load risk data to bkp table
+        load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
+             trigger_date, risk_initiated, impact, risk_id, primary_project, user), RISK_BKP_TABLE)
         return HttpResponseRedirect(reverse("risk"))
     else:
         try:
@@ -207,8 +211,14 @@ def risk_edit_table(request, pk):
         trigger_date = request.POST['trigger_date']
         risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
+        primary_project = request.COOKIES['primary_project']
+        user = request.COOKIES['user_id']
+        # updating the project
         update_risk_data([(display, risk_summary, risk_area, status, owner, consequence, mitigations,
                            trigger_date, risk_initiated, impact, pk)])
+        # load risk data to bkp table
+        load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
+                        trigger_date, risk_initiated, impact, pk, primary_project, user), RISK_BKP_TABLE)
         return HttpResponseRedirect(reverse("risk"))
 
 
@@ -227,7 +237,12 @@ def key_program(request):
         metric_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
-                                       current_week_plan, status, comments, metric_id, primary_project, user)])
+                                       current_week_plan, status, comments, metric_id, primary_project, user)],
+                                     KEY_PROGRAM_METRIC_TABLE)
+        # backup table
+        load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
+                                       current_week_plan, status, comments, metric_id, primary_project, user)],
+                                     KEY_PROGRAM_METRIC_BKP_TABLE)
         return HttpResponseRedirect(reverse("key_program"))
     else:
         try:
@@ -255,9 +270,16 @@ def key_program_edit(request, pk):
         current_week_plan = request.POST['plan']
         status = request.POST['status']
         comments = request.POST['comments']
+        primary_project = request.COOKIES['primary_project']
+        user = request.COOKIES['user_id']
         # update the values in external database
         update_key_program_metric_data([(display, metric, fv_target, current_week_actual, current_week_plan,
                                         status, comments, pk)])
+
+        # backup table
+        load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
+                                       current_week_plan, status, comments, pk, primary_project, user)],
+                                     KEY_PROGRAM_METRIC_BKP_TABLE)
         return HttpResponseRedirect(reverse("key_program"))
 
 
@@ -292,6 +314,12 @@ def schedule(request):
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         schedule_id = str(int(time.time() * 1000)) + '_' + user
+
+        # verifying the values
+        por_commit = check_por_trend_values(por_commit)
+        por_trend = check_por_trend_values(por_trend)
+        por_trend2 = check_por_trend_values(por_trend2)
+
         ''' storing data into database'''
         load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, primary_project,
                            False, 'None', datetime.now().date())
@@ -312,6 +340,13 @@ def schedule(request):
             return HttpResponseRedirect(reverse('login'))
 
 
+def check_por_trend_values(input_string):
+    if '.' not in input_string and input_string:
+        return f'{input_string}.5'
+    else:
+        return input_string
+
+
 @csrf_exempt
 def schedule_edit_table(request, pk):
     if request.method == "POST":
@@ -323,7 +358,10 @@ def schedule_edit_table(request, pk):
         status = request.POST['status']
         comments = request.POST['comments']
         # update the values in external database
-        update_schedule_data([(display, milestone, por_commit, por_trend, por_trend2, status, comments, pk)])
+        por_commit = check_por_trend_values(por_commit)
+        record = get_schedule_record(pk)
+        update_schedule_data([(display, milestone, por_commit, record[0].get('por_commit'), record[0].get('por_trend'),
+                               status, comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
 
 
@@ -348,14 +386,17 @@ def links(request):
             raise Exception('fill the fields!!!!!!!!')
 
         links_id = str(int(time.time() * 1000)) + '_' + user
-        load_links_data(display, links_url, comments, links_id, primary_project, user,
+        # original table
+        load_links_data(LINKS_TABLE, display, links_url, comments, links_id, primary_project, user)
+        # loading backup table
+        load_links_data(LINKS_BKP_TABLE, display, links_url, comments, links_id, primary_project, user,
                         False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("links"))
     else:
         user_project = request.COOKIES['project']
         user = request.COOKIES['user_id']
         user_project = ast.literal_eval(user_project)
-        result = get_data(user, LINKS_TABLE, request.COOKIES['primary_project'], False)
+        result = get_data(user, LINKS_TABLE, request.COOKIES['primary_project'])
         return render(request, 'intel_app/links.html', {'project': user_project, 'data': result,
                                                         'user': user})
 
@@ -366,8 +407,13 @@ def links_edit_table(request, pk):
         display = request.POST['switch_button']
         links_url = request.POST['links_url']
         comments = request.POST['comments_links']
+        primary_project = request.COOKIES['primary_project']
+        user = request.COOKIES['user_id']
         # update the values in external database
         update_links_data(display, links_url, comments, pk)
+        # loading backup table
+        load_links_data(LINKS_BKP_TABLE, display, links_url, comments, pk, primary_project, user,
+                        False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("links"))
 
 
@@ -456,17 +502,22 @@ def issues(request):
         issues_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         # load isuues data to external database
-        load_issues_data([
+        load_issues_data(ISSUES_TABLE,
+                         (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity,
+                          issues_id,primary_project, user)
+                         )
+        # backup table
+        load_issues_data(ISSUES_BKP_TABLE,
             (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id,
              primary_project, user, False, 'None', datetime.now().date())
-        ])
+        )
         return HttpResponseRedirect(reverse("issues"))
     else:
         try:
             user_projects = request.COOKIES['project']
             user = request.COOKIES['user_id']
             user_projects = ast.literal_eval(user_projects)
-            result = get_data(user, ISSUES_TABLE, request.COOKIES['primary_project'], False)
+            result = get_data(user, ISSUES_TABLE, request.COOKIES['primary_project'])
             if result:
                 status = ['Open', 'Closed']
                 severity = ['Low', 'Medium', 'High']
@@ -490,7 +541,15 @@ def issues_edit_table(request, pk):
         trigger_date = request.POST['trigger_date']
         issues_initiated = request.POST['issues_initiated']
         severity = request.POST['severity']
+        user = request.COOKIES['user_id']
+        primary_project = request.COOKIES['primary_project']
+        # updating the table
         update_issues_data([(display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, pk)])
+        # backup table
+        load_issues_data(ISSUES_BKP_TABLE,
+                         (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity,
+                          pk,primary_project, user, False, 'None', datetime.now().date())
+                         )
         return HttpResponseRedirect(reverse("issues"))
 
 
@@ -509,11 +568,25 @@ def delete_schedule_data(request, pk):
 
 def delete_links_data(request, pk):
     deleted_by = request.COOKIES['user_id']
-    update_deleted_record(LINKS_TABLE, deleted_by, datetime.now().today(), 'links_id', pk)
+    record = get_record(LINKS_TABLE, 'links_id', pk)
+    # loading backup table
+    load_links_data(LINKS_BKP_TABLE, record.get('display'), record.get('links_url'), record.get('comments_links'),
+                    record.get('links_id'), record.get('project'), record.get('user'),
+                    True, deleted_by, datetime.now().date())
+    # delete the record
+    delete_record(LINKS_TABLE, 'links_id', pk)
     return HttpResponseRedirect(reverse("links"))
 
 
 def delete_issues_data(request, pk):
     deleted_by = request.COOKIES['user_id']
-    update_deleted_record(ISSUES_TABLE, deleted_by, datetime.now().today(), 'issues_id', pk)
+    record = get_record(ISSUES_TABLE, 'issues_id', pk)
+    # loading backup table
+    load_issues_data(
+        ISSUES_BKP_TABLE, (record['display'], record['issues_summary'], record['status'],
+        record['owner'], record['eta'], record['trigger_date'], record['issues_initiated'],
+        record['severity'],pk, record['project'], record['user'], True, deleted_by, datetime.now().date())
+    )
+    # delete the record
+    delete_record(ISSUES_TABLE, 'issues_id', pk)
     return HttpResponseRedirect(reverse("issues"))

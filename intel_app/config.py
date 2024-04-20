@@ -16,3 +16,9 @@ SCHEDULE_TABLE = 'schedule_table'
 LINKS_TABLE = 'links_table'
 BBOX_TABLE = 'bbox'
 ISSUES_TABLE = 'issues_table'
+
+# backup tables
+LINKS_BKP_TABLE = 'links_bkp_table'
+ISSUES_BKP_TABLE = 'issues_bkp_table'
+RISK_BKP_TABLE = 'risk_bkp_table'
+KEY_PROGRAM_METRIC_BKP_TABLE = 'key_program_metric_bkp_table'
