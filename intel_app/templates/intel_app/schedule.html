@@ -83,7 +83,7 @@
 <main>
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
-        <div class="container"><!--style="max-width:100%;"-->
+        <div class="container" style="max-width:100%;">
             <div class="card">
                 <div class="card-header">
                     <b>Schedule</b>
@@ -109,14 +109,14 @@
                                data-buttons-class="primary btn-sm">
                             <thead>
                             <tr>
-                                <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
-                                <th scope="col" nowrap data-field="milestone" class="w-50 p-3 milestone">Milestone</th>
-                                <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
-                                <th scope="col" nowrap data-field="por_commit" class="w-50 p-3 por_commit">POR Commit</th>
-                                <th scope="col" nowrap data-field="por_trend" class="w-50 p-3 por_trend">POR Trend</th>
-                                <th scope="col" nowrap data-field="por_trend2" class="w-50 p-3 por_trend2">POR Trend2</th>
-                                <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
-                                <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
+                                <th scope="col" data-field="switch_button" class="switch_button">On/Off</th>
+                                <th scope="col" data-field="milestone" class="w-30 p-3 milestone">Milestone</th>
+                                <th scope="col" data-field="status" class="w-30 p-3 status" data-formatter="nameFormatter">Status</th>
+                                <th scope="col" data-field="por_commit" class="w-30 p-3 por_commit">POR Commit</th>
+                                <th scope="col" data-field="por_trend" class="w-30 p-3 por_trend">POR Trend</th>
+                                <th scope="col" data-field="por_trend2" class="w-30 p-3 por_trend2">POR Trend2</th>
+                                <th scope="col" data-field="comments" class="w-30 p-3 comments">Comments</th>
+                                <th scope="col" data-field="action" class="w-30 p-3 action">Action</th>
                             </tr>
                             </thead>
                             <tbody data-body="schedule">
@@ -167,9 +167,9 @@
                                 <td nowrap class="milestone">{{ i.milestone }}</td>
                                 <td nowrap class="status" style="color: {% if i.status.0 == 'Done' %} green; font-weight: 600; {% else %} black; {% endif %}">
                                     {% if i.status.0 == 'Done' %}
-                                        &#x2714;
+                                    &#x2714;
                                     {% else %}
-                                        {{ i.status.0 }}
+                                    {{ i.status.0 }}
                                     {% endif %}
                                 </td>
                                 <td nowrap class="por_commit">{{ i.por_commit }}</td>
