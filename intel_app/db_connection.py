@@ -416,8 +416,17 @@ def get_record(table, id_key, id_value):
 def delete_record(table, id_key, id_value):
     conn, cursor = db_connection()
     sql = f"delete from {table} where {id_key}='{id_value}'"
-    print(sql)
     cursor.execute(sql)
     conn.commit()
     conn.close()
     print(f'record {id_key} deleted from {table} !!!!!')
+
+
+def update_project(username, project):
+    conn, cursor = db_connection()
+    project_json = json.dumps(project)
+    sql = f"UPDATE users SET project = '{project_json}' WHERE username = '{username}'"
+    cursor.execute(sql)
+    print(f'data updated in users table ....')
+    conn.commit()
+    conn.close()

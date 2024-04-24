@@ -15,7 +15,7 @@ from .db_connection import load_schedule_data, update_schedule_data, load_links_
 from .db_connection import login_user, create_project, get_projects, load_bbox_data
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, get_users_data, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
-from .db_connection import get_record, delete_record, get_schedule_record
+from .db_connection import get_record, delete_record, get_schedule_record, update_project
 
 import ast
 
@@ -591,31 +591,25 @@ def delete_issues_data(request, pk):
     delete_record(ISSUES_TABLE, 'issues_id', pk)
     return HttpResponseRedirect(reverse("issues"))
 
+
 def user_list(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        project_name = request.POST.getlist('project_name')
-        # user validation
-        users = get_users()
-        # projects
-        projects = get_projects()
-        return render(request, 'intel_app/user_list.html', {'users': users, 'projects': projects, 'messages': messages})
-    else:
-        users = get_users_data()
-        projects = get_projects()
-        return render(request, 'intel_app/user_list.html', {'users': users, 'projects': projects})
+    users = get_users_data()
+    projects = get_projects()
+    return render(request, 'intel_app/user_list.html', {'users': users, 'projects': projects})
+
 
 def edit_projects(request):
     # Your view logic here
     if request.method == "POST":
         username = request.POST['username']
         project_name = request.POST.getlist('project_name')
-        print(username,project_name)
+        update_project(username, project_name)
         return HttpResponseRedirect(reverse("user_list"))
+
 
 def delete_user(request):
     # Your view logic here
     if request.method == "POST":
         username = request.POST['username']
-        print(username)
+        delete_record('users', 'username', username)
         return HttpResponseRedirect(reverse("user_list"))
