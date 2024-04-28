@@ -37,19 +37,24 @@ def user_login(request):
             '''
             return HttpResponseRedirect(reverse("user_create"))
         else:
-            user, data = login_user(username, password)
-            projects = ast.literal_eval(data.get('project'))
-            primary_project = projects[0]
-            if user:
-                response = HttpResponseRedirect(reverse('home'))
-                response.set_cookie('user_id', data.get('username'))
-                response.set_cookie('project', data.get('project'))
-                response.set_cookie('admin', data.get('admin'))
-                response.set_cookie('primary_project', primary_project)
-                return response
-            else:
+            try:
+                user, data = login_user(username, password)
+                projects = ast.literal_eval(data.get('project'))
+                primary_project = projects[0]
+                if user:
+                    response = HttpResponseRedirect(reverse('home'))
+                    response.set_cookie('user_id', data.get('username'))
+                    response.set_cookie('project', data.get('project'))
+                    response.set_cookie('admin', data.get('admin'))
+                    response.set_cookie('primary_project', primary_project)
+                    return response
+                else:
+                    context['error'] = "provide valid credentials"
+                    return render(request, "intel_app/login.html", context)
+            except Exception as e:
                 context['error'] = "provide valid credentials"
                 return render(request, "intel_app/login.html", context)
+
     else:
         return render(request, "intel_app/login.html")
 
@@ -169,6 +174,8 @@ def risks(request):
         user = request.COOKIES['user_id']
         risk_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
+        trigger_date = check_por_trend_values(trigger_date)
+        risk_initiated = check_por_trend_values(risk_initiated)
         # load risk data to external database
         load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
              trigger_date, risk_initiated, impact, risk_id, primary_project, user), RISK_TABLE)
@@ -213,6 +220,9 @@ def risk_edit_table(request, pk):
         impact = request.POST['impact']
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
+
+        trigger_date = check_por_trend_values(trigger_date)
+        risk_initiated = check_por_trend_values(risk_initiated)
         # updating the project
         update_risk_data([(display, risk_summary, risk_area, status, owner, consequence, mitigations,
                            trigger_date, risk_initiated, impact, pk)])
@@ -500,11 +510,16 @@ def issues(request):
         user = request.COOKIES['user_id']
         primary_project = request.COOKIES['primary_project']
         issues_id = str(int(time.time() * 1000)) + '_' + user
+
+        # verify the values
+        trigger_date = check_por_trend_values(trigger_date)
+        issues_initiated = check_por_trend_values(issues_initiated)
+
         ''' storing data into database'''
         # load isuues data to external database
         load_issues_data(ISSUES_TABLE,
                          (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity,
-                          issues_id,primary_project, user)
+                          issues_id, primary_project, user)
                          )
         # backup table
         load_issues_data(ISSUES_BKP_TABLE,
@@ -543,6 +558,11 @@ def issues_edit_table(request, pk):
         severity = request.POST['severity']
         user = request.COOKIES['user_id']
         primary_project = request.COOKIES['primary_project']
+
+        # verify the values
+        trigger_date = check_por_trend_values(trigger_date)
+        issues_initiated = check_por_trend_values(issues_initiated)
+
         # updating the table
         update_issues_data([(display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, pk)])
         # backup table

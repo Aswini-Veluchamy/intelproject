@@ -13,7 +13,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3306
+        port=3406
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -226,7 +226,7 @@ def login_user(username, password):
                 result = dict(zip(columns, user))
                 return user[0], result
             else:
-                return None, None
+                return (None, None)
         else:
             return None, None
     except mysql.connector.Error as err:

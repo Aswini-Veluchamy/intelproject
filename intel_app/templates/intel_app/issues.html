@@ -146,11 +146,11 @@
                                            placeholder="Enter ETA" title="What’s being done to resolve the issue? Should have ETA for each step" required="required" />
                                 </td>
                                 <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" name="trigger_date" type="date"
+                                    <input class="form-control" data-prop="trigger_date" name="trigger_date" type="text"
                                            placeholder="Enter Trigger Date" title="By when does the issue need to be resolved?" required="required" />
                                 </td>
                                 <td class="issues_initiated">
-                                    <input class="form-control" data-prop="issues_initiated" name="issues_initiated" type="date"
+                                    <input class="form-control" data-prop="issues_initiated" name="issues_initiated" type="text"
                                            placeholder="Enter Issues Initiated" title="When did the issue first come to light and start to get tracked?" required="required" />
                                 </td>
                                 <td class="severity">
@@ -181,8 +181,8 @@
                                 <td nowrap class="status">{{ i.status.0 }}</td>
                                 <td nowrap class="owner">{{ i.owner }}</td>
                                 <td nowrap class="eta">{{ i.eta }}</td>
-                                <td nowrap class="trigger_date">{{ i.trigger_date | date:'Y-m-d' }}</td>
-                                <td nowrap class="issues_initiated">{{ i.issues_initiated | date:'Y-m-d' }}</td>
+                                <td nowrap class="trigger_date">{{ i.trigger_date }}</td>
+                                <td nowrap class="issues_initiated">{{ i.issues_initiated }}</td>
                                 <td nowrap class="severity">{{ i.severity.0 }}</td>
                                 <td nowrap class="action">
                                     <button data-id="{{ i.issues_id }}" type="button" class="btn btn-info btn-sm edit-btn"
@@ -220,12 +220,12 @@
                                 </td>
 
                                 <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" type="date"
-                                           required="required" value="{{ i.trigger_date | date:'Y-m-d' }}" />
+                                    <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" type="text"
+                                           required="required" value="{{ i.trigger_date }}" />
                                 </td>
                                 <td class="issues_initiated">
-                                    <input class="form-control" data-prop="issues_initiated" id="issues_initiated" name="issues_initiated" type="date"
-                                           required="required" value="{{ i.issues_initiated | date:'Y-m-d' }}" />
+                                    <input class="form-control" data-prop="issues_initiated" id="issues_initiated" name="issues_initiated" type="text"
+                                           required="required" value="{{ i.issues_initiated }}" />
                                 </td>
                                 <td class="severity">
                                     <select class="form-select" data-prop="severity" name="severity" required="required">
