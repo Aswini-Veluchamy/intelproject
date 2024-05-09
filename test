@@ -874,3 +874,72 @@ CREATE TABLE risk_table(
  user VARCHAR(100) NOT NULL,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+
+
+
+
+<div id="counter_keymessage">Limited to 350 characters</div>
+
+<div id="counter_details">Limited to 350 characters</div>
+
+<script>
+    $(document).ready(function () {
+        var editor = CKEDITOR.replace('editor');
+        var maxLength = 350;
+
+        editor.on('change', function () {
+            var content = editor.getData();
+            var textLength = content.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                var limitedContent = content.substring(0, content.lastIndexOf(' ', maxLength));
+                editor.setData(limitedContent);
+            }
+            $('#charCount').text('Character count: ' + textLength + ' / ' + maxLength);
+        });
+
+        $('#btn_keymessage').on('click', function (e) {
+            var html = editor.getData();
+            var textLength = html.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                alert('Content exceeds the maximum length of ' + maxLength + ' characters.');
+                e.preventDefault();
+            } else {
+                $('#hiddenInput').val(html);
+                // Submit the form
+                $('#myForm').submit();
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var editor = CKEDITOR.replace('details_editor');
+        var maxLength = 350;
+
+        editor.on('change', function () {
+            var content = editor.getData();
+            var textLength = content.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                var limitedContent = content.substring(0, content.lastIndexOf(' ', maxLength));
+                editor.setData(limitedContent);
+            }
+            $('#charCount').text('Character count: ' + textLength + ' / ' + maxLength);
+        });
+
+        $('#btn_details').on('click', function (e) {
+            var html = editor.getData();
+            var textLength = html.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                alert('Content exceeds the maximum length of ' + maxLength + ' characters.');
+                e.preventDefault();
+            } else {
+                $('#details_message').val(html);
+                // Submit the form
+                detailsForm.submit();
+            }
+        });
+    });
+</script>
