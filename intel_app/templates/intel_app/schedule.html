@@ -358,7 +358,7 @@
         sessionStorage.setItem("itemName",selectedcategory);
     });
 
-    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
+    $('select').find('option[value="' + sessionStorage.getItem('itemName').replace(/"/g, '\\"') + '"]').prop('selected', true);
 </script>
 <script>
     tail.select("#projectdata", {

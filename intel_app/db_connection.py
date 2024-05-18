@@ -13,7 +13,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3406
+        port=3306
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -428,5 +428,22 @@ def update_project(username, project):
     sql = f"UPDATE users SET project = '{project_json}' WHERE username = '{username}'"
     cursor.execute(sql)
     print(f'data updated in users table ....')
+    conn.commit()
+    conn.close()
+
+def update_project_list(project):
+    conn, cursor = db_connection()
+    project_json = json.dumps(project)
+    sql = f"UPDATE users SET project = '{project_json}'"
+    cursor.execute(sql)
+    print(f'data updated in project table ....')
+    conn.commit()
+    conn.close()
+
+def delete_project_from_db(project_name):
+    conn, cursor = db_connection()
+    sql = "DELETE FROM projects WHERE username = %s AND project_name = %s"
+    cursor.execute(sql, (project_name))
+    print('Project deleted from database ...')
     conn.commit()
     conn.close()

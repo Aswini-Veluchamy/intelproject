@@ -239,6 +239,7 @@
                     <!--<input type="text" value="" />-->
                     <div id="editor" style="height: 275px;">{{ key_mess_data.message|safe }}</div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
+                    <div id="counter_keymessage">Limited to 1000 characters</div>
                     <p>{{error}}</p>
                     <button type="submit" id="btn_keymessage" class="btn btn-primary">Submit</button>
                     <button type="submit" class="btn btn-primary"><a href="{% url 'home' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
@@ -264,9 +265,10 @@
                     <!--<input type="text" value="" />-->
                     <div id="details_editor" style="height: 275px;">{{ details_data.message|safe }}</div>
                     <input type="hidden" name="details_message" id="details_message">
+                    <div id="counter_details">Limited to 1000 characters</div>
                     <p>{{error}}</p>
-                    <button type="submit" id="btn_details" class="btn btn-primary">Submit</button>
-                    <button type="submit" class="btn btn-primary"><a href="{% url 'home' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                    <button type="button" id="btn_details" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
@@ -288,45 +290,62 @@
 </script>
 
 <script>
-    // Replace textarea with CKEditor instance
-    CKEDITOR.replace('editor');
+    $(document).ready(function () {
+        var editor = CKEDITOR.replace('editor');
+        var maxLength = 1000;
 
-    // Handle form submission
-    $('#btn_keymessage').on('click', (e) => {
-        // Get CKEditor instance
-        var editor = CKEDITOR.instances.editor;
+        editor.on('change', function () {
+            var content = editor.getData();
+            var textLength = content.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                var limitedContent = content.substring(0, content.lastIndexOf(' ', maxLength));
+                editor.setData(limitedContent);
+            }
+            $('#charCount').text('Character count: ' + textLength + ' / ' + maxLength);
+        });
 
-        // Get HTML content
-        var html = editor.getData();
-
-        // Copy HTML content to hidden input
-        $('#hiddenInput').val(html);
-
-        // Prevent default form submission
-        e.preventDefault();
-
-        // Submit the form
-        $('#myForm').submit();
+        $('#btn_keymessage').on('click', function (e) {
+            var html = editor.getData();
+            var textLength = html.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                alert('Content exceeds the maximum length of ' + maxLength + ' characters.');
+                e.preventDefault();
+            } else {
+                $('#hiddenInput').val(html);
+                // Submit the form
+                $('#myForm').submit();
+            }
+        });
     });
 </script>
 
 <script>
-    CKEDITOR.replace('details_editor');
-    $('#btn_details').on('click', (e) => {
-        // Get CKEditor instance
-        var editor = CKEDITOR.instances.details_editor;
+    $(document).ready(function () {
+        var editor = CKEDITOR.replace('details_editor');
+        var maxLength = 1000;
 
-        // Get HTML content
-        var html = editor.getData();
+        editor.on('change', function () {
+            var content = editor.getData();
+            var textLength = content.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                var limitedContent = content.substring(0, content.lastIndexOf(' ', maxLength));
+                editor.setData(limitedContent);
+            }
+            $('#charCount').text('Character count: ' + textLength + ' / ' + maxLength);
+        });
 
-        // Copy HTML content to hidden input
-        $('#details_message').val(html);
-
-        // Prevent default form submission
-        e.preventDefault();
-
-        // Submit the form
-        detailsForm.submit();
+        $('#btn_details').on('click', function (e) {
+            var html = editor.getData();
+            var textLength = html.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+            if (textLength > maxLength) {
+                alert('Content exceeds the maximum length of ' + maxLength + ' characters.');
+                e.preventDefault();
+            } else {
+                $('#details_message').val(html);
+                // Submit the form
+                detailsForm.submit();
+            }
+        });
     });
 </script>
 
@@ -335,8 +354,9 @@
         var selectedcategory = $(this).children("option:selected").val();
         sessionStorage.setItem("itemName",selectedcategory);
     });
-    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
+    $('select').find('option[value="' + sessionStorage.getItem('itemName').replace(/"/g, '\\"') + '"]').prop('selected', true);
 </script>
+
 <script>
     tail.select("#projectdata", {
     animate: true,
@@ -349,5 +369,6 @@
     width: 170
 });
 </script>
+
 </body>
 </html>

@@ -15,7 +15,7 @@ from .db_connection import load_schedule_data, update_schedule_data, load_links_
 from .db_connection import login_user, create_project, get_projects, load_bbox_data
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, get_users_data, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
-from .db_connection import get_record, delete_record, get_schedule_record, update_project
+from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
 
 import ast
 
@@ -633,3 +633,23 @@ def delete_user(request):
         username = request.POST['username']
         delete_record('users', 'username', username)
         return HttpResponseRedirect(reverse("user_list"))
+
+def project_list(request):
+    projects = get_projects()
+    return render(request, 'intel_app/project_list.html', {'projects': projects})
+
+
+def edit_project_list(request):
+    # Your view logic here
+    if request.method == "POST":
+        project_name = request.POST['project_name']
+        print(project_name)
+        update_project_list('project_name')
+        return HttpResponseRedirect(reverse("project_list"))
+
+def delete_project(request):
+    if request.method == "POST":
+        project_name = request.POST['project_name']
+        print(project_name)
+        delete_project_from_db(project_name)
+        return HttpResponseRedirect(reverse("project_list"))

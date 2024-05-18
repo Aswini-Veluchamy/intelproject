@@ -30,4 +30,7 @@ urlpatterns = [
     path('delete_links_data/<str:pk>', views.delete_links_data, name='delete_links_data'),
     path('edit_projects/', views.edit_projects, name='edit_projects'),
     path('delete_user/', views.delete_user, name='delete_user'),
+    path('delete_project/', views.delete_project, name='delete_project'),
+    path('project_list/', views.project_list, name='project_list'),
+    path('edit_project_list/', views.edit_project_list, name='edit_project_list'),
 ]
