@@ -239,13 +239,12 @@
                     <!--<input type="text" value="" />-->
                     <div id="editor" style="height: 275px;">{{ key_mess_data.message|safe }}</div>
                     <input type="hidden" name="hiddenInput" id="hiddenInput">
-                    <div id="counter_keymessage">Limited to 1000 characters</div>
-                    <p>{{error}}</p>
+                    <div id="counter_keymessage">Characters remaining: 375</div>
+                    <p>{{ error }}</p>
                     <button type="submit" id="btn_keymessage" class="btn btn-primary">Submit</button>
-                    <button type="submit" class="btn btn-primary"><a href="{% url 'home' %}" style="text-decoration:none;color:#fff;">Cancel</a></button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
@@ -265,7 +264,7 @@
                     <!--<input type="text" value="" />-->
                     <div id="details_editor" style="height: 275px;">{{ details_data.message|safe }}</div>
                     <input type="hidden" name="details_message" id="details_message">
-                    <div id="counter_details">Limited to 1000 characters</div>
+                    <div id="counter_details">Limited to 375 characters</div>
                     <p>{{error}}</p>
                     <button type="button" id="btn_details" class="btn btn-primary">Submit</button>
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
@@ -292,21 +291,29 @@
 <script>
     $(document).ready(function () {
         var editor = CKEDITOR.replace('editor');
-        var maxLength = 1000;
+        var maxLength = 375;
 
-        editor.on('change', function () {
+        function updateCharacterCount() {
             var content = editor.getData();
             var textLength = content.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
-            if (textLength > maxLength) {
+            var remaining = maxLength - textLength;
+
+            if (remaining < 0) {
                 var limitedContent = content.substring(0, content.lastIndexOf(' ', maxLength));
                 editor.setData(limitedContent);
+                textLength = limitedContent.replace(/<[^>]*>/g, '').length;
+                remaining = maxLength - textLength;
             }
-            $('#charCount').text('Character count: ' + textLength + ' / ' + maxLength);
-        });
+
+            $('#counter_keymessage').text('Characters remaining: ' + remaining);
+        }
+
+        editor.on('change', updateCharacterCount);
 
         $('#btn_keymessage').on('click', function (e) {
             var html = editor.getData();
             var textLength = html.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+
             if (textLength > maxLength) {
                 alert('Content exceeds the maximum length of ' + maxLength + ' characters.');
                 e.preventDefault();
@@ -316,13 +323,16 @@
                 $('#myForm').submit();
             }
         });
+
+        // Initialize character count on page load
+        updateCharacterCount();
     });
 </script>
 
 <script>
     $(document).ready(function () {
         var editor = CKEDITOR.replace('details_editor');
-        var maxLength = 1000;
+        var maxLength = 375;
 
         editor.on('change', function () {
             var content = editor.getData();
