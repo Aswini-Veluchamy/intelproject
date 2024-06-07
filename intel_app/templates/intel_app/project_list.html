@@ -109,10 +109,10 @@
                     <tbody>
                     {% for i in projects %}
                     <tr>
-                        <td nowrap class="projects">{{ i }}</td>
+                        <td nowrap class="projects">{{ i.project }}</td>
                         <td class="text-center">
                             <button type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links"
-                                    data-bs-toggle="modal" data-bs-target="#editModal" data-project="{{ i }}">
+                                    data-bs-toggle="modal" data-bs-target="#editModal" data-project="{{ i.project }}">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-sm" title="Delete Link" onclick="deleteProject(this)">

@@ -12,7 +12,7 @@ from .config import ISSUES_BKP_TABLE, RISK_BKP_TABLE, KEY_PROGRAM_METRIC_BKP_TAB
 from .db_connection import load_key_message_data, load_risk_data, update_risk_data, load_details_data
 from .db_connection import load_key_program_metric_data, update_key_program_metric_data, delete_key_program_metric_data
 from .db_connection import load_schedule_data, update_schedule_data, load_links_data, update_links_data, register_user
-from .db_connection import login_user, create_project, get_projects, load_bbox_data
+from .db_connection import login_user, create_project, get_projects, load_bbox_data, get_projects_data
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, get_users_data, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
@@ -86,14 +86,18 @@ def project(request):
     if request.method == "POST":
         project = request.POST['project']
         projects = get_projects()
+        print(projects)
+        print(project)
         if projects and project in projects:
             messages = f'project already exists ......{project}'
+            return render(request, 'intel_app/project.html', {'error': messages})
         else:
             create_project(project)
             messages = f'project created successfully ....{project}'
-        return render(request, 'intel_app/project.html', {'messages': messages})
+            return HttpResponseRedirect(reverse('project_list'))
+
     else:
-        return render(request, 'intel_app/project.html')
+        return render(request, 'intel_app/project.html', {'error': ''})
 
 
 def user_logout(request):
@@ -332,6 +336,7 @@ def schedule(request):
 
         ''' storing data into database'''
         load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, primary_project,
+                           datetime.now(),
                            False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("schedule"))
     else:
@@ -634,8 +639,10 @@ def delete_user(request):
         delete_record('users', 'username', username)
         return HttpResponseRedirect(reverse("user_list"))
 
+
 def project_list(request):
-    projects = get_projects()
+    projects = get_projects_data()
+    print(projects)
     return render(request, 'intel_app/project_list.html', {'projects': projects})
 
 
@@ -643,9 +650,9 @@ def edit_project_list(request):
     # Your view logic here
     if request.method == "POST":
         project_name = request.POST['project_name']
-        print(project_name)
-        update_project_list('project_name')
+        update_project_list(project_name)
         return HttpResponseRedirect(reverse("project_list"))
+
 
 def delete_project(request):
     if request.method == "POST":

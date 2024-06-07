@@ -185,7 +185,7 @@ CREATE TABLE schedule_table(
  schedule_id VARCHAR(50) NOT NULL,
  user VARCHAR(50) NOT NULL,
  project VARCHAR(20) NOT NULL,
- ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ ts TIMESTAMP,
  sort_value int NOT NULL AUTO_INCREMENT,
  PRIMARY KEY (sort_value)
 );
@@ -366,7 +366,9 @@ CREATE TABLE users(
 
 CREATE TABLE project_data(
  project VARCHAR(50) NOT NULL,
- ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ sort_value int NOT NULL AUTO_INCREMENT,
+ PRIMARY KEY (sort_value)
 );
 
 
@@ -529,7 +531,7 @@ CREATE TABLE schedule_table(
  schedule_id VARCHAR(50) NOT NULL,
  user VARCHAR(50) NOT NULL,
  project VARCHAR(20) NOT NULL,
- ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ ts TIMESTAMP,
  deleted BOOLEAN,
  deleted_by VARCHAR(200) NOT NULL,
  deleted_on date,
@@ -881,4 +883,12 @@ views
 user_create
 project
 project_list
-user_list
+user_list,
+
+
+CREATE TABLE project_data(
+ project VARCHAR(50) NOT NULL,
+ ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ pk int NOT NULL AUTO_INCREMENT,
+ PRIMARY KEY (pk)
+);

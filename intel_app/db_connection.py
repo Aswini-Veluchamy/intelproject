@@ -13,7 +13,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3306
+        port=3406
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -147,12 +147,12 @@ def update_details_data(details_id, message):
     conn.close()
 
 
-def load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, proj, deleted, deleted_by,
+def load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, proj, ts, deleted, deleted_by,
                        deleted_on):
     conn, cursor = db_connection()
     sql = f"INSERT INTO {SCHEDULE_TABLE} (display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id,\
-            user, project, deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, proj, deleted, deleted_by, deleted_on)
+            user, project, ts,  deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, proj, ts, deleted, deleted_by, deleted_on)
     cursor.execute(sql, val)
     print(f'data inserted in {SCHEDULE_TABLE} ....')
     conn.commit()
@@ -431,14 +431,16 @@ def update_project(username, project):
     conn.commit()
     conn.close()
 
+
 def update_project_list(project):
     conn, cursor = db_connection()
-    project_json = json.dumps(project)
-    sql = f"UPDATE users SET project = '{project_json}'"
+    sql = f"UPDATE project_data SET project = '{project}'"
     cursor.execute(sql)
     print(f'data updated in project table ....')
     conn.commit()
     conn.close()
+
+
 
 def delete_project_from_db(project_name):
     conn, cursor = db_connection()
@@ -447,3 +449,13 @@ def delete_project_from_db(project_name):
     print('Project deleted from database ...')
     conn.commit()
     conn.close()
+
+
+def get_projects_data():
+    conn, cursor = db_connection()
+    dict_cursor = conn.cursor(dictionary=True)
+    sql = f"SELECT * FROM project_data"
+    dict_cursor.execute(sql)
+    records = dict_cursor.fetchall()
+    conn.close()
+    return records
