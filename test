@@ -892,3 +892,8 @@ CREATE TABLE project_data(
  pk int NOT NULL AUTO_INCREMENT,
  PRIMARY KEY (pk)
 );
+
+**************************************
+urls
+views
+project_list

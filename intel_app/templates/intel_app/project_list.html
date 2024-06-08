@@ -112,9 +112,11 @@
                         <td nowrap class="projects">{{ i.project }}</td>
                         <td class="text-center">
                             <button type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links"
-                                    data-bs-toggle="modal" data-bs-target="#editModal" data-project="{{ i.project }}">
-                                <i class="fas fa-edit"></i>
-                            </button>
+        data-bs-toggle="modal" data-bs-target="#editModal"
+        data-project="{{ i.project }}" data-pk="{{ i.pk }}"> <!-- Pass pk here -->
+    <i class="fas fa-edit"></i>
+</button>
+
                             <button type="button" class="btn btn-danger btn-sm" title="Delete Link" onclick="deleteProject(this)">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -139,12 +141,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editForm" action="{% url 'edit_project_list' %}" method="post">
-                    {% csrf_token %}
-                    <label for="project_name">Project:</label>
-                    <input type="text" name="project_name" id="project_name" value=""><br><br>
-                    <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
-                </form>
+                <form id="editForm" action="{% url 'edit_project_list' pk=0 %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="project_pk" id="project_pk" value="">
+    <label for="project_name">Project:</label>
+    <input type="text" name="project_name" id="project_name" value=""><br><br>
+    <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+</form>
+
             </div>
         </div>
     </div>
@@ -188,22 +192,30 @@
 
 <script>
     function submitForm() {
-        var project_name = $('#project_name').val();
+    var project_name = $('#project_name').val();
+    var project_pk = $('#editModal').data('pk'); // Get project's primary key from modal data
 
-        if (project_name.length === 0) {
-            alert('Please enter a project name.');
-            return;
-        }
-    $('#editForm input[name="project_name"]').val(project_name);
-        $('#editForm').submit();
+    if (project_name.length === 0) {
+        alert('Please enter a project name.');
+        return;
     }
 
+    $('#editForm input[name="project_name"]').val(project_name);
+    $('#editForm input[name="project_pk"]').val(project_pk); // Set project_pk value
+    $('#editForm').submit();
+}
+
     $('#editModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var project_name = button.data('project');
-        var modal = $(this);
-        modal.find('.modal-body #project_name').val(project_name);
-    });
+    var button = $(event.relatedTarget);
+    var project_name = button.data('project');
+    var project_pk = button.data('pk'); // Get project's primary key
+    var modal = $(this);
+    modal.find('.modal-body #project_name').val(project_name);
+    modal.find('.modal-body #project_pk').val(project_pk); // Set project's primary key
+    // Update form action URL with the correct project pk value
+    modal.find('#editForm').attr('action', '{% url "edit_project_list" pk=0 %}'.replace('0', project_pk));
+});
+
 
     function deleteProject(button) {
         var row = $(button).closest('tr');

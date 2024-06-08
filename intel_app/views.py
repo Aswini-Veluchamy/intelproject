@@ -642,21 +642,21 @@ def delete_user(request):
 
 def project_list(request):
     projects = get_projects_data()
-    print(projects)
+    #print(projects)
     return render(request, 'intel_app/project_list.html', {'projects': projects})
 
 
-def edit_project_list(request):
-    # Your view logic here
+def edit_project_list(request, pk):
     if request.method == "POST":
         project_name = request.POST['project_name']
+        print(pk)
         update_project_list(project_name)
         return HttpResponseRedirect(reverse("project_list"))
-
+    # Add your other logic for handling GET requests here
 
 def delete_project(request):
     if request.method == "POST":
         project_name = request.POST['project_name']
-        print(project_name)
+        #print(project_name)
         delete_project_from_db(project_name)
         return HttpResponseRedirect(reverse("project_list"))
