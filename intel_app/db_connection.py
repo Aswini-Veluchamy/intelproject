@@ -32,12 +32,10 @@ def load_key_message_data(data):
 
 def load_risk_data(data, table):
     conn, cursor = db_connection()
-    print(data, table)
     display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, risk_id, project, user = data
     sql = f"INSERT INTO {table} (display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, \
         risk_id, project, user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     val = (display, risk_summary, risk_area, status, owner, consequence, mitigations, trigger_date, risk_initiated, impact, risk_id, project, user)
-    print(sql)
     cursor.execute(sql, val)
     print(f'data inserted in {table} ....')
     conn.commit()
@@ -359,7 +357,6 @@ def update_deleted_record(table, deleted_by, deleted_on, row_id, row_value):
     conn, cursor = db_connection()
     sql = (f"UPDATE {table} SET deleted = {deleted}, deleted_by = '{deleted_by}', \
             deleted_on = '{deleted_on}' WHERE {row_id}='{row_value}'")
-    print(sql)
     cursor.execute(sql)
     print(f'data updated in {table} ....')
     conn.commit()
@@ -432,25 +429,6 @@ def update_project(username, project):
     conn.close()
 
 
-def update_project_list(project):
-    conn, cursor = db_connection()
-    sql = f"UPDATE project_data SET project = '{project}'"
-    cursor.execute(sql)
-    print(f'data updated in project table ....')
-    conn.commit()
-    conn.close()
-
-
-
-def delete_project_from_db(project_name):
-    conn, cursor = db_connection()
-    sql = "DELETE FROM projects WHERE username = %s AND project_name = %s"
-    cursor.execute(sql, (project_name))
-    print('Project deleted from database ...')
-    conn.commit()
-    conn.close()
-
-
 def get_projects_data():
     conn, cursor = db_connection()
     dict_cursor = conn.cursor(dictionary=True)
@@ -459,3 +437,23 @@ def get_projects_data():
     records = dict_cursor.fetchall()
     conn.close()
     return records
+
+
+
+def delete_project_from_db(project_name):
+    conn, cursor = db_connection()
+    sql = f"DELETE FROM project_data where project = '{project_name}'"
+    cursor.execute(sql)
+    print(f'Project deleted from database ... {project_name}')
+    conn.commit()
+    conn.close()
+
+
+
+def update_project_list(project, pk):
+    conn, cursor = db_connection()
+    sql = f"UPDATE project_data SET project = '{project}' where pk = {pk}"
+    cursor.execute(sql)
+    print(f'data updated in project table ....')
+    conn.commit()
+    conn.close()
