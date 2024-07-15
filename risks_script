@@ -88,7 +88,8 @@
                     consequence: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="consequence"]').val(),
                     mitigations: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="mitigations"]').val(),
                     trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]').val(),
-                    risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]').val()
+                    risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]').val(),
+                    impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]').val(),
                 };
 
                 // Debugging: Log the risk data
@@ -125,7 +126,8 @@
                     consequence: $('tr[data-a-id="new"] textarea[data-prop="consequence"]').val(),
                     mitigations: $('tr[data-a-id="new"] textarea[data-prop="mitigations"]').val(),
                     trigger_date: $('tr[data-a-id="new"] input[data-prop="trigger_date"]').val(),
-                    risk_initiated: $('tr[data-a-id="new"] input[data-prop="risk_initiated"]').val()
+                    risk_initiated: $('tr[data-a-id="new"] input[data-prop="risk_initiated"]').val(),
+                    impact: $('tr[data-a-id="new"] select[data-prop="impact"]').val(),
                 };
 
                 // Debugging: Log the new risk data
