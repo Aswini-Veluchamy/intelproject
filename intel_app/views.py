@@ -86,8 +86,6 @@ def project(request):
     if request.method == "POST":
         project = request.POST['project']
         projects = get_projects()
-        print(projects)
-        print(project)
         if projects and project in projects:
             messages = f'project already exists ......{project}'
             return render(request, 'intel_app/project.html', {'error': messages})
@@ -640,23 +638,19 @@ def delete_user(request):
         return HttpResponseRedirect(reverse("user_list"))
 
 
-def project_list(request):
-    projects = get_projects_data()
-    #print(projects)
-    return render(request, 'intel_app/project_list.html', {'projects': projects})
-
-
 def edit_project_list(request, pk):
     if request.method == "POST":
         project_name = request.POST['project_name']
-        print(pk)
-        update_project_list(project_name)
+        update_project_list(project_name, pk)
         return HttpResponseRedirect(reverse("project_list"))
-    # Add your other logic for handling GET requests here
 
 def delete_project(request):
     if request.method == "POST":
         project_name = request.POST['project_name']
-        #print(project_name)
         delete_project_from_db(project_name)
         return HttpResponseRedirect(reverse("project_list"))
+
+
+def project_list(request):
+    projects = get_projects_data()
+    return render(request, 'intel_app/project_list.html', {'projects': projects})

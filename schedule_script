@@ -1,0 +1,146 @@
+<script>
+    $('#example').bootstrapTable({
+        exportOptions: {
+            fileName: 'Schedule'
+        },
+        exportTypes: ['excel'],
+    });
+
+    $(document).ready(function() {
+        $('.edit-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
+
+        $('.cancel-btn').on('click', function () {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
+
+        function validatePorTrend(porTrend) {
+            const pattern = /^\d{4}(0[1-9]|[1-4][0-9]|5[0-2])(\.[1-5])?$/;
+            return pattern.test(porTrend);
+        }
+
+        function validateAllFields(objectId) {
+            let valid = true;
+
+            $('tr[data-e-id="' + objectId + '"] input[required], tr[data-e-id="' + objectId + '"] textarea[required], tr[data-e-id="' + objectId + '"] select[required]').each(function() {
+                if ($(this).val() === '') {
+                    valid = false;
+                    alert('Please fill out all required fields.');
+                    return false;
+                }
+            });
+
+            ['por_trend', 'por_commit'].forEach(field => {
+                const value = $('tr[data-e-id="' + objectId + '"] input[data-prop="' + field + '"]').val();
+                if (!validatePorTrend(value)) {
+                    valid = false;
+                    alert('Please enter a valid ' + field + ' (YYYYWW or YYYYWW.X with week number up to 52 and decimal 1 to 5).');
+                    return false;
+                }
+            });
+
+            return valid;
+        }
+
+        $('.save-btn').on('click', function (event) {
+            event.preventDefault();
+            const objectId = $(this).data('id');
+
+            if (validateAllFields(objectId)) {
+                const schedule = {
+                    switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
+                    milestone: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="milestone"]').val(),
+                    status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]').val(),
+                    por_commit: $('tr[data-e-id="' + objectId + '"] input[data-prop="por_commit"]').val(),
+                    por_trend: $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend"]').val(),
+                    comments: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]').val(),
+                };
+
+                // Debugging: Log the schedule data
+                console.log('Schedule data being sent:', schedule);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/schedule_edit_table/" + objectId,
+                    data: schedule,
+                    success: function(data) {
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error details:', xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        $('.add-btn').on('click', function () {
+            $('tr[data-a-id="new"]').attr('data-add', true);
+        });
+
+        function validateAddFields() {
+            let valid = true;
+
+            $('tr[data-a-id="new"] input[required], tr[data-a-id="new"] textarea[required], tr[data-a-id="new"] select[required]').each(function() {
+                if ($(this).val() === '') {
+                    valid = false;
+                    alert('Please fill out all required fields.');
+                    return false;
+                }
+            });
+
+            ['por_trend', 'por_commit'].forEach(field => {
+                const value = $('tr[data-a-id="new"] input[data-prop="' + field + '"]').val();
+                if (!validatePorTrend(value)) {
+                    valid = false;
+                    alert('Please enter a valid ' + field + ' (YYYYWW or YYYYWW.X with week number up to 52 and decimal 1 to 5).');
+                    return false;
+                }
+            });
+
+            return valid;
+        }
+
+        $('.add-save-btn').on('click', function (event) {
+            event.preventDefault();
+
+            if (validateAddFields()) {
+                const schedule = {
+                    switch_button: $('tr[data-a-id="new"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
+                    milestone: $('tr[data-a-id="new"] textarea[data-prop="milestone"]').val(),
+                    status: $('tr[data-a-id="new"] select[data-prop="status"]').val(),
+                    por_commit: $('tr[data-a-id="new"] input[data-prop="por_commit"]').val(),
+                    por_trend: $('tr[data-a-id="new"] input[data-prop="por_trend"]').val(),
+                    comments: $('tr[data-a-id="new"] textarea[data-prop="comments"]').val(),
+                };
+
+                // Debugging: Log the new schedule data
+                console.log('New schedule data being sent:', schedule);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/schedule/",
+                    data: schedule,
+                    success: function(data) {
+                        window.location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error details:', xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        $('.add-cancel-btn').click(function () {
+            $('tr[data-a-id="new"]').attr('data-add', false);
+        });
+    });
+</script>

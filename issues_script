@@ -1,0 +1,136 @@
+<script>
+    $('#example').bootstrapTable({
+        exportOptions: {
+            fileName: 'Issues'
+        },
+        exportTypes: ['excel'],
+    });
+
+    $(document).ready(function() {
+        function validateIssueDate(value) {
+            const pattern = /^\d{4}(0[1-9]|[1-4][0-9]|5[0-2])(\.[1-5])?$/;
+            return pattern.test(value);
+        }
+
+        function validateAllFields(objectId) {
+            let valid = true;
+
+            $('tr[data-e-id="' + objectId + '"] input[required], tr[data-e-id="' + objectId + '"] textarea[required], tr[data-e-id="' + objectId + '"] select[required]').each(function() {
+                if ($(this).val() === '') {
+                    valid = false;
+                    alert('Please fill out all required fields.');
+                    return false;
+                }
+            });
+
+            ['trigger_date', 'issues_initiated'].forEach(field => {
+                const value = $('tr[data-e-id="' + objectId + '"] input[data-prop="' + field + '"]').val();
+                if (!validateIssueDate(value)) {
+                    valid = false;
+                    alert('Please enter a valid ' + field + ' (YYYYWW or YYYYWW.X with week number up to 52 and decimal 1 to 5).');
+                    return false;
+                }
+            });
+
+            return valid;
+        }
+
+        function validateAddFields() {
+            let valid = true;
+
+            $('tr[data-a-id="new"] input[required], tr[data-a-id="new"] textarea[required], tr[data-a-id="new"] select[required]').each(function() {
+                if ($(this).val() === '') {
+                    valid = false;
+                    alert('Please fill out all required fields.');
+                    return false;
+                }
+            });
+
+            ['trigger_date', 'issues_initiated'].forEach(field => {
+                const value = $('tr[data-a-id="new"] input[data-prop="' + field + '"]').val();
+                if (!validateIssueDate(value)) {
+                    valid = false;
+                    alert('Please enter a valid ' + field + ' (YYYYWW or YYYYWW.X with week number up to 52 and decimal 1 to 5).');
+                    return false;
+                }
+            });
+
+            return valid;
+        }
+
+        $('.edit-btn').on('click', function() {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
+
+        $('.cancel-btn').on('click', function() {
+            let objectId = $(this).data('id');
+            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
+            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
+            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
+            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
+        });
+
+        $('.save-btn').on('click', function(event) {
+            event.preventDefault();
+            const objectId = $(this).data('id');
+
+            if (validateAllFields(objectId)) {
+                const issues = {
+                    switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
+                    issues_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="issues_summary"]').val(),
+                    status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]').val(),
+                    owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]').val(),
+                    eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]').val(),
+                    trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]').val(),
+                    issues_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="issues_initiated"]').val(),
+                    severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]').val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/issues_edit_table/" + objectId,
+                    data: issues,
+                    success: function(data) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+
+        $('.add-btn').on('click', function() {
+            $('tr[data-a-id="new"]').attr('data-add', true);
+        });
+
+        $('.add-save-btn').on('click', function(event) {
+            event.preventDefault();
+
+            if (validateAddFields()) {
+                const issues = {
+                    switch_button: $('tr[data-a-id="new"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
+                    issues_summary: $('tr[data-a-id="new"] textarea[data-prop="issues_summary"]').val(),
+                    status: $('tr[data-a-id="new"] select[data-prop="status"]').val(),
+                    owner: $('tr[data-a-id="new"] input[data-prop="owner"]').val(),
+                    eta: $('tr[data-a-id="new"] input[data-prop="eta"]').val(),
+                    trigger_date: $('tr[data-a-id="new"] input[data-prop="trigger_date"]').val(),
+                    issues_initiated: $('tr[data-a-id="new"] input[data-prop="issues_initiated"]').val(),
+                    severity: $('tr[data-a-id="new"] select[data-prop="severity"]').val()
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/issues/",
+                    data: issues,
+                    success: function(data) {
+                        window.location.reload();
+                    }
+                });
+            }
+        });
+
+        $('.add-cancel-btn').click(function() {
+            $('tr[data-a-id="new"]').attr('data-add', false);
+        });
+    });
+</script>
