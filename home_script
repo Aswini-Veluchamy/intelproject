@@ -1,4 +1,3 @@
-<script src="{% static 'xae_app/ckeditor.js' %}"></script>
 <script>
 $(document).ready(function () {
     ClassicEditor
