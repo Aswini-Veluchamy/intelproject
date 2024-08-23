@@ -1,0 +1,76 @@
+<script>
+$(document).ready(function () {
+    ClassicEditor
+        .create(document.querySelector('#editor'))
+        .then(editor => {
+            const maxLength = 375;
+
+            function updateCharacterCount() {
+                const content = editor.getData();
+                const textLength = content.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+                let remaining = maxLength - textLength;
+
+                if (remaining < 0) {
+                    let limitedContent = content.substring(0, maxLength);
+                    limitedContent = limitedContent.substring(0, limitedContent.lastIndexOf(' '));
+                    editor.setData(limitedContent);
+                    const newContent = editor.getData();
+                    remaining = maxLength - newContent.replace(/<[^>]*>/g, '').length;
+                }
+
+                $('#counter_keymessage').text('Characters remaining: ' + remaining);
+            }
+
+            editor.model.document.on('change:data', updateCharacterCount);
+
+            $('#btn_keymessage').on('click', function (e) {
+                const html = editor.getData();
+                const textLength = html.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
+
+                if (textLength > maxLength) {
+                    alert('Content exceeds the maximum length of ' + maxLength + ' characters.');
+                    e.preventDefault();
+                } else {
+                    $('#hiddenInput').val(html);
+                    // Submit the form
+                    $('#myForm').submit();
+                }
+            });
+
+            // Initialize character count on page load
+            updateCharacterCount();
+        })
+        .catch(error => {
+            console.error(error);
+        });
+});
+</script>
+<script>
+$(document).ready(function () {
+    ClassicEditor
+        .create(document.querySelector('#details_editor'))
+        .then(editor => {
+            window.detailsEditor = editor;
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    // Handle form submission
+    $('#btn_details').on('click', (e) => {
+        e.preventDefault(); // Prevent default form submission
+
+        // Get CKEditor instance
+        var editor = window.detailsEditor;
+
+        // Get HTML content
+        var html = editor.getData();
+
+        // Copy HTML content to hidden input
+        $('#details_message').val(html);
+
+        // Submit the form
+        $('#detailsForm').submit();
+    });
+});
+</script>
