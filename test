@@ -688,7 +688,6 @@ CREATE TABLE schedule_table(
  milestone VARCHAR(200) NOT NULL,
  por_commit VARCHAR(50) NOT NULL,
  por_trend VARCHAR(50) NOT NULL,
- por_trend2 VARCHAR(50) NOT NULL,
  status VARCHAR(50) NOT NULL,
  comments VARCHAR(200) NOT NULL,
  schedule_id VARCHAR(50) NOT NULL,
@@ -897,3 +896,11 @@ CREATE TABLE project_data(
 urls
 views
 project_list
+
+
+*************** Aug 23 2024 ***************
+schedule_data
+urls
+views.py
+
+**************************************

@@ -210,6 +210,7 @@ def risks(request):
 @csrf_exempt
 def risk_edit_table(request, pk):
     if request.method == "POST":
+        print(request.POST)
         display = request.POST['switch_button']
         risk_summary = request.POST['risk_summary']
         risk_area = request.POST['risk_area']
@@ -320,7 +321,6 @@ def schedule(request):
         milestone = request.POST['milestone']
         por_commit = request.POST['por_commit']
         por_trend = request.POST['por_trend']
-        por_trend2 = request.POST['por_trend2']
         status = request.POST['status']
         comments = request.POST['comments']
         primary_project = request.COOKIES['primary_project']
@@ -330,10 +330,9 @@ def schedule(request):
         # verifying the values
         por_commit = check_por_trend_values(por_commit)
         por_trend = check_por_trend_values(por_trend)
-        por_trend2 = check_por_trend_values(por_trend2)
 
         ''' storing data into database'''
-        load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, primary_project,
+        load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, primary_project,
                            datetime.now(),
                            False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("schedule"))
@@ -367,7 +366,6 @@ def schedule_edit_table(request, pk):
         milestone = request.POST['milestone']
         por_commit = request.POST['por_commit']
         por_trend = request.POST['por_trend']
-        por_trend2 = request.POST['por_trend2']
         status = request.POST['status']
         comments = request.POST['comments']
         # update the values in external database
@@ -654,3 +652,30 @@ def delete_project(request):
 def project_list(request):
     projects = get_projects_data()
     return render(request, 'intel_app/project_list.html', {'projects': projects})
+
+
+@csrf_exempt
+def schedule_data(request):
+    try:
+        user_projects = request.COOKIES['project']
+        user = request.COOKIES['user_id']
+        user_projects = ast.literal_eval(user_projects)
+        result = get_data(user, SCHEDULE_TABLE, request.COOKIES['primary_project'], False)
+        if result:
+            status = ['R', 'G', 'B', 'Y', 'Done']
+            for i in result:
+                i['status'] = update_queryset_values(status, i['status'])
+        return render(request, 'intel_app/schedule_data.html', {'data': result, 'project': user_projects,
+                                                           'user': user})
+    except KeyError:
+        return HttpResponseRedirect(reverse('login'))
+
+@csrf_exempt
+def schedule_data_edit_table(request, pk):
+    if request.method == "POST":
+        schedule_comments = request.POST['comments']
+        # update the values in external database
+        por_commit = check_por_trend_values(por_commit)
+        record = get_schedule_record(pk)
+        update_schedule_data([(schedule_comments, pk)])
+        return HttpResponseRedirect(reverse("schedule_data"))
