@@ -22,28 +22,67 @@ def db_connection():
         user='root',
         password='root1234',
         database="intel_project",
-        port=3406
+        port=3306
     )
-    return conn
-
-
-def load_data(data):
-    conn = db_connection()
     cursor = conn.cursor()
-    for i in data:
-        sql = f"INSERT INTO test_data (milestone, trend, target, implement, complete, die, sheet, ts) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (i['milestone'], i['trend'], i['target'], i['implement'], i['complete'], i['die'], i['sheet'], datetime.now())
-        cursor.execute(sql, val)
+    return conn, cursor
+
+def load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, ts, deleted, deleted_by,
+                       deleted_on):
+    conn, cursor = db_connection()
+    sql = f"INSERT INTO schedule_table (display, milestone, por_commit, por_trend, status, comments, schedule_id,\
+            user, project, ts,  deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (display, milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, ts, deleted, deleted_by, deleted_on)
+    cursor.execute(sql, val)
+    print(f'data inserted in schedule_table ....')
     conn.commit()
-    print(f'data inserted in table ....')
     conn.close()
 
-
-a = [
-    {'trend': 'wW24', 'target': "24'ww12", 'milestone': '1', 'implement': '2', 'complete': '3','die': '4', 'sheet': 'sheet1'},
-    {'trend': 'WW24', 'target': '24WW12', 'milestone': '1', 'implement': '2', 'complete': '3','die': '4', 'sheet': 'sheet2'},
-    {'trend': "24'ww12", 'target': 'WW24', 'milestone': '1', 'implement': '2', 'complete': '3','die': '4', 'sheet': 'sheet3'}
+data = [
+    {'display': 'On', 'milestone': 'new_1', 'por_commit': '2024.5',
+     'por_trend': '2024.5', 'status': 'R', 'comments': 'test_comments',
+     'user': 'srini', 'proj': 'test3', 'ts': datetime.now(),
+    'deleted': False, 'deleted_by': 'None', 'deleted_on':datetime.now().date()
+    },
+    {'display': 'Off', 'milestone': 'new_2', 'por_commit': '2024.5',
+     'por_trend': '2024.5', 'status': 'R', 'comments': 'test_comments',
+     'user': 'srini', 'proj': 'test3', 'ts': datetime.now(),
+    'deleted': False, 'deleted_by': 'None', 'deleted_on':datetime.now().date()
+    }
 ]
+
+for i in data:
+    schedule_id = str(int(time.time() * 1000)) + '_' + 'srini'
+    load_schedule_data(i['display'], i['milestone'],
+                       i['por_commit'], i['por_trend'], i['status'],
+                       i['comments'],schedule_id, i['user'],
+                       i['proj'], i['ts'], i['deleted'], i['deleted_by'],
+                       i['deleted_on']
+                       )
+    time.sleep(2)
+
+
+exit()
+
+#
+#
+# def load_data(data):
+#     conn = db_connection()
+#     cursor = conn.cursor()
+#     for i in data:
+#         sql = f"INSERT INTO test_data (milestone, trend, target, implement, complete, die, sheet, ts) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+#         val = (i['milestone'], i['trend'], i['target'], i['implement'], i['complete'], i['die'], i['sheet'], datetime.now())
+#         cursor.execute(sql, val)
+#     conn.commit()
+#     print(f'data inserted in table ....')
+#     conn.close()
+
+
+# a = [
+#     {'trend': 'wW24', 'target': "24'ww12", 'milestone': '1', 'implement': '2', 'complete': '3','die': '4', 'sheet': 'sheet1'},
+#     {'trend': 'WW24', 'target': '24WW12', 'milestone': '1', 'implement': '2', 'complete': '3','die': '4', 'sheet': 'sheet2'},
+#     {'trend': "24'ww12", 'target': 'WW24', 'milestone': '1', 'implement': '2', 'complete': '3','die': '4', 'sheet': 'sheet3'}
+# ]
 
 
 def convert_upper(string):
