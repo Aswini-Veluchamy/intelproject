@@ -152,11 +152,57 @@ def key_message(request):
     if request.method == "POST":
         primary_project = request.COOKIES['primary_project']
         message = request.POST['hiddenInput']
+        print(message)
         user = request.COOKIES['user_id']
         message_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
         load_key_message_data([(message_id, user, message, primary_project)])
         return HttpResponseRedirect(reverse("home"))
+    else:
+        try:
+            project_data = request.COOKIES['project']
+            user = request.COOKIES['user_id']
+            user_projects = ast.literal_eval(project_data)
+            primary_project = request.COOKIES['primary_project']
+            # based on the user filtering the data
+            try:
+                key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, primary_project)
+            except TypeError:
+                key_mess_data = None
+            # return the data to UI
+            return render(request, 'intel_app/key_message.html', {'project': user_projects,
+                                                            'key_mess_data': key_mess_data,
+                                                            'user': user})
+        except KeyError:
+            return HttpResponseRedirect(reverse('login'))
+
+
+@csrf_exempt
+def details(request):
+    if request.method == "POST":
+        message = request.POST['details_message']
+        primary_project = request.COOKIES['primary_project']
+        user = request.COOKIES['user_id']
+        details_id = str(int(time.time() * 1000)) + '_' + user
+        ''' storing data into database'''
+        load_details_data(details_id, user, message, primary_project)
+        return HttpResponseRedirect(reverse("home"))
+    else:
+        try:
+            project_data = request.COOKIES['project']
+            user = request.COOKIES['user_id']
+            user_projects = ast.literal_eval(project_data)
+            primary_project = request.COOKIES['primary_project']
+            # based on the user filtering the data
+            try:
+                details_data = get_key_msg_or_details_data(DETAILS_TABLE, primary_project)
+            except TypeError:
+                details_data = None
+            # return the data to UI
+            return render(request, 'intel_app/details.html', {'project': user_projects,
+                                                            'details_data': details_data, 'user': user})
+        except KeyError:
+            return HttpResponseRedirect(reverse('login'))
 
 
 @csrf_exempt
@@ -300,19 +346,6 @@ def key_program_edit(request, pk):
 def key_program_delete(request, pk):
     delete_key_program_metric_data(pk)
     return HttpResponseRedirect(reverse("key_program"))
-
-
-@csrf_exempt
-def details(request):
-    if request.method == "POST":
-        message = request.POST['details_message']
-        primary_project = request.COOKIES['primary_project']
-        user = request.COOKIES['user_id']
-        details_id = str(int(time.time() * 1000)) + '_' + user
-        ''' storing data into database'''
-        load_details_data(details_id, user, message, primary_project)
-        return HttpResponseRedirect(reverse("home"))
-
 
 @csrf_exempt
 def schedule(request):
