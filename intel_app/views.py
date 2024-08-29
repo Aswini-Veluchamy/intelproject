@@ -152,7 +152,6 @@ def key_message(request):
     if request.method == "POST":
         primary_project = request.COOKIES['primary_project']
         message = request.POST['hiddenInput']
-        print(message)
         user = request.COOKIES['user_id']
         message_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
