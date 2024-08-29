@@ -1,5 +1,5 @@
 import mysql.connector
-from .config import HOST, PORT, USER, PASSWORD
+from .config import HOST, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
 from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE, ISSUES_TABLE
 import json
@@ -13,7 +13,7 @@ def db_connection():
         user=USER,
         password=PASSWORD,
         database="intel_project",
-        port=3406
+        port=3306
     )
     cursor = conn.cursor()
     return conn, cursor
@@ -54,10 +54,10 @@ def get_key_msg_or_details_data(table, project):
 
 def get_data(user, table, project, deleted=None):
     conn, cursor = db_connection()
-    if deleted == False:
-        sql = f"SELECT * FROM {table} where user='{user}' and project='{project}' and deleted={deleted}"
+    if not deleted:
+        sql = f"SELECT * FROM {table} where project='{project}' and deleted={deleted}"
     else:
-        sql = f"SELECT * FROM {table} where user='{user}' and project='{project}'"
+        sql = f"SELECT * FROM {table} where project='{project}'"
     cursor.execute(sql)
     records = cursor.fetchall()
     columns = [col[0] for col in cursor.description]
@@ -145,12 +145,12 @@ def update_details_data(details_id, message):
     conn.close()
 
 
-def load_schedule_data(display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, proj, ts, deleted, deleted_by,
+def load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, ts, deleted, deleted_by,
                        deleted_on):
     conn, cursor = db_connection()
-    sql = f"INSERT INTO {SCHEDULE_TABLE} (display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id,\
-            user, project, ts,  deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id, user, proj, ts, deleted, deleted_by, deleted_on)
+    sql = f"INSERT INTO {SCHEDULE_TABLE} (display, milestone, por_commit, por_trend, status, comments, schedule_id,\
+            user, project, ts,  deleted, deleted_by, deleted_on) VALUES (%s, %s, %s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (display, milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, ts, deleted, deleted_by, deleted_on)
     cursor.execute(sql, val)
     print(f'data inserted in {SCHEDULE_TABLE} ....')
     conn.commit()
@@ -310,7 +310,7 @@ def update_password(user_id, password):
             return True
         else:
             raise Exception("Username not exists.................")
-    except Exception as ex:
+    except Exception:
         return False
 
 

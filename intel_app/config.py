@@ -1,9 +1,10 @@
 DEFAULT_PASSWORDS = ['Admin#123']
 USER_NAMES = ['admin']
+MIGRATE_PROJECTS = ['test3']
 
 # Database configuration
 HOST = "localhost"
-PORT = 3406
+PORT = 3306
 USER = "root"
 PASSWORD = "root1234"
 

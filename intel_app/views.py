@@ -7,7 +7,7 @@ import time
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
 from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, BBOX_TABLE, LINKS_BKP_TABLE
-from .config import ISSUES_BKP_TABLE, RISK_BKP_TABLE, KEY_PROGRAM_METRIC_BKP_TABLE
+from .config import ISSUES_BKP_TABLE, RISK_BKP_TABLE, KEY_PROGRAM_METRIC_BKP_TABLE, MIGRATE_PROJECTS
 
 from .db_connection import load_key_message_data, load_risk_data, update_risk_data, load_details_data
 from .db_connection import load_key_program_metric_data, update_key_program_metric_data, delete_key_program_metric_data
@@ -379,6 +379,9 @@ def schedule(request):
                 status = ['R', 'G', 'B', 'Y', 'Done']
                 for i in result:
                     i['status'] = update_queryset_values(status, i['status'])
+            if request.COOKIES['primary_project'] in MIGRATE_PROJECTS:
+                return render(request, 'intel_app/schedule_data.html', {'data': result, 'project': user_projects,
+                                                                        'user': user})
             return render(request, 'intel_app/schedule.html', {'data': result, 'project': user_projects,
                                                                'user': user})
         except KeyError:
@@ -707,8 +710,9 @@ def schedule_data(request):
 def schedule_data_edit_table(request, pk):
     if request.method == "POST":
         schedule_comments = request.POST['comments']
+        print(schedule_comments, pk)
         # update the values in external database
-        por_commit = check_por_trend_values(por_commit)
-        record = get_schedule_record(pk)
-        update_schedule_data([(schedule_comments, pk)])
-        return HttpResponseRedirect(reverse("schedule_data"))
+        #por_commit = check_por_trend_values(por_commit)
+        #record = get_schedule_record(pk)
+        #update_schedule_data([(schedule_comments, pk)])
+        return HttpResponseRedirect(reverse("schedule"))
