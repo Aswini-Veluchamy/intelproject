@@ -55,7 +55,7 @@ def get_key_msg_or_details_data(table, project):
 def get_data(user, table, project, deleted=None):
     conn, cursor = db_connection()
     if not deleted:
-        sql = f"SELECT * FROM {table} where project='{project}' and deleted={deleted}"
+        sql = f"SELECT * FROM {table} where project='{project}'"
     else:
         sql = f"SELECT * FROM {table} where project='{project}'"
     cursor.execute(sql)

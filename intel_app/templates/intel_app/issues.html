@@ -365,14 +365,14 @@
     }
 }
 </script>
-<script>
-    $('#projectdata').change(function(event){
-        var selectedcategory = $(this).children("option:selected").val();
-        sessionStorage.setItem("itemName",selectedcategory);
-    });
+<!--<script>-->
+<!--    $('#projectdata').change(function(event){-->
+<!--        var selectedcategory = $(this).children("option:selected").val();-->
+<!--        sessionStorage.setItem("itemName",selectedcategory);-->
+<!--    });-->
 
-    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
-</script>
+<!--    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');-->
+<!--</script>-->
 <script>
     tail.select("#projectdata", {
     animate: true,

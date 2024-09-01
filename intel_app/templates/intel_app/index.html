@@ -241,13 +241,13 @@
     });
 </script>
 
-<script>
-    $('#projectdata').change(function(event){
-        var selectedcategory = $(this).children("option:selected").val();
-        sessionStorage.setItem("itemName",selectedcategory);
-    });
-    $('select').find('option[value="' + sessionStorage.getItem('itemName').replace(/"/g, '\\"') + '"]').prop('selected', true);
-</script>
+<!--<script>-->
+<!--    $('#projectdata').change(function(event){-->
+<!--        var selectedcategory = $(this).children("option:selected").val();-->
+<!--        sessionStorage.setItem("itemName",selectedcategory);-->
+<!--    });-->
+<!--    $('select').find('option[value="' + sessionStorage.getItem('itemName').replace(/"/g, '\\"') + '"]').prop('selected', true);-->
+<!--</script>-->
 
 <script>
     tail.select("#projectdata", {

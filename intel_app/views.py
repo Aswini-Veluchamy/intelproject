@@ -51,7 +51,7 @@ def user_login(request):
                 else:
                     context['error'] = "provide valid credentials"
                     return render(request, "intel_app/login.html", context)
-            except Exception as e:
+            except Exception:
                 context['error'] = "provide valid credentials"
                 return render(request, "intel_app/login.html", context)
 
@@ -255,7 +255,6 @@ def risks(request):
 @csrf_exempt
 def risk_edit_table(request, pk):
     if request.method == "POST":
-        print(request.POST)
         display = request.POST['switch_button']
         risk_summary = request.POST['risk_summary']
         risk_area = request.POST['risk_area']
@@ -612,6 +611,10 @@ def issues_edit_table(request, pk):
 @csrf_exempt
 def project_change(request, func_name):
     response = HttpResponseRedirect(reverse(func_name))
+    user_projects = request.COOKIES['project']
+    user_projects = ast.literal_eval(user_projects)
+    projects = update_queryset_values(user_projects,request.POST.get('projectdata'))
+    response.set_cookie('project', projects)
     response.set_cookie('primary_project', request.POST.get('projectdata'))
     return response
 
@@ -709,7 +712,6 @@ def schedule_data(request):
 def schedule_data_edit_table(request, pk):
     if request.method == "POST":
         schedule_comments = request.POST['comments']
-        print(schedule_comments, pk)
         # update the values in external database
         #por_commit = check_por_trend_values(por_commit)
         #record = get_schedule_record(pk)
