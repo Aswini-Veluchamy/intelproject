@@ -97,7 +97,6 @@
                     {% csrf_token %}
                     <div id="details_editor" style="height: 275px;">{{ details_data.message|safe }}</div>
                     <input type="hidden" name="details_message" id="details_message">
-                    <div id="counter_details">Limited to 375 characters</div>
                     <p>{{error}}</p>
                     <button type="submit" id="btn_details" class="btn btn-primary">Submit</button>
                     <button type="button" class="btn btn-secondary" id="btn_cancel">Cancel</button>
@@ -128,14 +127,13 @@
     }
 
 </script>
-<!--<script>-->
-<!--    $('#projectdata').change(function(event){-->
-<!--        var selectedcategory = $(this).children("option:selected").val();-->
-<!--        sessionStorage.setItem("itemName",selectedcategory);-->
-<!--    });-->
-
-<!--    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');-->
-<!--</script>-->
+<script>
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.location.reload();
+        }
+    });
+</script>
 <script>
     tail.select("#projectdata", {
     animate: true,
@@ -194,5 +192,4 @@ $(document).ready(function () {
 </script>
 
 </body>
-</head>
 </html>

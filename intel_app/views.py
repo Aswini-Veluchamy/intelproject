@@ -405,8 +405,7 @@ def schedule_edit_table(request, pk):
         # update the values in external database
         por_commit = check_por_trend_values(por_commit)
         record = get_schedule_record(pk)
-        update_schedule_data([(display, milestone, por_commit, record[0].get('por_commit'), record[0].get('por_trend'),
-                               status, comments, pk)])
+        update_schedule_data([(display, milestone, por_commit, por_trend, status, comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
 
 
@@ -426,9 +425,6 @@ def links(request):
         comments = request.POST['comments_links']
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
-
-        if links_url == '' or comments == '' or primary_project == '':
-            raise Exception('fill the fields!!!!!!!!')
 
         links_id = str(int(time.time() * 1000)) + '_' + user
         # original table

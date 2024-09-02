@@ -128,14 +128,13 @@
     }
 
 </script>
-<!--<script>-->
-<!--    $('#projectdata').change(function(event){-->
-<!--        var selectedcategory = $(this).children("option:selected").val();-->
-<!--        sessionStorage.setItem("itemName",selectedcategory);-->
-<!--    });-->
-
-<!--    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');-->
-<!--</script>-->
+<script>
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.location.reload();
+        }
+    });
+</script>
 <script>
     tail.select("#projectdata", {
     animate: true,
@@ -167,28 +166,12 @@ $(document).ready(function () {
                 let textLength = textContent.length;
 
                 if (textLength > maxLength) {
-                    let allowedLength = maxLength;
+                    const range = editor.model.document.selection.getFirstRange();
+                    editor.model.change(writer => {
+                        writer.remove(range);  // Prevent any further changes if limit is exceeded
+                    });
 
-                    // Rebuild the HTML by adding one character at a time until we reach the limit
-                    let truncatedContent = '';
-                    let currentLength = 0;
-
-                    for (let i = 0; i < content.length && currentLength < allowedLength; i++) {
-                        let char = content[i];
-                        truncatedContent += char;
-
-                        if (char === '<') {
-                            // Skip until we close the tag
-                            while (content[i] !== '>' && i < content.length) {
-                                truncatedContent += content[++i];
-                            }
-                        } else {
-                            currentLength++;
-                        }
-                    }
-
-                    editor.setData(truncatedContent);
-                    textLength = currentLength;
+                    textLength = maxLength; // Cap the text length
                 }
 
                 const remaining = maxLength - textLength;
@@ -240,5 +223,4 @@ $(document).ready(function () {
 });
 </script>
 </body>
-</head>
 </html>

@@ -373,12 +373,11 @@ $('.add-btn').on('click', function() {
 });
 </script>
 <script>
-    $('#projectdata').change(function(event){
-        var selectedcategory = $(this).children("option:selected").val();
-        sessionStorage.setItem("itemName",selectedcategory);
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.location.reload();
+        }
     });
-
-    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
 </script>
 <script>
     // Show action column header when editing or displaying

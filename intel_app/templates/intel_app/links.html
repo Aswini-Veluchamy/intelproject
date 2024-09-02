@@ -37,6 +37,13 @@
     </style>
 <body style="background-color:#ffffff!important;">
 
+<!-- Loader -->
+<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
 <!-- Example Code -->
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
@@ -118,15 +125,15 @@
                             <tbody data-body="links">
                             <tr data-a-id="new" data-add="false">
                                 <td class="switch_button">
-                                    <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
+                                    <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger">
                                 </td>
                                 <td class="links_url">
                                     <input class="form-control" data-prop="links_url" name="links_url" type="url"  placeholder="Enter Links" pattern="^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
                                            oninvalid="setCustomValidity('Please Enter URL.')"
-                                           onchange="try{setCustomValidity('')}catch(e){}" required="required">
+                                           onchange="try{setCustomValidity('')}catch(e){}">
                                 </td>
                                 <td class="comments_links">
-                                    <textarea class="form-control" data-prop="comments_links" name="comments_links" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
+                                    <textarea class="form-control" data-prop="comments_links" name="comments_links" placeholder="Enter Comments" cols="3" maxlength="250"></textarea>
                                 </td>
                                 <td class="text-center">
                                     <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Links">
@@ -155,15 +162,15 @@
                             </tr>
                             <tr data-e-id="{{ i.links_id }}" data-edit="false">
                                 <td class="switch_button">
-                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
+                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" {% if i.display == 'On' %} checked {% endif %} />
                                 </td>
                                 <td class="links_url">
                                     <input class="form-control" data-prop="links_url" name="links_url" type="url"  placeholder="Enter Links" pattern="^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
                                            oninvalid="setCustomValidity('Please Enter URL.')"
-                                           onchange="try{setCustomValidity('')}catch(e){}" value="{{i.links_url}}" required="required">
+                                           onchange="try{setCustomValidity('')}catch(e){}" value="{{i.links_url}}">
                                 </td>
                                 <td class="comments_links">
-                                    <textarea class="form-control" data-prop="comments_links" name="comments_links" cols="3" maxlength="250" required="required">{{i.comments_links}}</textarea>
+                                    <textarea class="form-control" data-prop="comments_links" name="comments_links" cols="3" maxlength="250">{{i.comments_links}}</textarea>
                                 </td>
                                 <div class="text-center">
                                     <td>
@@ -225,22 +232,41 @@
 
         $('.save-btn').on('click', function () {
             let objectId = $(this).data('id');
-            const links = {
-               switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-               links_url : $('tr[data-e-id="' + objectId + '"] input[data-prop="links_url"]')[0].value,
-               comments_links : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value,
-            }
-            $.ajax(
-                    {
-                        type:"POST",
-                        url: "/links_edit_table/"+objectId,
-                        data:links,
-                        success: function( data )
-                        {
-                        window.location.reload()
 
-                        }
-                     })
+            const switchButton = $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]');
+            const linksUrl = $('tr[data-e-id="' + objectId + '"] input[data-prop="links_url"]')[0].value;
+            const commentsLinks = $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value;
+
+            // Validate required fields
+            if (!switchButton.length || !linksUrl || !commentsLinks) {
+                alert("Please fill out all fields.");
+                return; // Prevent submission
+            }
+            const links = {
+                switch_button: switchButton.prop("checked") ? "On" : "Off",
+                links_url: linksUrl,
+                comments_links: commentsLinks,
+            };
+
+            // Show the loader
+            $('#loader').css('display', 'flex');
+
+            $.ajax({
+                type: "POST",
+                url: "/links_edit_table/" + objectId,
+                data: links,
+                success: function (data) {
+                    // Reload the page after success
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    // Optionally handle errors
+                    console.error("AJAX Error: ", error);
+                    alert("An error occurred while saving the data. Please try again.");
+                    // Hide the loader if there's an error
+                    $('#loader').hide();
+                }
+            });
         });
 
         $('.add-btn').on('click', function () {
@@ -248,21 +274,41 @@
         });
 
          $('.add-save-btn').on('click', function () {
-
             let objectId = "new";
-            const links = {
-               switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-               links_url : $('tr[data-a-id="' + objectId + '"] input[data-prop="links_url"]')[0].value,
-               comments_links : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value,
+            const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]');
+            const linksUrl = $('tr[data-a-id="' + objectId + '"] input[data-prop="links_url"]')[0].value;
+            const commentsLinks = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value;
+
+            // Validate required fields
+            if (!switchButton.length || !linksUrl || !commentsLinks) {
+                alert("Please fill out all fields.");
+                return; // Prevent submission
             }
+
+            const links = {
+                switch_button: switchButton.prop("checked") ? "On" : "Off",
+                links_url: linksUrl,
+                comments_links: commentsLinks,
+            };
+
+            // Show the loader
+            $('#loader').css('display', 'flex');
+
             $.ajax({
                 type: "POST",
                 url: "/links/",
                 data: links,
-                success: function(data) {
-                    window.location.reload()
+                success: function (data) {
+                    // Reload the page after success
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    // Optionally handle errors
+                    console.error("AJAX Error: ", error);
+                    // Hide the loader if there's an error
+                    $('#loader').hide();
                 }
-            })
+            });
         });
 
          $('.add-cancel-btn').click(function () {
@@ -279,14 +325,13 @@
     }
 }
 </script>
-<!--<script>-->
-<!--    $('#projectdata').change(function(event){-->
-<!--        var selectedcategory = $(this).children("option:selected").val();-->
-<!--        sessionStorage.setItem("itemName",selectedcategory);-->
-<!--    });-->
-
-<!--    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');-->
-<!--</script>-->
+<script>
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.location.reload();
+        }
+    });
+</script>
 <script>
     tail.select("#projectdata", {
     animate: true,
@@ -300,5 +345,4 @@
 });
 </script>
 </body>
-</head>
 </html>

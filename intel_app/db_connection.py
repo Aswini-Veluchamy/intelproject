@@ -159,9 +159,9 @@ def load_schedule_data(display, milestone, por_commit, por_trend, status, commen
 
 def update_schedule_data(data):
     conn, cursor = db_connection()
-    for display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id in data:
+    for display, milestone, por_commit, por_trend, status, comments, schedule_id in data:
         sql = (f"UPDATE {SCHEDULE_TABLE} SET display = '{display}', milestone = '{milestone}', por_commit = '{por_commit}', \
-                por_trend = '{por_trend}',por_trend2 = '{por_trend2}', status = '{status}', comments = '{comments}' \
+                por_trend = '{por_trend}', status = '{status}', comments = '{comments}' \
                 WHERE schedule_id='{schedule_id}'")
         cursor.execute(sql)
     print(f'data updated in {SCHEDULE_TABLE} ....')
