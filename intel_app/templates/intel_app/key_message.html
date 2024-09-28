@@ -165,17 +165,14 @@ $(document).ready(function () {
                 let textContent = content.replace(/<[^>]*>/g, ''); // Get text content without HTML tags
                 let textLength = textContent.length;
 
-                if (textLength > maxLength) {
-                    const range = editor.model.document.selection.getFirstRange();
-                    editor.model.change(writer => {
-                        writer.remove(range);  // Prevent any further changes if limit is exceeded
-                    });
-
-                    textLength = maxLength; // Cap the text length
-                }
-
                 const remaining = maxLength - textLength;
                 $('#counter_keymessage').text('Characters remaining: ' + remaining);
+
+                if (remaining < 0) {
+                    $('#counter_keymessage').addClass('text-danger'); // Add red color for negative values
+                } else {
+                    $('#counter_keymessage').removeClass('text-danger'); // Reset color if within limits
+                }
             }
 
             function debounce(func, timeout = 300) {
@@ -210,7 +207,6 @@ $(document).ready(function () {
                 editor.setData(originalContent); // Revert to original content
                 window.location.href = '{% url 'home' %}';  // Change '/' to your home page URL
             });
-
 
             $('.btn-secondary').on('click', function () {
                 editor.setData(originalContent); // Revert to original content
