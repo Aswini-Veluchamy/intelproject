@@ -320,6 +320,16 @@
                 issues_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="issues_initiated"]')[0].value,
                 severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value
             }
+
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(issues.eta) || !regex.test(issues.trigger_date) || !regex.test(issues.issues_initiated)) {
+                alert("Invalid eta or trigger_date or issues_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
+            }
+
             // Show the loader
             $('#loader').css('display', 'flex');
             $.ajax({
@@ -366,6 +376,15 @@
                 issues_initiated: issuesInitiated,
                 severity: severity,
             };
+
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(issues.eta) || !regex.test(issues.trigger_date) || !regex.test(issues.issues_initiated)) {
+                alert("Invalid eta or trigger_date or issues_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
+            }
 
             // Show the loader
             $('#loader').css('display', 'flex');

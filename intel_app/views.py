@@ -404,6 +404,7 @@ def schedule_edit_table(request, pk):
         comments = request.POST['comments']
         # update the values in external database
         por_commit = check_por_trend_values(por_commit)
+        por_trend = check_por_trend_values(por_trend)
         record = get_schedule_record(pk)
         update_schedule_data([(display, milestone, por_commit, por_trend, status, comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
@@ -593,6 +594,7 @@ def issues_edit_table(request, pk):
         # verify the values
         trigger_date = check_por_trend_values(trigger_date)
         issues_initiated = check_por_trend_values(issues_initiated)
+        eta = check_por_trend_values(eta)
 
         # updating the table
         update_issues_data([(display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, pk)])

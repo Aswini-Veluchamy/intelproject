@@ -294,6 +294,15 @@
                por_trend : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
                comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
             }
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(schedule.por_commit) || !regex.test(schedule.por_trend)) {
+                alert("Invalid POR Commit or POR Trend format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
+            }
+
             // Show the loader
             $('#loader').css('display', 'flex');
             $.ajax(
@@ -328,6 +337,22 @@
                 alert("Please fill out all fields.");
                 return; // Prevent submission
             }
+
+            // Define regex for validation (matches yyyy, yyyy.w, or yyyy.ww)
+            const porRegex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate POR Commit
+            if (!porRegex.test(por_commit)) {
+                alert("POR Commit must be in the format yyyy, yyyy.w, or yyyy.ww (e.g., 2024, 2024.6, or 2024.43).");
+                return;
+            }
+
+            // Validate POR Trend
+            if (!porRegex.test(por_trend)) {
+                alert("POR Trend must be in the format yyyy, yyyy.w, or yyyy.ww (e.g., 2024, 2024.6, or 2024.43).");
+                return;
+            }
+
 
             // Create the data object for the AJAX request
             const schedule = {

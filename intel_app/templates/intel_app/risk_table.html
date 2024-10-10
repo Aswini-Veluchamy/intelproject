@@ -353,6 +353,17 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
                 impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
             }
+
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
+                alert("Invalid eta or trigger_date or risk_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
+            }
+
+
             // Show the loader
             $('#loader').css('display', 'flex');
             $.ajax({
@@ -396,6 +407,15 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 risk_initiated: riskInitiated,
                 impact: impact,
             };
+
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
+                alert("Invalid eta or trigger_date or risk_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
+            }
 
             // Validate required fields
             if (!riskSummary || !riskArea || !status || !owner || !consequence || !mitigations || !triggerDate || !riskInitiated || !impact) {
