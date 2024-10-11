@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 import json
 import time
+import urllib.parse
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
 from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, BBOX_TABLE, LINKS_BKP_TABLE
@@ -150,7 +151,9 @@ def home(request):
 @csrf_exempt
 def key_message(request):
     if request.method == "POST":
-        primary_project = request.COOKIES['primary_project']
+        cookie_string = request.headers.get('Cookie')
+        cookies = dict(urllib.parse.parse_qsl(cookie_string.replace('; ', '&')))
+        primary_project = cookies.get('primary_project')
         message = request.POST['hiddenInput']
         user = request.COOKIES['user_id']
         message_id = str(int(time.time() * 1000)) + '_' + user
@@ -180,7 +183,9 @@ def key_message(request):
 def details(request):
     if request.method == "POST":
         message = request.POST['details_message']
-        primary_project = request.COOKIES['primary_project']
+        cookie_string = request.headers.get('Cookie')
+        cookies = dict(urllib.parse.parse_qsl(cookie_string.replace('; ', '&')))
+        primary_project = cookies.get('primary_project')
         user = request.COOKIES['user_id']
         details_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
