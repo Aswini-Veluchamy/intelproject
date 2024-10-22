@@ -112,10 +112,10 @@
                         <td nowrap class="projects">{{ i.project }}</td>
                         <td class="text-center">
                             <button type="button" class="btn btn-info btn-sm edit-btn" title="Edit Links"
-        data-bs-toggle="modal" data-bs-target="#editModal"
-        data-project="{{ i.project }}" data-pk="{{ i.pk }}"> <!-- Pass pk here -->
-    <i class="fas fa-edit"></i>
-</button>
+                                    data-bs-toggle="modal" data-bs-target="#editModal"
+                                    data-project="{{ i.project }}" data-pk="{{ i.pk }}"> <!-- Pass pk here -->
+                                <i class="fas fa-edit"></i>
+                            </button>
 
                             <button type="button" class="btn btn-danger btn-sm" title="Delete Link" onclick="deleteProject(this)">
                                 <i class="fas fa-trash"></i>
@@ -142,12 +142,12 @@
             </div>
             <div class="modal-body">
                 <form id="editForm" action="{% url 'edit_project_list' pk=0 %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="project_pk" id="project_pk" value="">
-    <label for="project_name">Project:</label>
-    <input type="text" name="project_name" id="project_name" value=""><br><br>
-    <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
-</form>
+                    {% csrf_token %}
+                    <input type="hidden" name="project_pk" id="project_pk" value="">
+                    <label for="project_name">Project:</label>
+                    <input type="text" name="project_name" id="project_name" value=""><br><br>
+                    <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                </form>
 
             </div>
         </div>
