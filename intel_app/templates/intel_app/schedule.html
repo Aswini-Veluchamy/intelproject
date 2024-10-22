@@ -37,6 +37,12 @@
     </style>
 <body style="background-color:#ffffff!important;">
 
+<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
 <!-- Example Code -->
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
@@ -288,6 +294,17 @@
                por_trend : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
                comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
             }
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(schedule.por_commit) || !regex.test(schedule.por_trend)) {
+                alert("Invalid POR Commit or POR Trend format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
+            }
+
+            // Show the loader
+            $('#loader').css('display', 'flex');
             $.ajax(
                     {
                         type:"POST",
@@ -306,25 +323,64 @@
         });
 
          $('.add-save-btn').on('click', function () {
-
             let objectId = "new";
-            const schedule = {
-               switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-               milestone : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
-               status : $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-               por_commit : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
-               por_trend : $('tr[data-a-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
-               comments : $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+            // Extract values from the form
+            const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]');
+            const milestone = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value;
+            const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value;
+            const por_commit = $('tr[data-a-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value;
+            const por_trend = $('tr[data-a-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value;
+            const comments = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value;
+
+            // Validate required fields
+            if (!switchButton.length || !milestone || !status || !por_commit || !por_trend || !comments) {
+                alert("Please fill out all fields.");
+                return; // Prevent submission
             }
-                $.ajax({
-                    type: "POST",
-                    url: "/schedule/",
-                    data: schedule,
-                    success: function(data) {
-                        window.location.reload()
-                    }
-                })
+
+            // Define regex for validation (matches yyyy, yyyy.w, or yyyy.ww)
+            const porRegex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate POR Commit
+            if (!porRegex.test(por_commit)) {
+                alert("POR Commit must be in the format yyyy, yyyy.w, or yyyy.ww (e.g., 2024, 2024.6, or 2024.43).");
+                return;
+            }
+
+            // Validate POR Trend
+            if (!porRegex.test(por_trend)) {
+                alert("POR Trend must be in the format yyyy, yyyy.w, or yyyy.ww (e.g., 2024, 2024.6, or 2024.43).");
+                return;
+            }
+
+
+            // Create the data object for the AJAX request
+            const schedule = {
+                switch_button: switchButton.prop("checked") ? "On" : "Off",
+                milestone: milestone,
+                status: status,
+                por_commit: por_commit,
+                por_trend: por_trend,
+                comments: comments,
+            };
+
+            // Show the loader
+            $('#loader').css('display', 'flex');
+
+            // Perform the AJAX request
+            $.ajax({
+                type: "POST",
+                url: "/schedule/",
+                data: schedule,
+                success: function(data) {
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error: ", error); // Optional error handling
+                    alert("An error occurred while saving the data. Please try again.");
+                }
             });
+        });
 
          $('.add-cancel-btn').click(function () {
             $('tr[data-a-id="new"]').attr('data-add', false);
@@ -341,12 +397,11 @@
 }
 </script>
 <script>
-    $('#projectdata').change(function(event){
-        var selectedcategory = $(this).children("option:selected").val();
-        sessionStorage.setItem("itemName",selectedcategory);
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.location.reload();
+        }
     });
-
-    $('select').find('option[value="' + sessionStorage.getItem('itemName').replace(/"/g, '\\"') + '"]').prop('selected', true);
 </script>
 <script>
     tail.select("#projectdata", {

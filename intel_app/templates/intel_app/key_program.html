@@ -16,6 +16,7 @@
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
 
     <style>
         tr[data-non-edit="true"] {
@@ -34,8 +35,17 @@
         tr[data-add="false"] {
             display : none;
         }
+        .highlight {
+            border-color: red;
+        }
     </style>
 <body style="background-color:#ffffff!important;">
+
+<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
 
 <!-- Example Code -->
 <nav class="navbar navbar-expand-lg">
@@ -134,7 +144,11 @@
                                 </select>
                             </td>
                             <td class="metric">
-                                <textarea class="form-control" data-prop="metric" name="metric" placeholder="Enter Metric" cols="3" maxlength="250" required="required"></textarea>
+                              <select class="form-select" data-prop="metric" name="metric" required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select metric</option>
+                                    <option value="test1">test1</option>
+                                    <option value="test2">test2</option>
+                                </select>
                             </td>
                             <td class="target">
                                 <textarea class="form-control" data-prop="target" name="target" placeholder="Enter Target" cols="3" maxlength="250" required="required"></textarea>
@@ -161,7 +175,7 @@
                         <tr data-n-id="{{ i.metric_id }}" data-non-edit="true">
                             <td nowrap class="switch_button">{{ i.display }}</td>
                             <td nowrap class="status">{{ i.status.0 }}</td>
-                            <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
+                            <td nowrap class="metric">{{ i.metric }}</td>
                             <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
                             <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
                             <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
@@ -189,7 +203,7 @@
                                 </select>
                             </td>
                             <td class="metric">
-                                <textarea class="form-control" data-prop="metric" name="metric" cols="3" maxlength="250" required="required">{{ i.metric }}</textarea>
+                                <textarea class="form-control" data-prop="metric" name="metric" cols="3" maxlength="250" required="required" disabled="disabled">{{ i.metric }}</textarea>
                             </td>
                             <td class="target">
                                 <textarea class="form-control" data-prop="target" name="target" cols="3" maxlength="250" required="required">{{ i.fv_target }}</textarea>
@@ -235,6 +249,7 @@
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
 
 <script>
     function nameFormatter(value, row) {
@@ -282,6 +297,9 @@
                 plan: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="plan"]')[0].value,
                 comments: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
             }
+            // Show the loader
+            $('#loader').css('display', 'flex');
+
             $.ajax({
                 type: "POST",
                 url: "/key_program_edit/" + objectId,
@@ -298,23 +316,53 @@
 
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
+
+            // Extract values from the form
+            const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off";
+            const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').val();
+            const metric = $('tr[data-a-id="' + objectId + '"] select[data-prop="metric"]').val();
+            const target = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]').val();
+            const actual = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="actual"]').val();
+            const plan = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="plan"]').val();
+            const comments = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]').val();
+
+            // Create the key_program object
             const key_program = {
-                switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-                status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-                metric: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="metric"]')[0].value,
-                target: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]')[0].value,
-                actual: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="actual"]')[0].value,
-                plan: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="plan"]')[0].value,
-                comments: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+                switch_button: switchButton,
+                status: status,
+                metric: metric,
+                target: target,
+                actual: actual,
+                plan: plan,
+                comments: comments,
+            };
+
+            // Validate required fields
+            if (!status || !metric || !target || !actual || !plan || !comments) {
+                alert("Please fill out all fields.");
+                // Highlight empty fields
+                $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').toggleClass('highlight', !status);
+                $('tr[data-a-id="' + objectId + '"] select[data-prop="metric"]').toggleClass('highlight', !metric);
+                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]').toggleClass('highlight', !target);
+                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="actual"]').toggleClass('highlight', !actual);
+                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="plan"]').toggleClass('highlight', !plan);
+                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]').toggleClass('highlight', !comments);
+
+                return; // Prevent submission if validation fails
             }
+
+            // Show the loader
+            $('#loader').css('display', 'flex');
+
+            // Perform the AJAX request
             $.ajax({
                 type: "POST",
                 url: "/key_program/",
                 data: key_program,
                 success: function(data) {
-                    window.location.reload()
+                    window.location.reload();
                 }
-            })
+            });
         });
 
         $('.add-cancel-btn').click(function() {
@@ -322,25 +370,6 @@
         });
     });
 </script>
-<!--<script>
-    var allTableCells = document.getElementsByTagName("td");
-    for(var i = 0, max = allTableCells.length; i < max; i++) {
-        var node = allTableCells[i];
-
-        //get the text from the first child node - which should be a text node
-        var currentText = node.childNodes[0].nodeValue;
-
-        //check for 'one' and assign this table cell's background color accordingly
-        if (currentText === "R")
-            node.innerHTML = '<i class="fas fa-circle text-danger fa-sm">&nbsp;' + node.innerHTML;
-        else if (currentText === "G")
-            node.innerHTML = '<i class="fas fa-circle text-success fa-sm">&nbsp;' + node.innerHTML;
-        else if (currentText === "B")
-            node.innerHTML = '<i class="fas fa-circle text-primary fa-sm">&nbsp;' + node.innerHTML;
-        else if (currentText === "Y")
-            node.innerHTML = '<i class="fas fa-circle text-warning fa-sm">&nbsp;' + node.innerHTML;
-    }
-</script>-->
 <script>
     function confirmDelete() {
     if (confirm("Delete Record?") == true) {
@@ -351,12 +380,11 @@
 }
 </script>
 <script>
-    $('#projectdata').change(function(event){
-        var selectedcategory = $(this).children("option:selected").val();
-        sessionStorage.setItem("itemName",selectedcategory);
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.location.reload();
+        }
     });
-
-    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
 </script>
 <script>
     tail.select("#projectdata", {

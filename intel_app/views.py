@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 import json
 import time
+import urllib.parse
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
 from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, BBOX_TABLE, LINKS_BKP_TABLE
@@ -16,6 +17,7 @@ from .db_connection import login_user, create_project, get_projects, load_bbox_d
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, get_users_data, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
+from .db_connection import get_distinct_metric
 
 import ast
 
@@ -51,7 +53,7 @@ def user_login(request):
                 else:
                     context['error'] = "provide valid credentials"
                     return render(request, "intel_app/login.html", context)
-            except Exception as e:
+            except Exception:
                 context['error'] = "provide valid credentials"
                 return render(request, "intel_app/login.html", context)
 
@@ -150,7 +152,9 @@ def home(request):
 @csrf_exempt
 def key_message(request):
     if request.method == "POST":
-        primary_project = request.COOKIES['primary_project']
+        cookie_string = request.headers.get('Cookie')
+        cookies = dict(urllib.parse.parse_qsl(cookie_string.replace('; ', '&')))
+        primary_project = cookies.get('primary_project')
         message = request.POST['hiddenInput']
         user = request.COOKIES['user_id']
         message_id = str(int(time.time() * 1000)) + '_' + user
@@ -180,7 +184,9 @@ def key_message(request):
 def details(request):
     if request.method == "POST":
         message = request.POST['details_message']
-        primary_project = request.COOKIES['primary_project']
+        cookie_string = request.headers.get('Cookie')
+        cookies = dict(urllib.parse.parse_qsl(cookie_string.replace('; ', '&')))
+        primary_project = cookies.get('primary_project')
         user = request.COOKIES['user_id']
         details_id = str(int(time.time() * 1000)) + '_' + user
         ''' storing data into database'''
@@ -255,7 +261,6 @@ def risks(request):
 @csrf_exempt
 def risk_edit_table(request, pk):
     if request.method == "POST":
-        print(request.POST)
         display = request.POST['switch_button']
         risk_summary = request.POST['risk_summary']
         risk_area = request.POST['risk_area']
@@ -293,6 +298,20 @@ def key_program(request):
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         metric_id = str(int(time.time() * 1000)) + '_' + user
+
+        ''' verify the metirc data'''
+        metric_data = get_distinct_metric(primary_project)
+        if metric_data:
+            if metric in metric_data:
+                user_projects = request.COOKIES['project']
+                user = request.COOKIES['user_id']
+                user_projects = ast.literal_eval(user_projects)
+                messages = f'Metric already exists in {primary_project}'
+                print(messages)
+                return render(request, 'intel_app/key_program.html',
+                              {'messages': messages, 'project': user_projects,
+                                        'user': user})
+
         ''' storing data into database'''
         load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
                                        current_week_plan, status, comments, metric_id, primary_project, user)],
@@ -405,9 +424,9 @@ def schedule_edit_table(request, pk):
         comments = request.POST['comments']
         # update the values in external database
         por_commit = check_por_trend_values(por_commit)
+        por_trend = check_por_trend_values(por_trend)
         record = get_schedule_record(pk)
-        update_schedule_data([(display, milestone, por_commit, record[0].get('por_commit'), record[0].get('por_trend'),
-                               status, comments, pk)])
+        update_schedule_data([(display, milestone, por_commit, por_trend, status, comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
 
 
@@ -427,9 +446,6 @@ def links(request):
         comments = request.POST['comments_links']
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
-
-        if links_url == '' or comments == '' or primary_project == '':
-            raise Exception('fill the fields!!!!!!!!')
 
         links_id = str(int(time.time() * 1000)) + '_' + user
         # original table
@@ -598,6 +614,7 @@ def issues_edit_table(request, pk):
         # verify the values
         trigger_date = check_por_trend_values(trigger_date)
         issues_initiated = check_por_trend_values(issues_initiated)
+        eta = check_por_trend_values(eta)
 
         # updating the table
         update_issues_data([(display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, pk)])
@@ -612,6 +629,10 @@ def issues_edit_table(request, pk):
 @csrf_exempt
 def project_change(request, func_name):
     response = HttpResponseRedirect(reverse(func_name))
+    user_projects = request.COOKIES['project']
+    user_projects = ast.literal_eval(user_projects)
+    projects = update_queryset_values(user_projects,request.POST.get('projectdata'))
+    response.set_cookie('project', projects)
     response.set_cookie('primary_project', request.POST.get('projectdata'))
     return response
 
@@ -709,7 +730,6 @@ def schedule_data(request):
 def schedule_data_edit_table(request, pk):
     if request.method == "POST":
         schedule_comments = request.POST['comments']
-        print(schedule_comments, pk)
         # update the values in external database
         #por_commit = check_por_trend_values(por_commit)
         #record = get_schedule_record(pk)

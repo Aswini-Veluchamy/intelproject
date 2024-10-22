@@ -55,7 +55,7 @@ def get_key_msg_or_details_data(table, project):
 def get_data(user, table, project, deleted=None):
     conn, cursor = db_connection()
     if not deleted:
-        sql = f"SELECT * FROM {table} where project='{project}' and deleted={deleted}"
+        sql = f"SELECT * FROM {table} where project='{project}'"
     else:
         sql = f"SELECT * FROM {table} where project='{project}'"
     cursor.execute(sql)
@@ -159,9 +159,9 @@ def load_schedule_data(display, milestone, por_commit, por_trend, status, commen
 
 def update_schedule_data(data):
     conn, cursor = db_connection()
-    for display, milestone, por_commit, por_trend, por_trend2, status, comments, schedule_id in data:
+    for display, milestone, por_commit, por_trend, status, comments, schedule_id in data:
         sql = (f"UPDATE {SCHEDULE_TABLE} SET display = '{display}', milestone = '{milestone}', por_commit = '{por_commit}', \
-                por_trend = '{por_trend}',por_trend2 = '{por_trend2}', status = '{status}', comments = '{comments}' \
+                por_trend = '{por_trend}', status = '{status}', comments = '{comments}' \
                 WHERE schedule_id='{schedule_id}'")
         cursor.execute(sql)
     print(f'data updated in {SCHEDULE_TABLE} ....')
@@ -253,6 +253,22 @@ def get_projects():
         project = cursor.fetchall()
         if project:
             result = [i[0] for i in project]
+            return result
+        else:
+            return None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
+def get_distinct_metric(project_name):
+    """Register a new project."""
+    try:
+        conn, cursor = db_connection()
+        query = f"select distinct(metric) from key_program_metric_table where project='{project_name}'"
+        cursor.execute(query)
+        metric = cursor.fetchall()
+        if metric:
+            result = [i[0] for i in metric]
             return result
         else:
             return None

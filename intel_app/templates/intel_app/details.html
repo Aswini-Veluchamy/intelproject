@@ -97,7 +97,6 @@
                     {% csrf_token %}
                     <div id="details_editor" style="height: 275px;">{{ details_data.message|safe }}</div>
                     <input type="hidden" name="details_message" id="details_message">
-                    <div id="counter_details">Limited to 375 characters</div>
                     <p>{{error}}</p>
                     <button type="submit" id="btn_details" class="btn btn-primary">Submit</button>
                     <button type="button" class="btn btn-secondary" id="btn_cancel">Cancel</button>
@@ -127,14 +126,6 @@
       return '<i class="fa ' + icon + '"></i> ' + value
     }
 
-</script>
-<script>
-    $('#projectdata').change(function(event){
-        var selectedcategory = $(this).children("option:selected").val();
-        sessionStorage.setItem("itemName",selectedcategory);
-    });
-
-    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
 </script>
 <script>
     tail.select("#projectdata", {
@@ -194,5 +185,4 @@ $(document).ready(function () {
 </script>
 
 </body>
-</head>
 </html>

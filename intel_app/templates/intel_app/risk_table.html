@@ -36,8 +36,17 @@
         tr[data-add="false"] {
             display : none;
         }
+        .highlight {
+            border-color: red;
+        }
     </style>
 <body style="background-color:#ffffff!important;">
+<!-- Loader -->
+<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
 
 <!-- Example Code -->
 <nav class="navbar navbar-expand-lg">
@@ -344,6 +353,19 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
                 impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
             }
+
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
+                alert("Invalid eta or trigger_date or risk_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
+            }
+
+
+            // Show the loader
+            $('#loader').css('display', 'flex');
             $.ajax({
                 type: "POST",
                 url: "/risk_edit_table/" + objectId,
@@ -360,27 +382,75 @@ o    High – potentially high impact to milestones + path to avoidance is compl
 
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
+            // Extract values from the form
+            const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off";
+            const riskSummary = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]').val();
+            const riskArea = $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]').val();
+            const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').val();
+            const owner = $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]').val();
+            const consequence = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]').val();
+            const mitigations = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]').val();
+            const triggerDate = $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]').val();
+            const riskInitiated = $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]').val();
+            const impact = $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]').val();
+
+            // Create the risk object
             const risk = {
-                switch_button: $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-                risk_summary: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
-                risk_area: $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
-                status: $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-                owner: $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-                consequence: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
-                mitigations: $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
-                trigger_date: $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
-                risk_initiated: $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
-                impact: $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
+                switch_button: switchButton,
+                risk_summary: riskSummary,
+                risk_area: riskArea,
+                status: status,
+                owner: owner,
+                consequence: consequence,
+                mitigations: mitigations,
+                trigger_date: triggerDate,
+                risk_initiated: riskInitiated,
+                impact: impact,
+            };
+
+            // Regular expression for validation
+            const regex = /^\d{4}(\.\d{1,2})?$/;
+
+            // Validate por_commit and por_trend formats
+            if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
+                alert("Invalid eta or trigger_date or risk_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
+                return; // Prevent submission
             }
+
+            // Validate required fields
+            if (!riskSummary || !riskArea || !status || !owner || !consequence || !mitigations || !triggerDate || !riskInitiated || !impact) {
+                alert("Please fill out all fields.");
+                // Highlight empty fields
+                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]').toggleClass('highlight', !riskSummary);
+                $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]').toggleClass('highlight', !riskArea);
+                $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').toggleClass('highlight', !status);
+                $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]').toggleClass('highlight', !owner);
+                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]').toggleClass('highlight', !consequence);
+                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]').toggleClass('highlight', !mitigations);
+                $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]').toggleClass('highlight', !triggerDate);
+                $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]').toggleClass('highlight', !riskInitiated);
+                $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]').toggleClass('highlight', !impact);
+                return; // Prevent submission if validation fails
+            }
+
+            // Show the loader
+            $('#loader').css('display', 'flex');
+
+            // Perform the AJAX request
             $.ajax({
                 type: "POST",
                 url: "/risk/",
                 data: risk,
                 success: function(data) {
-                    window.location.reload()
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error: ", error);
+                    alert("An error occurred while saving the data. Please try again.");
                 }
-            })
+            });
         });
+
 
         $('.add-cancel-btn').click(function() {
             $('tr[data-a-id="new"]').attr('data-add', false);
@@ -397,12 +467,11 @@ o    High – potentially high impact to milestones + path to avoidance is compl
 }
 </script>
 <script>
-    $('#projectdata').change(function(event){
-        var selectedcategory = $(this).children("option:selected").val();
-        sessionStorage.setItem("itemName",selectedcategory);
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            window.location.reload();
+        }
     });
-
-    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
 </script>
 <script>
     tail.select("#projectdata", {
