@@ -16,6 +16,7 @@
     <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
 
     <style>
         tr[data-non-edit="true"] {
@@ -143,7 +144,11 @@
                                 </select>
                             </td>
                             <td class="metric">
-                                <textarea class="form-control" data-prop="metric" name="metric" placeholder="Enter Metric" cols="3" maxlength="250" required="required"></textarea>
+                              <select class="form-select" data-prop="metric" name="metric" required="required">
+                                    <option value="" disabled="disabled" selected="selected">Select metric</option>
+                                    <option value="test1">test1</option>
+                                    <option value="test2">test2</option>
+                                </select>
                             </td>
                             <td class="target">
                                 <textarea class="form-control" data-prop="target" name="target" placeholder="Enter Target" cols="3" maxlength="250" required="required"></textarea>
@@ -170,7 +175,7 @@
                         <tr data-n-id="{{ i.metric_id }}" data-non-edit="true">
                             <td nowrap class="switch_button">{{ i.display }}</td>
                             <td nowrap class="status">{{ i.status.0 }}</td>
-                            <td nowrap class="metric">{{ i.metric | linebreaks }}</td>
+                            <td nowrap class="metric">{{ i.metric }}</td>
                             <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
                             <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
                             <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
@@ -198,7 +203,7 @@
                                 </select>
                             </td>
                             <td class="metric">
-                                <textarea class="form-control" data-prop="metric" name="metric" cols="3" maxlength="250" required="required">{{ i.metric }}</textarea>
+                                <textarea class="form-control" data-prop="metric" name="metric" cols="3" maxlength="250" required="required" disabled="disabled">{{ i.metric }}</textarea>
                             </td>
                             <td class="target">
                                 <textarea class="form-control" data-prop="target" name="target" cols="3" maxlength="250" required="required">{{ i.fv_target }}</textarea>
@@ -244,6 +249,7 @@
 <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
 
 <script>
     function nameFormatter(value, row) {
@@ -314,7 +320,7 @@
             // Extract values from the form
             const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off";
             const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').val();
-            const metric = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="metric"]').val();
+            const metric = $('tr[data-a-id="' + objectId + '"] select[data-prop="metric"]').val();
             const target = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]').val();
             const actual = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="actual"]').val();
             const plan = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="plan"]').val();
@@ -336,7 +342,7 @@
                 alert("Please fill out all fields.");
                 // Highlight empty fields
                 $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').toggleClass('highlight', !status);
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="metric"]').toggleClass('highlight', !metric);
+                $('tr[data-a-id="' + objectId + '"] select[data-prop="metric"]').toggleClass('highlight', !metric);
                 $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]').toggleClass('highlight', !target);
                 $('tr[data-a-id="' + objectId + '"] textarea[data-prop="actual"]').toggleClass('highlight', !actual);
                 $('tr[data-a-id="' + objectId + '"] textarea[data-prop="plan"]').toggleClass('highlight', !plan);
@@ -355,10 +361,6 @@
                 data: key_program,
                 success: function(data) {
                     window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error: ", error);
-                    alert("An error occurred while saving the data. Please try again.");
                 }
             });
         });

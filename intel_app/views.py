@@ -17,6 +17,7 @@ from .db_connection import login_user, create_project, get_projects, load_bbox_d
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, get_users_data, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
+from .db_connection import get_distinct_metric
 
 import ast
 
@@ -297,6 +298,20 @@ def key_program(request):
         primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         metric_id = str(int(time.time() * 1000)) + '_' + user
+
+        ''' verify the metirc data'''
+        metric_data = get_distinct_metric(primary_project)
+        if metric_data:
+            if metric in metric_data:
+                user_projects = request.COOKIES['project']
+                user = request.COOKIES['user_id']
+                user_projects = ast.literal_eval(user_projects)
+                messages = f'Metric already exists in {primary_project}'
+                print(messages)
+                return render(request, 'intel_app/key_program.html',
+                              {'messages': messages, 'project': user_projects,
+                                        'user': user})
+
         ''' storing data into database'''
         load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
                                        current_week_plan, status, comments, metric_id, primary_project, user)],

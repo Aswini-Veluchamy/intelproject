@@ -260,6 +260,22 @@ def get_projects():
         print(f"Error: {err}")
 
 
+def get_distinct_metric(project_name):
+    """Register a new project."""
+    try:
+        conn, cursor = db_connection()
+        query = f"select distinct(metric) from key_program_metric_table where project='{project_name}'"
+        cursor.execute(query)
+        metric = cursor.fetchall()
+        if metric:
+            result = [i[0] for i in metric]
+            return result
+        else:
+            return None
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
 def get_users():
     """Register a new project."""
     try:
