@@ -17,7 +17,7 @@ from .db_connection import login_user, create_project, get_projects, load_bbox_d
 from .db_connection import update_password, load_issues_data, update_issues_data, get_users, get_users_data, encrypt_password
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
-from .db_connection import get_distinct_metric
+from .db_connection import get_distinct_metric, update_user_projects, get_old_project
 
 import ast
 
@@ -60,7 +60,7 @@ def user_login(request):
     else:
         return render(request, "intel_app/login.html")
 
-
+@csrf_exempt
 def user_create(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -83,7 +83,7 @@ def user_create(request):
         projects = get_projects()
         return render(request, 'intel_app/user_create.html', {'projects': projects})
 
-
+@csrf_exempt
 def project(request):
     if request.method == "POST":
         project = request.POST['project']
@@ -94,6 +94,7 @@ def project(request):
         else:
             create_project(project)
             messages = f'project created successfully ....{project}'
+            print(messages)
             return HttpResponseRedirect(reverse('project_list'))
 
     else:
@@ -110,7 +111,7 @@ def user_logout(request):
     response.delete_cookie('primary_project')
     return response
 
-
+@csrf_exempt
 def forgot_password(request):
     if request.method == "POST":
         username = request.POST['forgot_username']
@@ -674,7 +675,7 @@ def user_list(request):
     projects = get_projects()
     return render(request, 'intel_app/user_list.html', {'users': users, 'projects': projects})
 
-
+@csrf_exempt
 def edit_projects(request):
     # Your view logic here
     if request.method == "POST":
@@ -683,7 +684,7 @@ def edit_projects(request):
         update_project(username, project_name)
         return HttpResponseRedirect(reverse("user_list"))
 
-
+@csrf_exempt
 def delete_user(request):
     # Your view logic here
     if request.method == "POST":
@@ -691,16 +692,30 @@ def delete_user(request):
         delete_record('users', 'username', username)
         return HttpResponseRedirect(reverse("user_list"))
 
-
+@csrf_exempt
 def edit_project_list(request, pk):
     if request.method == "POST":
         project_name = request.POST['project_name']
-        update_project_list(project_name, pk)
-        return HttpResponseRedirect(reverse("project_list"))
+        projects = get_projects()
+        if projects and project_name in projects:
+            messages = f'project already exists ......{project_name}'
+            return render(request, 'intel_app/project_list.html',
+                          {'messages': messages})
 
+        # update user projects
+        old_proj = get_old_project(pk)
+        update_user_projects(old_proj, project_name)
+        update_project_list(project_name, pk)
+        messages = f'project updated ......{project_name}'
+        return render(request, 'intel_app/project_list.html',
+                      {'messages': messages})
+
+@csrf_exempt
 def delete_project(request):
     if request.method == "POST":
         project_name = request.POST['project_name']
+        '''delete the project for user also'''
+        update_user_projects(project_name, '', True)
         delete_project_from_db(project_name)
         return HttpResponseRedirect(reverse("project_list"))
 

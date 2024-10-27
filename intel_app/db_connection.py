@@ -5,6 +5,7 @@ from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE, ISSU
 import json
 import bcrypt
 import time
+import ast
 
 
 def db_connection():
@@ -473,3 +474,34 @@ def update_project_list(project, pk):
     print(f'data updated in project table ....')
     conn.commit()
     conn.close()
+
+
+def update_user_projects(old_proj, new_proj, delete_flag=False):
+    conn, cursor = db_connection()
+    dict_cursor = conn.cursor(dictionary=True)
+    sql = f"SELECT * FROM users"
+    dict_cursor.execute(sql)
+    records = dict_cursor.fetchall()
+    for rec in records:
+        projects = ast.literal_eval(rec.get('project')) or []
+        if old_proj in projects:
+            ''' delete the data when the flag is true'''
+            if delete_flag:
+                projects.remove(old_proj)
+                update_project(rec.get('username'), projects)
+            else:
+                proj_index = projects.index(old_proj)
+                projects[proj_index] = new_proj
+                update_project(rec.get('username'), projects)
+
+def get_old_project(pk):
+    conn, cursor = db_connection()
+    dict_cursor = conn.cursor(dictionary=True)
+    sql = f"SELECT project FROM project_data where pk={pk}"
+    dict_cursor.execute(sql)
+    proj_data = dict_cursor.fetchone()
+    return proj_data.get('project')
+
+
+
+

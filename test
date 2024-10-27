@@ -919,3 +919,12 @@ def edit_project_list(request, pk):
         project_name = request.POST['project_name']
         update_project_list(project_name, pk)
         return HttpResponseRedirect(reverse("project_list"))
+
+
+
+ ******************************** 27-10-2024
+
+ views.py
+ db_connection.py
+ project_list.html
+ project.html
