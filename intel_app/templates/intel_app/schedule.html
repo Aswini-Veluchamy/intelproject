@@ -57,7 +57,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='schedule' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
                         <option value="" disabled >Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
@@ -261,6 +261,14 @@
 
 </script>
 <script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+</script>
+
+<script>
     $('#example').bootstrapTable({
         exportOptions: {
             fileName: 'Schedule'
@@ -286,6 +294,9 @@
 
         $('.save-btn').on('click', function () {
             let objectId = $(this).data('id');
+            // Retrieve the selected project data value
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             const schedule = {
                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                milestone : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="milestone"]')[0].value,
@@ -293,9 +304,11 @@
                por_commit : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_commit"]')[0].value,
                por_trend : $('tr[data-e-id="' + objectId + '"] input[data-prop="por_trend"]')[0].value,
                comments : $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+               project_name: projectData
             }
             // Regular expression for validation
             const regex = /^\d{4}(\.\d{1,2})?$/;
+
 
             // Validate por_commit and por_trend formats
             if (!regex.test(schedule.por_commit) || !regex.test(schedule.por_trend)) {
@@ -312,6 +325,8 @@
                         data:schedule,
                         success: function( data )
                         {
+                        // Save projectData as a cookie
+                        document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                         window.location.reload()
 
                         }
@@ -353,6 +368,9 @@
                 return;
             }
 
+             // Retrieve the selected project data value
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
 
             // Create the data object for the AJAX request
             const schedule = {
@@ -362,6 +380,7 @@
                 por_commit: por_commit,
                 por_trend: por_trend,
                 comments: comments,
+                project_name: projectData
             };
 
             // Show the loader
@@ -373,6 +392,8 @@
                 url: "/schedule/",
                 data: schedule,
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie =`projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload();
                 },
                 error: function(xhr, status, error) {
@@ -395,13 +416,6 @@
         return false;
     }
 }
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
 </script>
 <script>
     tail.select("#projectdata", {

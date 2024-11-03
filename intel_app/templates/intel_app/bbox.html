@@ -53,7 +53,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='bbox' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
                         <option value="" disabled >Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
@@ -211,6 +211,13 @@
     }
 </script>
 <script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+</script>
+<script>
     $(document).ready(function() {
         $('#example').bootstrapTable({
             exportOptions: {
@@ -243,6 +250,8 @@
         $('.save-btn').on('click', function() {
             event.preventDefault(); // Prevent the default form submission behavior
             let objectId = $(this).data('id');
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             const bbox = {
                 category: $('tr[data-e-id="' + objectId + '"] input[data-prop="category"]')[0].value,
                 process: $('tr[data-e-id="' + objectId + '"] input[data-prop="process"]')[0].value,
@@ -252,12 +261,15 @@
                 perf_target: $('tr[data-e-id="' + objectId + '"] input[data-prop="perf_target"]')[0].value,
                 cdyn: $('tr[data-e-id="' + objectId + '"] input[data-prop="cdyn"]')[0].value,
                 schedule_bbox: $('tr[data-e-id="' + objectId + '"] input[data-prop="schedule_bbox"]')[0].value,
+                project_name: projectData
             }
             $.ajax({
                 type: "POST",
                 url: "/bbox_edit/" + objectId,
                 data: bbox,
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload()
                 }
             })
@@ -265,7 +277,9 @@
 
         $(document).on('click', '.save-all-btn', function() {
             let rowsData = [];
-
+            // Retrieve the selected project data value
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             $('tr[data-a-id^="new-"]').each(function() {
                 let rowData = {
                     category: $(this).find('input[data-prop="category"]').val(),
@@ -276,6 +290,7 @@
                     perf_target: $(this).find('input[data-prop="perf_target"]').val(),
                     cdyn: $(this).find('input[data-prop="cdyn"]').val(),
                     schedule_bbox: $(this).find('input[data-prop="schedule_bbox"]').val(),
+                    project_name: projectData
                 };
                 rowsData.push(rowData);
             });
@@ -287,6 +302,8 @@
                 url: '/bbox/',
                 data: JSON.stringify({ 'data': rowsData }),
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload();
                 },
                 error: function(xhr, status, error) {
@@ -371,13 +388,6 @@ $('.add-btn').on('click', function() {
     $('#example tbody tr[data-a-id^="new-"]').show();
 
 });
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
 </script>
 <script>
     // Show action column header when editing or displaying

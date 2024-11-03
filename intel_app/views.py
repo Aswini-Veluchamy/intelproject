@@ -1,3 +1,5 @@
+from http.client import responses
+
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
@@ -129,23 +131,35 @@ def forgot_password(request):
 
 def home(request):
     try:
-        project_data = request.COOKIES['project']
+        projects = request.COOKIES['project']
         user = request.COOKIES['user_id']
-        user_projects = ast.literal_eval(project_data)
-        primary_project = request.COOKIES['primary_project']
+        user_projects = ast.literal_eval(projects)
+        project_data = request.COOKIES['primary_project']
         # based on the user filtering the data
+        project_name = request.COOKIES.get('projectData')
+        if project_name:
+            user_projects = update_queryset_values(user_projects, project_name)
+            project_data = project_name
+
+        print("------- home", user_projects, request.COOKIES)
+        print(project_data)
+        print("----------------------------------")
+
         try:
-            key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, primary_project)
+            key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, project_data)
         except TypeError:
             key_mess_data = None
         try:
-            details_data = get_key_msg_or_details_data(DETAILS_TABLE, primary_project)
+            details_data = get_key_msg_or_details_data(DETAILS_TABLE, project_data)
         except TypeError:
             details_data = None
         # return the data to UI
-        return render(request, 'intel_app/index.html', {'project': user_projects,
+        response = render(request, 'intel_app/index.html', {'project': user_projects,
                                                         'key_mess_data': key_mess_data,
                                                         'details_data': details_data, 'user': user})
+        response.set_cookie('project', user_projects)
+        response.set_cookie('primary_project', project_data)
+        return response
     except KeyError:
         return HttpResponseRedirect(reverse('login'))
 
@@ -164,13 +178,23 @@ def key_message(request):
         return HttpResponseRedirect(reverse("home"))
     else:
         try:
-            project_data = request.COOKIES['project']
+            projects = request.COOKIES['project']
             user = request.COOKIES['user_id']
-            user_projects = ast.literal_eval(project_data)
-            primary_project = request.COOKIES['primary_project']
+            user_projects = ast.literal_eval(projects)
+            project_data = request.COOKIES['primary_project']
             # based on the user filtering the data
+            project_name = request.COOKIES.get('projectData')
+            print("----------------------------------")
+            print(user_projects, project_name, request.COOKIES)
+            if project_name:
+                user_projects = update_queryset_values(user_projects, project_name)
+                project_data = project_name
+
+            print("------- key message ", user_projects)
+            print(project_data)
+            print("----------------------------------")
             try:
-                key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, primary_project)
+                key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, project_data)
             except TypeError:
                 key_mess_data = None
             # return the data to UI
@@ -195,13 +219,23 @@ def details(request):
         return HttpResponseRedirect(reverse("home"))
     else:
         try:
-            project_data = request.COOKIES['project']
+            projects = request.COOKIES['project']
             user = request.COOKIES['user_id']
-            user_projects = ast.literal_eval(project_data)
-            primary_project = request.COOKIES['primary_project']
+            user_projects = ast.literal_eval(projects)
+            project_data = request.COOKIES['primary_project']
             # based on the user filtering the data
+            project_name = request.COOKIES.get('projectData')
+            print("----------------------------------")
+            print(user_projects, project_name)
+            if project_name:
+                user_projects = update_queryset_values(user_projects, project_name)
+                project_data = project_name
+
+            print("------- Details ", user_projects)
+            print(project_data)
+            print("----------------------------------")
             try:
-                details_data = get_key_msg_or_details_data(DETAILS_TABLE, primary_project)
+                details_data = get_key_msg_or_details_data(DETAILS_TABLE, project_data)
             except TypeError:
                 details_data = None
             # return the data to UI
@@ -224,26 +258,39 @@ def risks(request):
         trigger_date = request.POST['trigger_date']
         risk_initiated = request.POST['risk_initiated']
         impact = request.POST['impact']
-        primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         risk_id = str(int(time.time() * 1000)) + '_' + user
+
+        project_data = request.COOKIES['primary_project']
+        project_name = request.COOKIES.get('projectData')
+
+        if project_name:
+            project_data = project_name
+
         ''' storing data into database'''
         trigger_date = check_por_trend_values(trigger_date)
         risk_initiated = check_por_trend_values(risk_initiated)
         # load risk data to external database
         load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
-             trigger_date, risk_initiated, impact, risk_id, primary_project, user), RISK_TABLE)
+             trigger_date, risk_initiated, impact, risk_id, project_data, user), RISK_TABLE)
 
-        # load risk data to bkp table
-        load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
-             trigger_date, risk_initiated, impact, risk_id, primary_project, user), RISK_BKP_TABLE)
         return HttpResponseRedirect(reverse("risk"))
     else:
         try:
             user_project = request.COOKIES['project']
             user = request.COOKIES['user_id']
-            user_project = ast.literal_eval(user_project)
-            result = get_data(user, RISK_TABLE, request.COOKIES['primary_project'])
+            user_projects = ast.literal_eval(user_project)
+            project_data = request.COOKIES['primary_project']
+            project_name = request.COOKIES.get('projectData')
+            print("----------------------------------")
+            print(user_projects)
+            print(project_name, '---- Risk cookie', request.COOKIES)
+            if project_name:
+                user_projects = update_queryset_values(user_projects, project_name)
+                project_data = project_name
+            print(user_projects)
+            print("----------------------------------")
+            result = get_data(user, RISK_TABLE, project_data)
             if result:
                 status = ['Open', 'Closed']
                 impact = ['Low', 'Medium', 'High']
@@ -253,7 +300,7 @@ def risks(request):
                     i['impact'] = update_queryset_values(impact, i['impact'])
                     i['risk_area'] = update_queryset_values(risk_area, i['risk_area'])
 
-            return render(request, 'intel_app/risk_table.html', {'data': result, 'project': user_project,
+            return render(request, 'intel_app/risk_table.html', {'data': result, 'project': user_projects,
                                                                  'user': user})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
@@ -296,38 +343,48 @@ def key_program(request):
         current_week_plan = request.POST['plan']
         status = request.POST['status']
         comments = request.POST['comments']
-        primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         metric_id = str(int(time.time() * 1000)) + '_' + user
 
+        project_data = request.COOKIES['primary_project']
+        project_name = request.COOKIES.get('projectData')
+
+        if project_name:
+            project_data = project_name
+
         ''' verify the metirc data'''
-        metric_data = get_distinct_metric(primary_project)
+        metric_data = get_distinct_metric(project_data)
         if metric_data:
             if metric in metric_data:
                 user_projects = request.COOKIES['project']
                 user = request.COOKIES['user_id']
                 user_projects = ast.literal_eval(user_projects)
-                messages = f'Metric already exists in {primary_project}'
-                print(messages)
+                messages = f'Metric already exists in {project_data}'
                 return render(request, 'intel_app/key_program.html',
                               {'messages': messages, 'project': user_projects,
                                         'user': user})
 
         ''' storing data into database'''
         load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
-                                       current_week_plan, status, comments, metric_id, primary_project, user)],
+                                       current_week_plan, status, comments, metric_id, project_data, user)],
                                      KEY_PROGRAM_METRIC_TABLE)
-        # backup table
-        load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
-                                       current_week_plan, status, comments, metric_id, primary_project, user)],
-                                     KEY_PROGRAM_METRIC_BKP_TABLE)
         return HttpResponseRedirect(reverse("key_program"))
     else:
         try:
             user_projects = request.COOKIES['project']
             user = request.COOKIES['user_id']
             user_projects = ast.literal_eval(user_projects)
-            result = get_data(user, KEY_PROGRAM_METRIC_TABLE,  request.COOKIES['primary_project'])
+            project_data = request.COOKIES['primary_project']
+            project_name = request.COOKIES.get('projectData')
+            print("----------------------------------")
+            print(user_projects)
+            print(project_name, '---- Key Program cookie', request.COOKIES)
+            if project_name:
+                user_projects = update_queryset_values(user_projects, project_name)
+                project_data = project_name
+            print(user_projects)
+            print("----------------------------------")
+            result = get_data(user, KEY_PROGRAM_METRIC_TABLE,  project_data)
             if result:
                 status = ['R', 'G', 'B', 'Y']
                 for i in result:
@@ -375,16 +432,21 @@ def schedule(request):
         por_trend = request.POST['por_trend']
         status = request.POST['status']
         comments = request.POST['comments']
-        primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
         schedule_id = str(int(time.time() * 1000)) + '_' + user
+
+        project_data = request.COOKIES['primary_project']
+        project_name = request.COOKIES.get('projectData')
+
+        if project_name:
+            project_data = project_name
 
         # verifying the values
         por_commit = check_por_trend_values(por_commit)
         por_trend = check_por_trend_values(por_trend)
 
         ''' storing data into database'''
-        load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, primary_project,
+        load_schedule_data(display, milestone, por_commit, por_trend, status, comments, schedule_id, user, project_data,
                            datetime.now(),
                            False, 'None', datetime.now().date())
         return HttpResponseRedirect(reverse("schedule"))
@@ -392,17 +454,31 @@ def schedule(request):
         try:
             user_projects = request.COOKIES['project']
             user = request.COOKIES['user_id']
+            project_data = request.COOKIES['primary_project']
             user_projects = ast.literal_eval(user_projects)
-            result = get_data(user, SCHEDULE_TABLE, request.COOKIES['primary_project'], False)
+            project_name = request.COOKIES.get('projectData')
+            print("----------------------------------")
+            print(user_projects)
+            print(project_name, '----schedule cookie', request.COOKIES)
+            if project_name:
+                user_projects = update_queryset_values(user_projects, project_name)
+                project_data = project_name
+            print(user_projects)
+            print("----------------------------------")
+            result = get_data(user, SCHEDULE_TABLE, project_data, False)
             if result:
                 status = ['R', 'G', 'B', 'Y', 'Done']
                 for i in result:
                     i['status'] = update_queryset_values(status, i['status'])
-            if request.COOKIES['primary_project'] in MIGRATE_PROJECTS:
-                return render(request, 'intel_app/schedule_data.html', {'data': result, 'project': user_projects,
-                                                                        'user': user})
-            return render(request, 'intel_app/schedule.html', {'data': result, 'project': user_projects,
+            # if request.COOKIES['primary_project'] in MIGRATE_PROJECTS:
+            #     return render(request, 'intel_app/schedule_data.html', {'data': result, 'project': user_projects,
+            #                                                             'user': user})
+            response = render(request, 'intel_app/schedule.html', {'data': result, 'project': user_projects,
                                                                'user': user})
+            response.set_cookie('project', user_projects)
+            response.set_cookie('primary_project', project_data)
+
+            return response
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
@@ -445,23 +521,39 @@ def links(request):
         display = request.POST['switch_button']
         links_url = request.POST['links_url']
         comments = request.POST['comments_links']
-        primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
+        project_name = request.POST['project_name']
+        print('Links project: ---', project_name)
 
         links_id = str(int(time.time() * 1000)) + '_' + user
         # original table
-        load_links_data(LINKS_TABLE, display, links_url, comments, links_id, primary_project, user)
-        # loading backup table
-        load_links_data(LINKS_BKP_TABLE, display, links_url, comments, links_id, primary_project, user,
-                        False, 'None', datetime.now().date())
+        load_links_data(LINKS_TABLE, display, links_url, comments, links_id, project_name, user)
+
         return HttpResponseRedirect(reverse("links"))
     else:
-        user_project = request.COOKIES['project']
-        user = request.COOKIES['user_id']
-        user_project = ast.literal_eval(user_project)
-        result = get_data(user, LINKS_TABLE, request.COOKIES['primary_project'])
-        return render(request, 'intel_app/links.html', {'project': user_project, 'data': result,
-                                                        'user': user})
+        try:
+            user_project = request.COOKIES['project']
+            user = request.COOKIES['user_id']
+            user_project = ast.literal_eval(user_project)
+            project_data = request.COOKIES['primary_project']
+            project_name = request.COOKIES.get('projectData')
+            print("----------------------------------")
+            print(user_project, project_name)
+            if project_name:
+                user_project = update_queryset_values(user_project, project_name)
+                project_data = project_name
+
+            print(project_data)
+            print(user_project)
+            print("----------------------------------")
+            result = get_data(user, LINKS_TABLE, project_data)
+            response = render(request, 'intel_app/links.html', {'project': user_project, 'data': result,
+                                                            'user': user})
+            response.set_cookie('project', user_project)
+            response.set_cookie('primary_project', project_data)
+            return response
+        except KeyError:
+            return  HttpResponseRedirect(reverse(('login')))
 
 
 @csrf_exempt
@@ -486,15 +578,20 @@ def bbox(request):
         # Parse the JSON data from the request body
         data = json.loads(request.body)
         rows_data = data.get('data', [])
-        primary_project = request.COOKIES['primary_project']
         user = request.COOKIES['user_id']
-        load_bbox_data(rows_data, primary_project, user)
+        project_name = request.POST['project_name']
+        load_bbox_data(rows_data, project_name, user)
         return HttpResponseRedirect(reverse("bbox"))
     else:
         user_projects = request.COOKIES['project']
         user_projects = ast.literal_eval(user_projects)
         user = request.COOKIES['user_id']
-        result = get_bbox_data(request.COOKIES['primary_project'])
+        project_data = request.COOKIES['primary_project']
+        project_name = request.COOKIES.get('projectData')
+        if project_name:
+            user_projects = update_queryset_values(user_projects, project_name)
+            project_data = project_name
+        result = get_bbox_data(project_data)
         count = len(result)
         if count > 1:
             result = sort_data(result)
@@ -561,7 +658,12 @@ def issues(request):
         issues_initiated = request.POST['issues_initiated']
         severity = request.POST['severity']
         user = request.COOKIES['user_id']
-        primary_project = request.COOKIES['primary_project']
+        project_data = request.COOKIES['primary_project']
+        project_name = request.COOKIES.get('projectData')
+
+        if project_name:
+            project_data = request.COOKIES.get('projectData')
+
         issues_id = str(int(time.time() * 1000)) + '_' + user
 
         # verify the values
@@ -572,20 +674,26 @@ def issues(request):
         # load isuues data to external database
         load_issues_data(ISSUES_TABLE,
                          (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity,
-                          issues_id, primary_project, user)
+                          issues_id, project_data, user)
                          )
-        # backup table
-        load_issues_data(ISSUES_BKP_TABLE,
-            (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, issues_id,
-             primary_project, user, False, 'None', datetime.now().date())
-        )
         return HttpResponseRedirect(reverse("issues"))
     else:
         try:
             user_projects = request.COOKIES['project']
             user = request.COOKIES['user_id']
+            project_data = request.COOKIES['primary_project']
             user_projects = ast.literal_eval(user_projects)
-            result = get_data(user, ISSUES_TABLE, request.COOKIES['primary_project'])
+            project_name = request.COOKIES.get('projectData')
+            print("----------------------------------")
+            print(user_projects, project_name)
+            if project_name:
+                user_projects = update_queryset_values(user_projects, project_name)
+                project_data = project_name
+
+            print("------- issues ", user_projects)
+            print(project_data)
+            print("----------------------------------")
+            result = get_data(user, ISSUES_TABLE, project_data)
             if result:
                 status = ['Open', 'Closed']
                 severity = ['Low', 'Medium', 'High']

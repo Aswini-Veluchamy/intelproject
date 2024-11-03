@@ -262,6 +262,13 @@
 
 </script>
 <script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+</script>
+<script>
     $('#example').bootstrapTable({
         exportOptions: {
             fileName: 'Key Program Metric'
@@ -288,6 +295,8 @@
 
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             const key_program = {
                 switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
@@ -296,6 +305,7 @@
                 actual: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="actual"]')[0].value,
                 plan: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="plan"]')[0].value,
                 comments: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
+                project_name: projectData
             }
             // Show the loader
             $('#loader').css('display', 'flex');
@@ -305,6 +315,8 @@
                 url: "/key_program_edit/" + objectId,
                 data: key_program,
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload()
                 }
             })
@@ -316,7 +328,8 @@
 
         $('.add-save-btn').on('click', function() {
             let objectId = "new";
-
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             // Extract values from the form
             const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off";
             const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').val();
@@ -335,6 +348,7 @@
                 actual: actual,
                 plan: plan,
                 comments: comments,
+                project_name: projectData
             };
 
             // Validate required fields
@@ -360,6 +374,8 @@
                 url: "/key_program/",
                 data: key_program,
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload();
                 }
             });
@@ -378,13 +394,6 @@
         return false;
     }
 }
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
 </script>
 <script>
     tail.select("#projectdata", {

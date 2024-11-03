@@ -62,7 +62,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='risk' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
                         <option value="" disabled >Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
@@ -315,6 +315,13 @@ o    High – potentially high impact to milestones + path to avoidance is compl
 
 </script>
 <script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+</script>
+<script>
     $('#example').bootstrapTable({
         exportOptions: {
             fileName: 'Risks'
@@ -341,6 +348,8 @@ o    High – potentially high impact to milestones + path to avoidance is compl
 
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             const risk = {
                 switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
                 risk_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
@@ -351,7 +360,8 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 mitigations: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
                 trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
-                impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
+                impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value,
+                project_name:  projectData
             }
 
             // Regular expression for validation
@@ -371,6 +381,8 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 url: "/risk_edit_table/" + objectId,
                 data: risk,
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload()
                 }
             })
@@ -394,6 +406,10 @@ o    High – potentially high impact to milestones + path to avoidance is compl
             const riskInitiated = $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]').val();
             const impact = $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]').val();
 
+            // Retrieve the selected project data value
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
             // Create the risk object
             const risk = {
                 switch_button: switchButton,
@@ -406,6 +422,7 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 trigger_date: triggerDate,
                 risk_initiated: riskInitiated,
                 impact: impact,
+                project_name: projectData
             };
 
             // Regular expression for validation
@@ -442,6 +459,8 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                 url: "/risk/",
                 data: risk,
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload();
                 },
                 error: function(xhr, status, error) {
@@ -465,13 +484,6 @@ o    High – potentially high impact to milestones + path to avoidance is compl
         return false;
     }
 }
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
 </script>
 <script>
     tail.select("#projectdata", {

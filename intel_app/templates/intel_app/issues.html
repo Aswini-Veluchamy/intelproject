@@ -58,7 +58,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='issues' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
                         <option value="" disabled >Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
@@ -284,6 +284,13 @@
 
 </script>
 <script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+</script>
+<script>
     $('#example').bootstrapTable({
         exportOptions: {
             fileName: 'Issues'
@@ -308,6 +315,10 @@
             $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
         });
 
+        // Retrieve the selected project data value
+        const projectData = $('#projectdata').val();
+        document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
         $('.save-btn').on('click', function() {
             let objectId = $(this).data('id');
             const issues = {
@@ -318,7 +329,8 @@
                 eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
                 trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
                 issues_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="issues_initiated"]')[0].value,
-                severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value
+                severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value,
+                project_name: projectData
             }
 
             // Regular expression for validation
@@ -337,6 +349,8 @@
                 url: "/issues_edit_table/" + objectId,
                 data: issues,
                 success: function(data) {
+                // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload()
                 }
             })
@@ -359,6 +373,10 @@
             const issuesInitiated = $('tr[data-a-id="' + objectId + '"] input[data-prop="issues_initiated"]').val();
             const severity = $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]').val();
 
+            // Retrieve the selected project data value
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
             // Validate required fields
             if (!issuesSummary || !status || !owner || !eta || !triggerDate || !issuesInitiated || !severity) {
                 alert("Please fill out all fields.");
@@ -375,6 +393,7 @@
                 trigger_date: triggerDate,
                 issues_initiated: issuesInitiated,
                 severity: severity,
+                project_name: projectData
             };
 
             // Regular expression for validation
@@ -395,6 +414,8 @@
                 url: "/issues/",
                 data: issues,
                 success: function(data) {
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload();
                 },
                 error: function(xhr, status, error) {
@@ -418,13 +439,6 @@
         return false;
     }
 }
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
 </script>
 <script>
     tail.select("#projectdata", {
