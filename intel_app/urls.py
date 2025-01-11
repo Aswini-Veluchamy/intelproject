@@ -35,4 +35,5 @@ urlpatterns = [
     path('edit_project/<int:pk>/', views.edit_project_list, name='edit_project_list'),
     path('schedule_data/', views.schedule_data, name='schedule_data'),
     path('schedule_data_edit_table/<str:pk>', views.schedule_data_edit_table, name='schedule_data_edit_table'),
+    path('ajax-handler/', views.ajax_handler, name='ajax_handler'),
 ]

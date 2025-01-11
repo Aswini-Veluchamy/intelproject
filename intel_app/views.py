@@ -3,6 +3,7 @@ from http.client import responses
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.urls import reverse
 import json
 import time
@@ -96,7 +97,6 @@ def project(request):
         else:
             create_project(project)
             messages = f'project created successfully ....{project}'
-            print(messages)
             return HttpResponseRedirect(reverse('project_list'))
 
     else:
@@ -140,11 +140,6 @@ def home(request):
         if project_name:
             user_projects = update_queryset_values(user_projects, project_name)
             project_data = project_name
-
-        print("------- home", user_projects, request.COOKIES)
-        print(project_data)
-        print("----------------------------------")
-
         try:
             key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, project_data)
         except TypeError:
@@ -184,15 +179,9 @@ def key_message(request):
             project_data = request.COOKIES['primary_project']
             # based on the user filtering the data
             project_name = request.COOKIES.get('projectData')
-            print("----------------------------------")
-            print(user_projects, project_name, request.COOKIES)
             if project_name:
                 user_projects = update_queryset_values(user_projects, project_name)
                 project_data = project_name
-
-            print("------- key message ", user_projects)
-            print(project_data)
-            print("----------------------------------")
             try:
                 key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, project_data)
             except TypeError:
@@ -225,15 +214,9 @@ def details(request):
             project_data = request.COOKIES['primary_project']
             # based on the user filtering the data
             project_name = request.COOKIES.get('projectData')
-            print("----------------------------------")
-            print(user_projects, project_name)
             if project_name:
                 user_projects = update_queryset_values(user_projects, project_name)
                 project_data = project_name
-
-            print("------- Details ", user_projects)
-            print(project_data)
-            print("----------------------------------")
             try:
                 details_data = get_key_msg_or_details_data(DETAILS_TABLE, project_data)
             except TypeError:
@@ -282,14 +265,9 @@ def risks(request):
             user_projects = ast.literal_eval(user_project)
             project_data = request.COOKIES['primary_project']
             project_name = request.COOKIES.get('projectData')
-            print("----------------------------------")
-            print(user_projects)
-            print(project_name, '---- Risk cookie', request.COOKIES)
             if project_name:
                 user_projects = update_queryset_values(user_projects, project_name)
                 project_data = project_name
-            print(user_projects)
-            print("----------------------------------")
             result = get_data(user, RISK_TABLE, project_data)
             if result:
                 status = ['Open', 'Closed']
@@ -359,16 +337,14 @@ def key_program(request):
                 user_projects = request.COOKIES['project']
                 user = request.COOKIES['user_id']
                 user_projects = ast.literal_eval(user_projects)
-                messages = f'Metric already exists in {project_data}'
-                return render(request, 'intel_app/key_program.html',
-                              {'messages': messages, 'project': user_projects,
-                                        'user': user})
+                messages = f'Metric already exists {metric}'
+                return JsonResponse({'messages': messages, 'status': 'error'}, status=200)
 
         ''' storing data into database'''
         load_key_program_metric_data([(display, metric, fv_target, current_week_actual,
                                        current_week_plan, status, comments, metric_id, project_data, user)],
                                      KEY_PROGRAM_METRIC_TABLE)
-        return HttpResponseRedirect(reverse("key_program"))
+        return JsonResponse({'messages': 'Metric added successfully.', 'status': 'success'}, status=200)
     else:
         try:
             user_projects = request.COOKIES['project']
@@ -376,14 +352,9 @@ def key_program(request):
             user_projects = ast.literal_eval(user_projects)
             project_data = request.COOKIES['primary_project']
             project_name = request.COOKIES.get('projectData')
-            print("----------------------------------")
-            print(user_projects)
-            print(project_name, '---- Key Program cookie', request.COOKIES)
             if project_name:
                 user_projects = update_queryset_values(user_projects, project_name)
                 project_data = project_name
-            print(user_projects)
-            print("----------------------------------")
             result = get_data(user, KEY_PROGRAM_METRIC_TABLE,  project_data)
             if result:
                 status = ['R', 'G', 'B', 'Y']
@@ -457,14 +428,9 @@ def schedule(request):
             project_data = request.COOKIES['primary_project']
             user_projects = ast.literal_eval(user_projects)
             project_name = request.COOKIES.get('projectData')
-            print("----------------------------------")
-            print(user_projects)
-            print(project_name, '----schedule cookie', request.COOKIES)
             if project_name:
                 user_projects = update_queryset_values(user_projects, project_name)
                 project_data = project_name
-            print(user_projects)
-            print("----------------------------------")
             result = get_data(user, SCHEDULE_TABLE, project_data, False)
             if result:
                 status = ['R', 'G', 'B', 'Y', 'Done']
@@ -523,8 +489,6 @@ def links(request):
         comments = request.POST['comments_links']
         user = request.COOKIES['user_id']
         project_name = request.POST['project_name']
-        print('Links project: ---', project_name)
-
         links_id = str(int(time.time() * 1000)) + '_' + user
         # original table
         load_links_data(LINKS_TABLE, display, links_url, comments, links_id, project_name, user)
@@ -537,15 +501,9 @@ def links(request):
             user_project = ast.literal_eval(user_project)
             project_data = request.COOKIES['primary_project']
             project_name = request.COOKIES.get('projectData')
-            print("----------------------------------")
-            print(user_project, project_name)
             if project_name:
                 user_project = update_queryset_values(user_project, project_name)
                 project_data = project_name
-
-            print(project_data)
-            print(user_project)
-            print("----------------------------------")
             result = get_data(user, LINKS_TABLE, project_data)
             response = render(request, 'intel_app/links.html', {'project': user_project, 'data': result,
                                                             'user': user})
@@ -684,15 +642,9 @@ def issues(request):
             project_data = request.COOKIES['primary_project']
             user_projects = ast.literal_eval(user_projects)
             project_name = request.COOKIES.get('projectData')
-            print("----------------------------------")
-            print(user_projects, project_name)
             if project_name:
                 user_projects = update_queryset_values(user_projects, project_name)
                 project_data = project_name
-
-            print("------- issues ", user_projects)
-            print(project_data)
-            print("----------------------------------")
             result = get_data(user, ISSUES_TABLE, project_data)
             if result:
                 status = ['Open', 'Closed']
@@ -858,3 +810,14 @@ def schedule_data_edit_table(request, pk):
         #record = get_schedule_record(pk)
         #update_schedule_data([(schedule_comments, pk)])
         return HttpResponseRedirect(reverse("schedule"))
+
+
+@csrf_exempt
+def ajax_handler(request):
+    if request.method == "POST":
+        dropdown_id = request.POST.get("dropdown")
+        value = request.POST.get("value")
+        print(f"Received value: {value} from {dropdown_id}")
+        return JsonResponse({"status": "success", "message": f"Value {value} from {dropdown_id} processed."})
+    else:
+        return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)

@@ -49,6 +49,9 @@
           opacity: 1;
           right: 0;
         }
+        .form-select {
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -102,7 +105,29 @@
         <div class="container" style="max-width:100%;">
             <div class="alert alert-light alert-dismissible fade show" role="alert">
                 <strong>Welcome! {{user}}</strong> <a href="https://google.com" target="_blank">Readme.md</a>
-                <!--<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+                <div class="dropdown-group d-flex gap-2 align-items-center">
+                    <label for="dropdown1">Schedule:</label>
+                    <select id="dropdown1" class="form-select" aria-label="Dropdown 1" onchange="sendDropdownValue('dropdown1')">
+                        <option value="Red">Red</option>
+                        <option value="Green">Green</option>
+                        <option value="Blue">Blue</option>
+                        <option value="Yellow">Yellow</option>
+                    </select>
+                    <label for="dropdown2">BBox:</label>
+                    <select id="dropdown2" class="form-select" aria-label="Dropdown 2" onchange="sendDropdownValue('dropdown2')">
+                        <option value="Red">Red</option>
+                        <option value="Green">Green</option>
+                        <option value="Blue">Blue</option>
+                        <option value="Yellow">Yellow</option>
+                    </select>
+                    <label for="dropdown3">Quantity:</label>
+                    <select id="dropdown3" class="form-select" aria-label="Dropdown 3" onchange="sendDropdownValue('dropdown3')">
+                        <option value="Red">Red</option>
+                        <option value="Green">Green</option>
+                        <option value="Blue">Blue</option>
+                        <option value="Yellow">Yellow</option>
+                    </select>
+                </div>
             </div>
         </div>
         <br>
@@ -232,6 +257,30 @@
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
 <script src="{% static 'intel_app/ckeditor.js' %}"></script>
+<script>
+    function sendDropdownValue(dropdownId) {
+        const dropdownValue = document.getElementById(dropdownId).value;
+
+        if (dropdownValue) {
+            $.ajax({
+                url: "{% url 'ajax_handler' %}", // Update with your Django URL pattern
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    dropdown: dropdownId,
+                    value: dropdownValue
+                },
+                success: function(response) {
+                   window.location.reload();
+                },
+                error: function(error) {
+                    alert("Error submitting value: " + error.responseText);
+                }
+            });
+        }
+    }
+</script>
+
 <script>
     $("#filter").on("keyup", function() {
        var value = $(this).val().toLowerCase();
