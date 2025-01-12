@@ -102,31 +102,43 @@
 <main>
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
-        <div class="container" style="max-width:100%;">
-            <div class="alert alert-light alert-dismissible fade show" role="alert">
-                <strong>Welcome! {{user}}</strong> <a href="https://google.com" target="_blank">Readme.md</a>
-                <div class="dropdown-group d-flex gap-2 align-items-center">
-                    <label for="dropdown1">Schedule:</label>
-                    <select id="dropdown1" class="form-select" aria-label="Dropdown 1" onchange="sendDropdownValue('dropdown1')">
-                        <option value="Red">Red</option>
-                        <option value="Green">Green</option>
-                        <option value="Blue">Blue</option>
-                        <option value="Yellow">Yellow</option>
-                    </select>
-                    <label for="dropdown2">BBox:</label>
-                    <select id="dropdown2" class="form-select" aria-label="Dropdown 2" onchange="sendDropdownValue('dropdown2')">
-                        <option value="Red">Red</option>
-                        <option value="Green">Green</option>
-                        <option value="Blue">Blue</option>
-                        <option value="Yellow">Yellow</option>
-                    </select>
-                    <label for="dropdown3">Quantity:</label>
-                    <select id="dropdown3" class="form-select" aria-label="Dropdown 3" onchange="sendDropdownValue('dropdown3')">
-                        <option value="Red">Red</option>
-                        <option value="Green">Green</option>
-                        <option value="Blue">Blue</option>
-                        <option value="Yellow">Yellow</option>
-                    </select>
+        <div class="container" style="width:100%;">
+            <div class="alert alert-light alert-dismissible fade show d-flex align-items-center justify-content-between" role="alert" style="gap: 10px;">
+                <!-- Left Section: Welcome Message and Link -->
+                <div class="d-flex align-items-center" style="gap: 5px;">
+                    <strong>Welcome! {{user}}</strong>
+                    <a href="https://google.com" target="_blank">Readme.md</a>
+                </div>
+
+                <!-- Right Section: Dropdowns -->
+                <div class="dropdown-group d-flex gap-2" style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="dropdown1">Schedule:</label>
+                        <select id="dropdown1" class="form-select" aria-label="Dropdown 1" onchange="sendDropdownValue('dropdown1')">
+                            <option value="Red">Red</option>
+                            <option value="Green">Green</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Yellow">Yellow</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="dropdown2">BBox:</label>
+                        <select id="dropdown2" class="form-select" aria-label="Dropdown 2" onchange="sendDropdownValue('dropdown2')">
+                            <option value="Red">Red</option>
+                            <option value="Green">Green</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Yellow">Yellow</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="dropdown3">Quantity:</label>
+                        <select id="dropdown3" class="form-select" aria-label="Dropdown 3" onchange="sendDropdownValue('dropdown3')">
+                            <option value="Red">Red</option>
+                            <option value="Green">Green</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Yellow">Yellow</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
