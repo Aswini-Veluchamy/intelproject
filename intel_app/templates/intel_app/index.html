@@ -113,30 +113,27 @@
                 <!-- Right Section: Dropdowns -->
                 <div class="dropdown-group d-flex gap-2" style="display: flex; align-items: center; gap: 10px;">
                     <div style="display: flex; align-items: center; gap: 5px;">
-                        <label for="dropdown1">Schedule:</label>
-                        <select id="dropdown1" class="form-select" aria-label="Dropdown 1" onchange="sendDropdownValue('dropdown1')">
-                            <option value="Red">Red</option>
-                            <option value="Green">Green</option>
-                            <option value="Blue">Blue</option>
-                            <option value="Yellow">Yellow</option>
+                        <label for="Schedule">Schedule:</label>
+                        <select id="Schedule" class="form-select" aria-label="Dropdown 1" onchange="sendDropdownValue('Schedule')">
+                             {% for i in schedule_dropdown %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div style="display: flex; align-items: center; gap: 5px;">
-                        <label for="dropdown2">BBox:</label>
-                        <select id="dropdown2" class="form-select" aria-label="Dropdown 2" onchange="sendDropdownValue('dropdown2')">
-                            <option value="Red">Red</option>
-                            <option value="Green">Green</option>
-                            <option value="Blue">Blue</option>
-                            <option value="Yellow">Yellow</option>
+                        <label for="BBOX">BBox:</label>
+                        <select id="BBOX" class="form-select" aria-label="Dropdown 2" onchange="sendDropdownValue('BBOX')">
+                            {% for i in bbox_dropdown %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div style="display: flex; align-items: center; gap: 5px;">
-                        <label for="dropdown3">Quantity:</label>
-                        <select id="dropdown3" class="form-select" aria-label="Dropdown 3" onchange="sendDropdownValue('dropdown3')">
-                            <option value="Red">Red</option>
-                            <option value="Green">Green</option>
-                            <option value="Blue">Blue</option>
-                            <option value="Yellow">Yellow</option>
+                        <label for="Quantity">Quantity:</label>
+                        <select id="Quantity" class="form-select" aria-label="Dropdown 3" onchange="sendDropdownValue('Quantity')">
+                            {% for i in quantity_dropdown %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>

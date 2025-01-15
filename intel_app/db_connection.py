@@ -503,5 +503,36 @@ def get_old_project(pk):
     return proj_data.get('project')
 
 
+def create_project_status(project_name, quantity_type, status, created_by, modified_by):
+    """ create project status record in db"""
+    try:
+        conn, cursor = db_connection()
+        query = f"INSERT INTO project_status (project_name, quantity_type, status, created_by, modified_by) VALUES (%s, %s, %s, %s, %s)"
+        data = (project_name, quantity_type, status, created_by, modified_by)
+        cursor.execute(query, data)
+        conn.commit()
+        print(f"project status created successfully for {project_name}!")
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+
+
+def get_project_status(project_name, quantity_type):
+    conn, cursor = db_connection()
+    dict_cursor = conn.cursor(dictionary=True)
+    sql = f"SELECT * FROM project_status where project_name='{project_name}' and quantity_type='{quantity_type}'"
+    dict_cursor.execute(sql)
+    record = dict_cursor.fetchone()
+    conn.close()
+    return record or {}
+
+def update_project_status(project_name, quantity_type, status, modified_by):
+    conn, cursor = db_connection()
+    sql = f"UPDATE project_status SET status='{status}', modified_by='{modified_by}' WHERE project_name='{project_name}' and quantity_type='{quantity_type}'"
+    cursor.execute(sql)
+    print(f'data updated in project_status table for {project_name}....')
+    conn.commit()
+    conn.close()
+
+
 
 

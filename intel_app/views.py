@@ -21,6 +21,7 @@ from .db_connection import update_password, load_issues_data, update_issues_data
 from .db_connection import get_data, get_key_msg_or_details_data, update_deleted_record, get_bbox_data
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
 from .db_connection import get_distinct_metric, update_user_projects, get_old_project
+from .db_connection import create_project_status, get_project_status, update_project_status
 
 import ast
 
@@ -148,15 +149,32 @@ def home(request):
             details_data = get_key_msg_or_details_data(DETAILS_TABLE, project_data)
         except TypeError:
             details_data = None
+
+        # retrieve project status values
+        schedule_dropdown = get_project_status_dropdowns(project_name, 'Schedule')
+        bbox_dropdown = get_project_status_dropdowns(project_name, 'BBOX')
+        quantity_dropdown = get_project_status_dropdowns(project_name, 'Quantity')
+
         # return the data to UI
         response = render(request, 'intel_app/index.html', {'project': user_projects,
                                                         'key_mess_data': key_mess_data,
-                                                        'details_data': details_data, 'user': user})
+                                                        'details_data': details_data, 'user': user, "schedule_dropdown": schedule_dropdown,
+                                                        'bbox_dropdown': bbox_dropdown, 'quantity_dropdown': quantity_dropdown})
         response.set_cookie('project', user_projects)
         response.set_cookie('primary_project', project_data)
         return response
     except KeyError:
         return HttpResponseRedirect(reverse('login'))
+
+
+def get_project_status_dropdowns(project_name, quantity_type):
+    new_dropdown = ['Select value', 'R', 'G', 'B', 'Y']
+    update_dropdown = ['R', 'G', 'B', 'Y']
+    status_value = get_project_status(project_name, quantity_type)
+    if len(status_value) == 0:
+        return new_dropdown
+    else:
+        return update_queryset_values(update_dropdown, status_value.get('status'))
 
 
 @csrf_exempt
@@ -815,9 +833,15 @@ def schedule_data_edit_table(request, pk):
 @csrf_exempt
 def ajax_handler(request):
     if request.method == "POST":
-        dropdown_id = request.POST.get("dropdown")
-        value = request.POST.get("value")
-        print(f"Received value: {value} from {dropdown_id}")
-        return JsonResponse({"status": "success", "message": f"Value {value} from {dropdown_id} processed."})
+        quantity_type = request.POST.get("dropdown")
+        status = request.POST.get("value")
+        project_name = request.COOKIES.get('projectData')
+        created_by = request.COOKIES['user_id']
+        status_check = get_project_status(project_name, quantity_type)
+        if len(status_check) == 0:
+            create_project_status(project_name, quantity_type, status, created_by, created_by)
+        else:
+            update_project_status(project_name, quantity_type, status, created_by)
+        return JsonResponse({"status": "success", "message": f"Value {status} from {quantity_type} processed."})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)
