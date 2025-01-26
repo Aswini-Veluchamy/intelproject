@@ -1,5 +1,3 @@
-from http.client import responses
-
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
@@ -10,7 +8,7 @@ import time
 import urllib.parse
 
 from .config import DEFAULT_PASSWORDS, KEY_PROGRAM_METRIC_TABLE, KEY_MESSAGE_TABLE, LINKS_TABLE
-from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, BBOX_TABLE, LINKS_BKP_TABLE
+from .config import RISK_TABLE, DETAILS_TABLE, SCHEDULE_TABLE, USER_NAMES, ISSUES_TABLE, LINKS_BKP_TABLE
 from .config import ISSUES_BKP_TABLE, RISK_BKP_TABLE, KEY_PROGRAM_METRIC_BKP_TABLE, MIGRATE_PROJECTS
 
 from .db_connection import load_key_message_data, load_risk_data, update_risk_data, load_details_data
@@ -323,9 +321,6 @@ def risk_edit_table(request, pk):
         # updating the project
         update_risk_data([(display, risk_summary, risk_area, status, owner, consequence, mitigations,
                            trigger_date, risk_initiated, impact, pk)])
-        # load risk data to bkp table
-        load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
-                        trigger_date, risk_initiated, impact, pk, primary_project, user), RISK_BKP_TABLE)
         return HttpResponseRedirect(reverse("risk"))
 
 
@@ -348,7 +343,7 @@ def key_program(request):
         if project_name:
             project_data = project_name
 
-        ''' verify the metirc data'''
+        ''' verify the metric data'''
         metric_data = get_distinct_metric(project_data)
         if metric_data:
             if metric in metric_data:
@@ -647,7 +642,7 @@ def issues(request):
         issues_initiated = check_por_trend_values(issues_initiated)
 
         ''' storing data into database'''
-        # load isuues data to external database
+        # load issues data to external database
         load_issues_data(ISSUES_TABLE,
                          (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity,
                           issues_id, project_data, user)
@@ -697,11 +692,6 @@ def issues_edit_table(request, pk):
 
         # updating the table
         update_issues_data([(display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity, pk)])
-        # backup table
-        load_issues_data(ISSUES_BKP_TABLE,
-                         (display, issues_summary, status, owner, eta, trigger_date, issues_initiated, severity,
-                          pk,primary_project, user, False, 'None', datetime.now().date())
-                         )
         return HttpResponseRedirect(reverse("issues"))
 
 
@@ -738,11 +728,11 @@ def delete_issues_data(request, pk):
     deleted_by = request.COOKIES['user_id']
     record = get_record(ISSUES_TABLE, 'issues_id', pk)
     # loading backup table
-    load_issues_data(
-        ISSUES_BKP_TABLE, (record['display'], record['issues_summary'], record['status'],
-        record['owner'], record['eta'], record['trigger_date'], record['issues_initiated'],
-        record['severity'],pk, record['project'], record['user'], True, deleted_by, datetime.now().date())
-    )
+    # load_issues_data(
+    #     ISSUES_BKP_TABLE, (record['display'], record['issues_summary'], record['status'],
+    #     record['owner'], record['eta'], record['trigger_date'], record['issues_initiated'],
+    #     record['severity'],pk, record['project'], record['user'], True, deleted_by, datetime.now().date())
+    # )
     # delete the record
     delete_record(ISSUES_TABLE, 'issues_id', pk)
     return HttpResponseRedirect(reverse("issues"))
@@ -845,3 +835,59 @@ def ajax_handler(request):
         return JsonResponse({"status": "success", "message": f"Value {status} from {quantity_type} processed."})
     else:
         return JsonResponse({"status": "error", "message": "Invalid request method."}, status=400)
+
+
+@csrf_exempt
+def risk_to_issues_table(request, pk):
+    if request.method == "POST":
+        display = request.POST['switch_button']
+        risk_summary = request.POST['risk_summary']
+        status = request.POST['status']
+        owner = request.POST['owner']
+        trigger_date = request.POST['trigger_date']
+        risk_initiated = request.POST['risk_initiated']
+        impact = request.POST['impact']
+        project_name = request.POST['project_name']
+        user = request.COOKIES['user_id']
+        eta = request.POST['eta']
+        issues_id = pk
+
+        eta = check_por_trend_values(eta)
+
+        # load issues data to external database
+        load_issues_data(ISSUES_TABLE,
+                         (display, risk_summary, status, owner, eta, trigger_date, risk_initiated, impact,
+                          issues_id, project_name, user)
+                         )
+        # delete the record
+        delete_record(RISK_TABLE, 'risk_id', pk)
+        messages = f'Risk data transferred to the issues table'
+        return JsonResponse({'messages': messages, 'status': 'success'}, status=200)
+
+
+@csrf_exempt
+def issues_to_risk_table(request, pk):
+    if request.method == "POST":
+        display = request.POST['switch_button']
+        risk_summary = request.POST['issues_summary']
+        risk_area = request.POST['risk_area']
+        status = request.POST['status']
+        owner = request.POST['owner']
+        consequence = request.POST['consequence']
+        mitigations = request.POST['mitigation']
+        trigger_date = request.POST['trigger_date']
+        risk_initiated = request.POST['issues_initiated']
+        impact = request.POST['severity']
+        user = request.COOKIES['user_id']
+        risk_id = pk
+        project_name = request.POST['project_name']
+
+        # load risk data to external database
+        load_risk_data((display, risk_summary, risk_area, status, owner, consequence, mitigations,
+                        trigger_date, risk_initiated, impact, risk_id, project_name, user), RISK_TABLE)
+
+        # delete the record
+        delete_record(ISSUES_TABLE, 'issues_id', pk)
+        messages = f'Issues data transferred to the Risk table'
+        return JsonResponse({'messages': messages, 'status': 'success'}, status=200)
+
