@@ -2,402 +2,592 @@
 {% load static %}
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Key Program Metrics</title>
-    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
-    <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
+  <meta charset="utf-8">
+  <title>Key Program Metrics</title>
+  <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}" />
+  <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
 
-    <style>
-        tr[data-non-edit="true"] {
-
-        }
-        tr[data-non-edit="false"] {
-            display : none;
-        }
-        tr[data-edit="true"] {
-
-        }
-        tr[data-edit="false"] {
-            display : none;
-        }
-
-        tr[data-add="false"] {
-            display : none;
-        }
-        .highlight {
-            border-color: red;
-        }
-    </style>
-<body style="background-color:#ffffff!important;">
-
-<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
-    <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
-    </div>
-</div>
-
-<!-- Example Code -->
-<nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-        <a class="navbar-brand">
-            <span>Intel</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-md-auto gap-2">
-                <form method="POST" action="{% url 'project_change' func_name='key_program' %}" id="projectForm">
-                    {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
-                        <option value="" disabled >Projects</option>
-                        {% for i in project %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
-                    <p style="display:none;">{{error}}</p>
-                </form>
-                <li class="nav-item rounded">
-                    <a class="nav-link ho" href="{% url 'home' %}">
-                        <i class="fa fa-home"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-                <li class="nav-item dropdown rounded">
-                    <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-user"></i>
-                        <span>{{user}}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<br>
-<main>
-    <!-- Service 4 - Bootstrap Brain Component -->
-    <section>
-        <div class="container"><!--style="max-width:100%;"-->
-            <div class="card">
-                <div class="card-header">
-                    <b>Key Program Metrics</b>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-sm add-btn"
-                            style="float:right;">
-                        Add Metric
-                    </button>
-                </div>
-                <div class="card-body">
-                    <form>
-                    <table class="table table-bordered table-striped" id="example"
-                           data-toggle="table"
-                           data-search="true"
-                           data-search-align="left"
-                           data-show-columns="true"
-                           data-show-toggle="false"
-                           data-show-columns-toggle-all="true"
-                           data-show-export="true"
-                           data-export-data-type="all"
-                           data-response-handler="responseHandler"
-                           data-show-fullscreen="true"
-                           data-buttons-class="primary btn-sm">
-                        <thead>
-                        <tr>
-                            <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
-                            <th scope="col" nowrap data-field="status" class="w-50 p-3 status" data-formatter="nameFormatter">Status</th>
-                            <th scope="col" nowrap data-field="metric" class="w-50 p-3 metric">Metric</th>
-                            <th scope="col" nowrap data-field="target" class="w-50 p-3 target">FV Target</th>
-                            <th scope="col" nowrap data-field="actual" class="w-50 p-3 actual">Current Week Actual</th>
-                            <th scope="col" nowrap data-field="plan" class="w-50 p-3 plan">Current Week Plan</th>
-                            <th scope="col" nowrap data-field="comments" class="w-50 p-3 comments">Comments</th>
-                            <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody data-body="key_program">
-                        <tr data-a-id="new" data-add="false">
-                            <td class="switch_button">
-                                <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
-                            </td>
-                            <td class="status">
-                                <select class="form-select" data-prop="status" name="status" required="required">
-                                    <option value="" disabled="disabled" selected="selected">Select Status</option>
-                                    <option value="R">R</option>
-                                    <option value="G">G</option>
-                                    <option value="B">B</option>
-                                    <option value="Y">Y</option>
-                                </select>
-                            </td>
-                            <td class="metric">
-                              <select class="form-select" data-prop="metric" name="metric" required="required">
-                                    <option value="" disabled="disabled" selected="selected">Select metric</option>
-                                    <option value="test1">test1</option>
-                                    <option value="test2">test2</option>
-                                </select>
-                            </td>
-                            <td class="target">
-                                <textarea class="form-control" data-prop="target" name="target" placeholder="Enter Target" cols="3" maxlength="250" required="required"></textarea>
-                            </td>
-                            <td class="actual">
-                                <textarea class="form-control" data-prop="actual" name="actual" placeholder="Enter Current Week Actual" cols="3" maxlength="250" required="required"></textarea>
-                            </td>
-                            <td class="plan">
-                                <textarea class="form-control" data-prop="plan" name="plan" placeholder="Enter Current Week Plan" cols="3" maxlength="250" required="required"></textarea>
-                            </td>
-                            <td class="comments">
-                                <textarea class="form-control" data-prop="comments" name="comments" placeholder="Enter Comments" cols="3" maxlength="250" required="required"></textarea>
-                            </td>
-                            <td class="text-center">
-                                <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Metric">
-                                    <i class="fa-solid fa-check"></i>
-                                </button>
-                                <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Metric">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% for i in data %}
-                        <tr data-n-id="{{ i.metric_id }}" data-non-edit="true">
-                            <td nowrap class="switch_button">{{ i.display }}</td>
-                            <td nowrap class="status">{{ i.status.0 }}</td>
-                            <td nowrap class="metric">{{ i.metric }}</td>
-                            <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
-                            <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
-                            <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
-                            <td nowrap class="comments">{{ i.comments | linebreaks }}</td>
-                            <td class="text-center">
-                                <button data-id="{{ i.metric_id }}" type="button" class="btn btn-info btn-sm edit-btn" title="Edit Metric">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button type="button" class="btn btn-danger btn-sm" title="Delete Metric">
-                                    <a style="text-decoration:none;color:#fff;" href="{% url 'key_program_delete' pk=i.metric_id %}" onclick="return confirmDelete()">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-e-id="{{ i.metric_id }}" data-edit="false">
-                            <td class="switch_button">
-                                <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
-                            </td>
-                            <td class="status">
-                                <select class="form-select" data-prop="status" name="status" required="required">
-                                    {% for i in i.status %}
-                                    <option value="{{i}}">{{i}}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td class="metric">
-                                <textarea class="form-control" data-prop="metric" name="metric" cols="3" maxlength="250" required="required" disabled="disabled">{{ i.metric }}</textarea>
-                            </td>
-                            <td class="target">
-                                <textarea class="form-control" data-prop="target" name="target" cols="3" maxlength="250" required="required">{{ i.fv_target }}</textarea>
-                            </td>
-                            <td class="actual">
-                                <textarea class="form-control" data-prop="actual" name="actual" cols="3" maxlength="250" required="required">{{ i.current_week_actual }}</textarea>
-                            </td>
-                            <td class="plan">
-                                <textarea class="form-control" data-prop="plan" name="plan" cols="3" maxlength="250" required="required">{{ i.current_week_plan }}</textarea>
-                            </td>
-                            <td class="comments">
-                                <textarea class="form-control" data-prop="comments" name="comments" cols="3" maxlength="250" required="required">{{i.comments}}</textarea>
-                            </td>
-                            <div class="text-center">
-                                <td>
-                                    <button data-id="{{ i.metric_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Metric">
-                                        <i class="fa-solid fa-check"></i>
-                                    </button>
-                                    <button data-id="{{ i.metric_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Metric">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </td>
-                            </div>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                        </form>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-<!-- Include the Quill library -->
-<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-<script src="{% static 'intel_app/js/quill.js' %}"></script>
-<script src="{% static 'intel_app/table/popper.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
-<script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
-<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
-<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
-
-<script>
-    function nameFormatter(value, row) {
-      var icon = row.status === 'R'  ? 'fa-circle fa-sm text-danger' :
-      row.status === 'G'  ? 'fa-circle fa-sm text-success' :
-      row.status === 'Y'  ? 'fa-circle fa-sm text-warning' :
-      row.status === 'B'  ? 'fa-circle fa-sm text-primary' : 'none'
-      return '<i class="fa ' + icon + '"></i> ' + value
+  <style>
+    tr[data-non-edit="true"] { }
+    tr[data-non-edit="false"] {
+      display: none;
+    }
+    tr[data-edit="true"] { }
+    tr[data-edit="false"] {
+      display: none;
     }
 
-</script>
-<script>
+    tr[data-add="false"] {
+      display: none;
+    }
+
+    .highlight {
+      border-color: red;
+    }
+  </style>
+</head>
+<body style="background-color:#ffffff!important;">
+  <!-- Loader -->
+  <div id="loader"
+       style="display: none; position: fixed; top: 0; left: 0; width: 100%;
+              height: 100%; background: rgba(255, 255, 255, 0.8);
+              z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand">
+        <span>Intel</span>
+      </a>
+      <button class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-md-auto gap-2">
+          <form method="POST" action="{% url 'project_change' func_name='key_program' %}" id="projectForm">
+            {% csrf_token %}
+            <select name="projectdata" id="projectdata"
+                    onchange="this.form.submit();">
+              <option value="" disabled>Projects</option>
+              {% for i in project %}
+                <option value="{{ i }}">{{ i }}</option>
+              {% endfor %}
+            </select>
+            <p style="display:none;">{{ error }}</p>
+          </form>
+
+          <li class="nav-item rounded">
+            <a class="nav-link ho" href="{% url 'home' %}">
+              <i class="fa fa-home"></i>
+              <span>Home</span>
+            </a>
+          </li>
+
+          <li class="nav-item dropdown rounded">
+            <a class="nav-link ho dropdown-toggle"
+               href="#"
+               id="navbarDropdown"
+               role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
+              <i class="fa fa-user"></i>
+              <span>{{ user }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <br>
+
+  <main>
+    <section>
+      <div class="container">
+        <div class="card">
+          <div class="card-header">
+            <b>Key Program Metrics</b>
+            <!-- Button to Add New Metric -->
+            <button type="button"
+                    class="btn btn-primary btn-sm add-btn"
+                    style="float:right;">
+              Add Metric
+            </button>
+          </div>
+          <div class="card-body">
+            <form>
+              <table class="table table-bordered table-striped"
+                     id="example"
+                     data-toggle="table"
+                     data-search="true"
+                     data-search-align="left"
+                     data-show-columns="true"
+                     data-show-toggle="false"
+                     data-show-columns-toggle-all="true"
+                     data-show-export="true"
+                     data-export-data-type="all"
+                     data-response-handler="responseHandler"
+                     data-show-fullscreen="true"
+                     data-buttons-class="primary btn-sm">
+                <thead>
+                  <tr>
+                    <th scope="col" nowrap
+                        data-field="switch_button"
+                        class="w-50 p-3 switch_button">
+                      On/Off
+                    </th>
+                    <th scope="col" nowrap
+                        data-field="status"
+                        class="w-50 p-3 status"
+                        data-formatter="nameFormatter">
+                      Status
+                    </th>
+                    <th scope="col" nowrap
+                        data-field="metric"
+                        class="w-50 p-3 metric">
+                      Metric
+                    </th>
+                    <th scope="col" nowrap
+                        data-field="target"
+                        class="w-50 p-3 target">
+                      FV Target
+                    </th>
+                    <th scope="col" nowrap
+                        data-field="actual"
+                        class="w-50 p-3 actual">
+                      Current Week Actual
+                    </th>
+                    <th scope="col" nowrap
+                        data-field="plan"
+                        class="w-50 p-3 plan">
+                      Current Week Plan
+                    </th>
+                    <th scope="col" nowrap
+                        data-field="comments"
+                        class="w-50 p-3 comments">
+                      Comments
+                    </th>
+                    <th scope="col" nowrap
+                        data-field="action"
+                        class="w-50 p-3 action">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody data-body="key_program">
+
+                  <!-- Row for Adding a New Metric -->
+                  <tr data-a-id="new" data-add="false">
+                    <td class="switch_button">
+                      <input type="checkbox"
+                             class="form-control"
+                             name="switch_button"
+                             checked
+                             data-prop="switch_button"
+                             data-toggle="toggle"
+                             data-onstyle="primary"
+                             data-offstyle="danger"
+                             required="required">
+                    </td>
+                    <td class="status">
+                      <select class="form-select"
+                              data-prop="status"
+                              name="status"
+                              required="required">
+                        <option value="" disabled selected>Select Status</option>
+                        <option value="R">R</option>
+                        <option value="G">G</option>
+                        <option value="B">B</option>
+                        <option value="Y">Y</option>
+                      </select>
+                    </td>
+                    <td class="metric">
+                      <select class="form-select"
+                              data-prop="metric"
+                              name="metric"
+                              required="required">
+                        <option value="" disabled selected>Select metric</option>
+                        <option value="Feature_Features">Feature_Features</option>
+                        <option value="IP Functional Validation_Simulation">IP Functional Validation_Simulation</option>
+                        <option value="IP Functional Validation_Emulation">IP Functional Validation_Emulation</option>
+                        <option value="IP Functional Validation_Functional Coverage">IP Functional Validation_Functional Coverage</option>
+                        <option value="IP Functional Validation_n_Code coverage Line | Branch | Toggle">IP Functional Validation_Code coverage Line | Branch | Toggle</option>
+                        <option value="IP Functional Validation_Driver - P1 WL traces">IP Functional Validation_Driver - P1 WL traces</option>
+                        <option value="IP Perf Validation_Synthetic tests(CLT)">IP Perf Validation_Synthetic tests(CLT)</option>
+                        <option value="IP Perf Validation_P1 Macro (GT)">IP Perf Validation_P1 Macro (GT)</option>
+                        <option value="IP Perf Validation_P1 WL Traces">IP Perf Validation_P1 WL Traces</option>
+                        <option value="Bugs_Incoming | Open | Total">Bugs_Incoming | Open | Total</option>
+                      </select>
+                    </td>
+                    <td class="target">
+                      <textarea class="form-control"
+                                data-prop="target"
+                                name="target"
+                                placeholder="Enter Target"
+                                cols="3"
+                                maxlength="250"
+                                required="required"></textarea>
+                    </td>
+                    <td class="actual">
+                      <textarea class="form-control"
+                                data-prop="actual"
+                                name="actual"
+                                placeholder="Enter Current Week Actual"
+                                cols="3"
+                                maxlength="250"
+                                required="required"></textarea>
+                    </td>
+                    <td class="plan">
+                      <textarea class="form-control"
+                                data-prop="plan"
+                                name="plan"
+                                placeholder="Enter Current Week Plan"
+                                cols="3"
+                                maxlength="250"
+                                required="required"></textarea>
+                    </td>
+                    <td class="comments">
+                      <textarea class="form-control"
+                                data-prop="comments"
+                                name="comments"
+                                placeholder="Enter Comments"
+                                cols="3"
+                                maxlength="250"
+                                required="required"></textarea>
+                    </td>
+                    <td class="text-center">
+                      <button data-id="new-save"
+                              type="button"
+                              class="btn btn-success btn-sm add-save-btn"
+                              title="Save Metric">
+                        <i class="fa-solid fa-check"></i>
+                      </button>
+                      <button data-id="new-cancel"
+                              type="reset"
+                              class="btn btn-danger btn-sm add-cancel-btn"
+                              title="Edit Metric">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Existing Rows -->
+                  {% for i in data %}
+                    <!-- Non-edit row -->
+                    <tr data-n-id="{{ i.metric_id }}" data-non-edit="true">
+                      <td nowrap class="switch_button">{{ i.display }}</td>
+                      <td nowrap class="status">{{ i.status.0 }}</td>
+                      <td nowrap class="metric">{{ i.metric }}</td>
+                      <td nowrap class="target">{{ i.fv_target | linebreaks }}</td>
+                      <td nowrap class="actual">{{ i.current_week_actual | linebreaks }}</td>
+                      <td nowrap class="plan">{{ i.current_week_plan | linebreaks }}</td>
+                      <td nowrap class="comments">{{ i.comments | linebreaks }}</td>
+                      <td class="text-center">
+                        <button data-id="{{ i.metric_id }}"
+                                type="button"
+                                class="btn btn-info btn-sm edit-btn"
+                                title="Edit Metric">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button"
+                                class="btn btn-danger btn-sm"
+                                title="Delete Metric">
+                          <a style="text-decoration:none;color:#fff;"
+                             href="{% url 'key_program_delete' pk=i.metric_id %}"
+                             onclick="return confirmDelete()">
+                            <i class="fas fa-trash"></i>
+                          </a>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Edit row (hidden by default) -->
+                    <tr data-e-id="{{ i.metric_id }}" data-edit="false">
+                      <td class="switch_button">
+                        <input class="form-control"
+                               type="checkbox"
+                               name="switch_button"
+                               data-prop="switch_button"
+                               value="1"
+                               data-toggle="toggle"
+                               data-on="On"
+                               data-off="Off"
+                               data-onstyle="primary"
+                               data-offstyle="danger"
+                               required="required"
+                               {% if i.display == 'On' %} checked {% endif %} />
+                      </td>
+                      <td class="status">
+                        <select class="form-select"
+                                data-prop="status"
+                                name="status"
+                                required="required">
+                          {% for st in i.status %}
+                            <option value="{{ st }}">{{ st }}</option>
+                          {% endfor %}
+                        </select>
+                      </td>
+                      <td class="metric">
+                        <textarea class="form-control"
+                                  data-prop="metric"
+                                  name="metric"
+                                  cols="3"
+                                  maxlength="250"
+                                  required="required"
+                                  disabled="disabled">{{ i.metric }}</textarea>
+                      </td>
+                      <td class="target">
+                        <textarea class="form-control"
+                                  data-prop="target"
+                                  name="target"
+                                  cols="3"
+                                  maxlength="250"
+                                  required="required">{{ i.fv_target }}</textarea>
+                      </td>
+                      <td class="actual">
+                        <textarea class="form-control"
+                                  data-prop="actual"
+                                  name="actual"
+                                  cols="3"
+                                  maxlength="250"
+                                  required="required">{{ i.current_week_actual }}</textarea>
+                      </td>
+                      <td class="plan">
+                        <textarea class="form-control"
+                                  data-prop="plan"
+                                  name="plan"
+                                  cols="3"
+                                  maxlength="250"
+                                  required="required">{{ i.current_week_plan }}</textarea>
+                      </td>
+                      <td class="comments">
+                        <textarea class="form-control"
+                                  data-prop="comments"
+                                  name="comments"
+                                  cols="3"
+                                  maxlength="250"
+                                  required="required">{{ i.comments }}</textarea>
+                      </td>
+                      <div class="text-center">
+                        <td>
+                          <button data-id="{{ i.metric_id }}"
+                                  type="submit"
+                                  class="btn btn-success btn-sm save-btn"
+                                  title="Save Metric">
+                            <i class="fa-solid fa-check"></i>
+                          </button>
+                          <button data-id="{{ i.metric_id }}"
+                                  type="reset"
+                                  class="btn btn-danger btn-sm cancel-btn"
+                                  title="Cancel Metric">
+                            <i class="fa-solid fa-xmark"></i>
+                          </button>
+                        </td>
+                      </div>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- JS Libraries -->
+  <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/quill.js' %}"></script>
+  <script src="{% static 'intel_app/table/popper.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
+  <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
+  <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
+  <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
+
+  <script>
+    // Color-coded icon for status
+    function nameFormatter(value, row) {
+      var icon = row.status === 'R' ? 'fa-circle fa-sm text-danger' :
+                 row.status === 'G' ? 'fa-circle fa-sm text-success' :
+                 row.status === 'Y' ? 'fa-circle fa-sm text-warning' :
+                 row.status === 'B' ? 'fa-circle fa-sm text-primary' : 'none';
+      return '<i class="fa ' + icon + '"></i> ' + value;
+    }
+  </script>
+
+  <script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+      document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+  </script>
+
+  <script>
     $('#example').bootstrapTable({
-        exportOptions: {
-            fileName: 'Key Program Metric'
-        },
-        exportTypes: ['excel'],
+      exportOptions: {
+        fileName: 'Key Program Metric'
+      },
+      exportTypes: ['excel']
     });
 
     $(document).ready(function() {
-        $('.edit-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
+      // Toggle edit mode
+      $('.edit-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        const non_Edit = $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit');
+        const edit = $(`tr[data-e-id="${objectId}"]`).attr('data-edit');
 
-        $('.cancel-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
+        $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit', (non_Edit === 'true' ? false : true));
+        $(`tr[data-e-id="${objectId}"]`).attr('data-edit', (edit === 'true' ? false : true));
+      });
 
-        $('.save-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const key_program = {
-                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-                status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-                metric: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="metric"]')[0].value,
-                target: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="target"]')[0].value,
-                actual: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="actual"]')[0].value,
-                plan: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="plan"]')[0].value,
-                comments: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments"]')[0].value,
-            }
-            // Show the loader
-            $('#loader').css('display', 'flex');
+      // Cancel edit
+      $('.cancel-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        const non_Edit = $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit');
+        const edit = $(`tr[data-e-id="${objectId}"]`).attr('data-edit');
 
-            $.ajax({
-                type: "POST",
-                url: "/key_program_edit/" + objectId,
-                data: key_program,
-                success: function(data) {
-                    window.location.reload()
-                }
-            })
-        });
+        $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit', (non_Edit === 'true' ? false : true));
+        $(`tr[data-e-id="${objectId}"]`).attr('data-edit', (edit === 'true' ? false : true));
+      });
 
-        $('.add-btn').on('click', function() {
-            $('tr[data-a-id="new"]').attr('data-add', true);
-        });
+      // Save metric
+      $('.save-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        const projectData = $('#projectdata').val();
 
-        $('.add-save-btn').on('click', function() {
-            let objectId = "new";
+        document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
 
-            // Extract values from the form
-            const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off";
-            const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').val();
-            const metric = $('tr[data-a-id="' + objectId + '"] select[data-prop="metric"]').val();
-            const target = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]').val();
-            const actual = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="actual"]').val();
-            const plan = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="plan"]').val();
-            const comments = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]').val();
+        const key_program = {
+          switch_button: $(`tr[data-e-id="${objectId}"] input[data-prop="switch_button"]`).prop("checked") ? "On" : "Off",
+          status: $(`tr[data-e-id="${objectId}"] select[data-prop="status"]`).val(),
+          metric: $(`tr[data-e-id="${objectId}"] textarea[data-prop="metric"]`).val(),
+          target: $(`tr[data-e-id="${objectId}"] textarea[data-prop="target"]`).val(),
+          actual: $(`tr[data-e-id="${objectId}"] textarea[data-prop="actual"]`).val(),
+          plan: $(`tr[data-e-id="${objectId}"] textarea[data-prop="plan"]`).val(),
+          comments: $(`tr[data-e-id="${objectId}"] textarea[data-prop="comments"]`).val(),
+          project_name: projectData
+        };
 
-            // Create the key_program object
-            const key_program = {
-                switch_button: switchButton,
-                status: status,
-                metric: metric,
-                target: target,
-                actual: actual,
-                plan: plan,
-                comments: comments,
-            };
+        // Show loader
+        $('#loader').css('display', 'flex');
 
-            // Validate required fields
-            if (!status || !metric || !target || !actual || !plan || !comments) {
-                alert("Please fill out all fields.");
-                // Highlight empty fields
-                $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').toggleClass('highlight', !status);
-                $('tr[data-a-id="' + objectId + '"] select[data-prop="metric"]').toggleClass('highlight', !metric);
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="target"]').toggleClass('highlight', !target);
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="actual"]').toggleClass('highlight', !actual);
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="plan"]').toggleClass('highlight', !plan);
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments"]').toggleClass('highlight', !comments);
-
-                return; // Prevent submission if validation fails
-            }
-
-            // Show the loader
-            $('#loader').css('display', 'flex');
-
-            // Perform the AJAX request
-            $.ajax({
-                type: "POST",
-                url: "/key_program/",
-                data: key_program,
-                success: function(data) {
-                    window.location.reload();
-                }
-            });
-        });
-
-        $('.add-cancel-btn').click(function() {
-            $('tr[data-a-id="new"]').attr('data-add', false);
-        });
-    });
-</script>
-<script>
-    function confirmDelete() {
-    if (confirm("Delete Record?") == true) {
-        return true;
-    } else {
-        return false;
-    }
-}
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
+        $.ajax({
+          type: "POST",
+          url: "/key_program_edit/" + objectId,
+          data: key_program,
+          success: function(data) {
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
             window.location.reload();
+          }
+        });
+      });
+
+      // Add new metric
+      $('.add-btn').on('click', function() {
+        $('tr[data-a-id="new"]').attr('data-add', true);
+      });
+
+      $('.add-cancel-btn').on('click', function() {
+        $('tr[data-a-id="new"]').attr('data-add', false);
+      });
+
+      // Save newly added metric
+      $('.add-save-btn').on('click', function() {
+        let objectId = "new";
+        const projectData = $('#projectdata').val();
+
+        document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
+        const switchButton = $(`tr[data-a-id="${objectId}"] input[data-prop="switch_button"]`).prop("checked") ? "On" : "Off";
+        const status       = $(`tr[data-a-id="${objectId}"] select[data-prop="status"]`).val();
+        const metric       = $(`tr[data-a-id="${objectId}"] select[data-prop="metric"]`).val();
+        const target       = $(`tr[data-a-id="${objectId}"] textarea[data-prop="target"]`).val();
+        const actual       = $(`tr[data-a-id="${objectId}"] textarea[data-prop="actual"]`).val();
+        const plan         = $(`tr[data-a-id="${objectId}"] textarea[data-prop="plan"]`).val();
+        const comments     = $(`tr[data-a-id="${objectId}"] textarea[data-prop="comments"]`).val();
+
+        const key_program = {
+          switch_button: switchButton,
+          status: status,
+          metric: metric,
+          target: target,
+          actual: actual,
+          plan: plan,
+          comments: comments,
+          project_name: projectData
+        };
+
+        // Validate required fields
+        if (!status || !metric || !target || !actual || !plan || !comments) {
+          alert("Please fill out all fields.");
+          // Highlight empty fields
+          $(`tr[data-a-id="${objectId}"] select[data-prop="status"]`).toggleClass('highlight', !status);
+          $(`tr[data-a-id="${objectId}"] select[data-prop="metric"]`).toggleClass('highlight', !metric);
+          $(`tr[data-a-id="${objectId}"] textarea[data-prop="target"]`).toggleClass('highlight', !target);
+          $(`tr[data-a-id="${objectId}"] textarea[data-prop="actual"]`).toggleClass('highlight', !actual);
+          $(`tr[data-a-id="${objectId}"] textarea[data-prop="plan"]`).toggleClass('highlight', !plan);
+          $(`tr[data-a-id="${objectId}"] textarea[data-prop="comments"]`).toggleClass('highlight', !comments);
+          return;
         }
+
+        // Show loader
+        $('#loader').css('display', 'flex');
+
+        $.ajax({
+          type: "POST",
+          url: "/key_program/",
+          data: key_program,
+          success: function(response) {
+            if (response.status === 'error') {
+              swal({
+                title: "Alert!",
+                text: response.messages,
+                icon: "warning",
+                showConfirmButton: true
+              }, function() {
+                window.location.reload();
+              });
+            } else if (response.status === 'success') {
+              swal({
+                title: "Success",
+                text: response.messages,
+                icon: "success",
+                showConfirmButton: true
+              }, function() {
+                window.location.reload();
+              });
+            }
+          }
+        });
+      });
     });
-</script>
-<script>
+
+    function confirmDelete() {
+      return confirm("Delete Record?");
+    }
+  </script>
+
+  <script>
     tail.select("#projectdata", {
-    animate: true,
-    deselect: false,
-    disabled: false,
-    height: 350,
-    multiple: false,
-    placeholder: "Projects",
-    search: false,
-    width: 170
-});
-</script>
+      animate: true,
+      deselect: false,
+      disabled: false,
+      height: 350,
+      multiple: false,
+      placeholder: "Projects",
+      search: false,
+      width: 170
+    });
+  </script>
 </body>
-</head>
 </html>

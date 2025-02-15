@@ -18,37 +18,32 @@
     <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
     <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
 
     <style>
-        tr[data-non-edit="true"] {
+        tr[data-non-edit="true"] { }
+        tr[data-non-edit="false"] { display: none; }
 
-        }
-        tr[data-non-edit="false"] {
-            display : none;
-        }
-        tr[data-edit="true"] {
+        tr[data-edit="true"] { }
+        tr[data-edit="false"] { display: none; }
 
-        }
-        tr[data-edit="false"] {
-            display : none;
-        }
+        tr[data-add="false"] { display: none; }
 
-        tr[data-add="false"] {
-            display : none;
-        }
         .highlight {
             border-color: red;
         }
     </style>
+</head>
 <body style="background-color:#ffffff!important;">
 <!-- Loader -->
-<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+     background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
     <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
     </div>
 </div>
 
-<!-- Example Code -->
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
         <a class="navbar-brand">
@@ -62,13 +57,13 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='risk' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
-                        <option value="" disabled >Projects</option>
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
+                        <option value="" disabled>Projects</option>
                         {% for i in project %}
-                        <option value="{{i}}">{{i}}</option>
+                        <option value="{{ i }}">{{ i }}</option>
                         {% endfor %}
                     </select>
-                    <p style="display:none;">{{error}}</p>
+                    <p style="display:none;">{{ error }}</p>
                 </form>
                 <li class="nav-item rounded">
                     <a class="nav-link ho" href="{% url 'home' %}">
@@ -80,7 +75,7 @@
                     <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-user"></i>
-                        <span>{{user}}</span>
+                        <span>{{ user }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
@@ -91,22 +86,22 @@
     </div>
 </nav>
 <br>
+
 <main>
-    <!-- Service 4 - Bootstrap Brain Component -->
     <section>
-        <div class="container"><!--style="max-width:100%;"-->
+        <div class="container">
             <div class="card">
                 <div class="card-header">
                     <b>Risks</b>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-sm add-btn"
-                            style="float:right;">
+                    <button type="button" class="btn btn-primary btn-sm add-btn" style="float:right;">
                         Add Risk
                     </button>
                 </div>
                 <div class="card-body">
                     <form>
-                        <table class="table table-bordered table-striped" id="example"
+                        <table class="table table-bordered table-striped"
+                               id="example"
                                data-toggle="table"
                                data-search="true"
                                data-search-align="left"
@@ -118,6 +113,7 @@
                                data-response-handler="responseHandler"
                                data-show-fullscreen="true"
                                data-buttons-class="primary btn-sm">
+
                             <thead>
                             <tr>
                                 <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
@@ -133,16 +129,35 @@
                                 <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
                             </tr>
                             </thead>
+
                             <tbody data-body="risk">
+                            <!-- Row for adding a new Risk -->
                             <tr data-a-id="new" data-add="false">
                                 <td class="switch_button">
-                                    <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
+                                    <input type="checkbox" class="form-control"
+                                           name="switch_button"
+                                           checked
+                                           data-prop="switch_button"
+                                           data-toggle="toggle"
+                                           data-onstyle="primary"
+                                           data-offstyle="danger"
+                                           required="required">
                                 </td>
                                 <td class="risk_summary">
-                                    <textarea class="form-control" data-prop="risk_summary" name="risk_summary" placeholder="Enter Risk Summary" cols="3" maxlength="250" required="required"></textarea>
+                                    <textarea class="form-control"
+                                              data-prop="risk_summary"
+                                              name="risk_summary"
+                                              placeholder="Enter Risk Summary"
+                                              cols="3"
+                                              maxlength="250"
+                                              required="required"></textarea>
                                 </td>
                                 <td class="risk_area">
-                                    <select class="form-select" data-prop="risk_area" name="risk_area" title="What’s the event or scenario that we’re trying to avoid?" id="risk_area" required="required">
+                                    <select class="form-select"
+                                            data-prop="risk_area"
+                                            name="risk_area"
+                                            title="Select Risk Area"
+                                            required="required">
                                         <option value="" selected disabled>Select Risk Area</option>
                                         <option value="Cost">Cost</option>
                                         <option value="Schedule">Schedule</option>
@@ -153,54 +168,88 @@
                                     </select>
                                 </td>
                                 <td class="status">
-                                    <select class="form-select" data-prop="status" name="status" required="required">
-                                        <option value="" disabled="disabled" selected="selected" >Select Status</option>
+                                    <select class="form-select"
+                                            data-prop="status"
+                                            name="status"
+                                            required="required">
+                                        <option value="" disabled selected>Select Status</option>
                                         <option value="Open">Open</option>
                                         <option value="Closed">Closed</option>
                                     </select>
                                 </td>
                                 <td class="owner">
-                                    <input class="form-control" data-prop="owner" name="owner" title="IDSID of owner" type="text"
-                                           required="required" placeholder="Enter Owner" />
+                                    <input class="form-control"
+                                           data-prop="owner"
+                                           name="owner"
+                                           title="IDSID of owner"
+                                           type="text"
+                                           required="required"
+                                           placeholder="Enter Owner" />
                                 </td>
                                 <td class="consequence">
-                                    <textarea class="form-control" data-prop="consequence" name="consequence" title="What is the consequence if the risk materializes?" placeholder="Enter Consequence" cols="3" maxlength="250" required="required"></textarea>
+                                    <textarea class="form-control"
+                                              data-prop="consequence"
+                                              name="consequence"
+                                              placeholder="Enter Consequence"
+                                              cols="3"
+                                              maxlength="250"
+                                              required="required"></textarea>
                                 </td>
                                 <td class="mitigations">
-                                    <textarea class="form-control" data-prop="mitigations" name="mitigations" placeholder="Enter Mitigations" cols="3" maxlength="250" required="required"></textarea>
+                                    <textarea class="form-control"
+                                              data-prop="mitigations"
+                                              name="mitigations"
+                                              placeholder="Enter Mitigations"
+                                              cols="3"
+                                              maxlength="250"
+                                              required="required"></textarea>
                                 </td>
                                 <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="text"
-                                           required="required" placeholder="Enter Trigger Date" />
+                                    <input class="form-control"
+                                           data-prop="trigger_date"
+                                           name="trigger_date"
+                                           title="Enter Trigger Date"
+                                           type="text"
+                                           required="required"
+                                           placeholder="Enter Trigger Date" />
                                 </td>
                                 <td class="risk_initiated">
-                                    <input class="form-control" data-prop="risk_initiated" name="risk_initiated" title="Date when the risk was identified and started to be tracked" type="text"
-                                           required="required" placeholder="Enter Risk Initiated" />
+                                    <input class="form-control"
+                                           data-prop="risk_initiated"
+                                           name="risk_initiated"
+                                           title="Enter Risk Initiated"
+                                           type="text"
+                                           required="required"
+                                           placeholder="Enter Risk Initiated" />
                                 </td>
                                 <td class="impact">
-                                    <select class="form-select" data-prop="impact" name="impact"
-                                            title="Measures level of impact of risk happening
-o    Low – low impact to schedule/cost/quality. Tracked only to ensure risk level is kept under control
-o    Medium – potentially high impact to milestones, but there is a viable path to avoidance
-o    High – potentially high impact to milestones + path to avoidance is complex/unclear. Urgent help required
-(probability is not being documented/tracked)"
+                                    <select class="form-select"
+                                            data-prop="impact"
+                                            name="impact"
                                             required="required">
-                                        <option value="" disabled="disabled" selected="selected">Select Impact</option>
+                                        <option value="" disabled selected>Select Impact</option>
                                         <option value="High">High</option>
                                         <option value="Medium">Medium</option>
                                         <option value="Low">Low</option>
                                     </select>
                                 </td>
                                 <td class="text-center">
-                                    <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Risk">
+                                    <button data-id="new-save" type="button"
+                                            class="btn btn-success btn-sm add-save-btn"
+                                            title="Save Risk">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Risk">
+                                    <button data-id="new-cancel" type="reset"
+                                            class="btn btn-danger btn-sm add-cancel-btn"
+                                            title="Cancel">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                 </td>
                             </tr>
+
+                            <!-- Existing rows in read-only & edit modes -->
                             {% for i in data %}
+                            <!-- Non-edit display row -->
                             <tr data-n-id="{{ i.risk_id }}" data-non-edit="true">
                                 <td nowrap class="switch_button">{{ i.display }}</td>
                                 <td nowrap class="risk_summary">{{ i.risk_summary }}</td>
@@ -213,73 +262,132 @@ o    High – potentially high impact to milestones + path to avoidance is compl
                                 <td nowrap class="risk_initiated">{{ i.risk_initiated }}</td>
                                 <td nowrap class="impact">{{ i.impact.0 }}</td>
                                 <td nowrap class="action">
-                                    <button data-id="{{ i.risk_id }}" type="button" class="btn btn-info btn-sm edit-btn"
-                                            title="Edit Risk"><i
-                                            class="fas fa-edit"></i></button>
+                                    <!-- Edit Button -->
+                                    <button data-id="{{ i.risk_id }}"
+                                            type="button"
+                                            class="btn btn-info btn-sm edit-btn"
+                                            title="Edit Risk">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <!-- New 'Open Modal' (symbol) Button -->
+                                    <button data-id="{{ i.risk_id }}"
+                                            type="button"
+                                            class="btn btn-warning btn-sm open-modal-btn"
+                                            title="Open Modal">
+                                         <i class="fas fa-share-from-square"></i>
+                                    </button>
                                 </td>
                             </tr>
+
+                            <!-- Edit row (hidden by default) -->
                             <tr data-e-id="{{ i.risk_id }}" data-edit="false">
                                 <td class="switch_button">
-                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
+                                    <input class="form-control"
+                                           type="checkbox"
+                                           name="switch_button"
+                                           data-prop="switch_button"
+                                           value="1"
+                                           data-toggle="toggle"
+                                           data-on="On"
+                                           data-off="Off"
+                                           data-onstyle="primary"
+                                           data-offstyle="danger"
+                                           required="required"
+                                           {% if i.display == 'On' %} checked {% endif %} />
                                 </td>
                                 <td class="risk_summary">
-                                    <textarea class="form-control" data-prop="risk_summary" name="risk_summary" cols="3" maxlength="250" required="required">{{i.risk_summary}}</textarea>
+                                    <textarea class="form-control"
+                                              data-prop="risk_summary"
+                                              name="risk_summary"
+                                              cols="3"
+                                              maxlength="250"
+                                              required="required">{{ i.risk_summary }}</textarea>
                                 </td>
                                 <td class="risk_area">
-                                    <select class="form-select" data-prop="risk_area" name="risk_area" title="What’s the event or scenario that we’re trying to avoid?" required="required">
-                                        {% for i in i.risk_area %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <select class="form-select"
+                                            data-prop="risk_area"
+                                            name="risk_area"
+                                            required="required">
+                                        {% for ra in i.risk_area %}
+                                        <option value="{{ ra }}">{{ ra }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
                                 <td class="status">
-                                    <select class="form-select" data-prop="status" name="status" required="required">
-                                        {% for i in i.status %}
-                                        <option value="{{i}}">{{i}}</option>
+                                    <select class="form-select"
+                                            data-prop="status"
+                                            name="status"
+                                            required="required">
+                                        {% for st in i.status %}
+                                        <option value="{{ st }}">{{ st }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
                                 <td class="owner">
-                                    <input class="form-control" data-prop="owner" id="owner" name="owner" title="IDSID of owner" type="text"
-                                           required="required" value="{{i.owner}}" />
+                                    <input class="form-control"
+                                           data-prop="owner"
+                                           name="owner"
+                                           title="IDSID of owner"
+                                           type="text"
+                                           required="required"
+                                           value="{{ i.owner }}" />
                                 </td>
                                 <td class="consequence">
-                                    <textarea class="form-control" data-prop="consequence" id="consequence" name="consequence" title="What is the consequence if the risk materializes?" cols="3" maxlength="250" required="required">{{ i.consequence }}</textarea>
+                                    <textarea class="form-control"
+                                              data-prop="consequence"
+                                              name="consequence"
+                                              cols="3"
+                                              maxlength="250"
+                                              required="required">{{ i.consequence }}</textarea>
                                 </td>
                                 <td class="mitigations">
-                                    <textarea class="form-control" data-prop="mitigations" id="mitigations" name="mitigations" cols="3" maxlength="250" required="required">{{ i.mitigations }}</textarea>
+                                    <textarea class="form-control"
+                                              data-prop="mitigations"
+                                              name="mitigations"
+                                              cols="3"
+                                              maxlength="250"
+                                              required="required">{{ i.mitigations }}</textarea>
                                 </td>
                                 <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" title="If the risk is not closed by this date, it will cause the consequence described" type="date"
-                                           required="required" value="{{ i.trigger_date }}" />
+                                    <input class="form-control"
+                                           data-prop="trigger_date"
+                                           name="trigger_date"
+                                           type="text"
+                                           required="required"
+                                           value="{{ i.trigger_date }}" />
                                 </td>
                                 <td class="risk_initiated">
-                                    <input class="form-control" data-prop="risk_initiated" id="risk_initiated" name="risk_initiated" title="Date when the risk was identified and started to be tracked" type="date"
-                                           required="required" value="{{ i.risk_initiated }}" />
+                                    <input class="form-control"
+                                           data-prop="risk_initiated"
+                                           name="risk_initiated"
+                                           type="text"
+                                           required="required"
+                                           value="{{ i.risk_initiated }}" />
                                 </td>
                                 <td class="impact">
-                                    <select class="form-select" data-prop="impact" name="impact"
-                                            title="Measures level of impact of risk happening
-o    Low – low impact to schedule/cost/quality. Tracked only to ensure risk level is kept under control
-o    Medium – potentially high impact to milestones, but there is a viable path to avoidance
-o    High – potentially high impact to milestones + path to avoidance is complex/unclear. Urgent help required
-(probability is not being documented/tracked)"
+                                    <select class="form-select"
+                                            data-prop="impact"
+                                            name="impact"
                                             required="required">
-                                        {% for j in i.impact %}
-                                        <option value="{{j}}">{{j}}</option>
+                                        {% for imp in i.impact %}
+                                        <option value="{{ imp }}">{{ imp }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
-                                <div>
-                                    <td>
-                                        <button data-id="{{ i.risk_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Risk">
-                                            <i class="fa-solid fa-check"></i>
-                                        </button>
-                                        <button data-id="{{ i.risk_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Risk">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </button>
-                                    </td>
-                                </div>
+                                <td>
+                                    <button data-id="{{ i.risk_id }}"
+                                            type="submit"
+                                            class="btn btn-success btn-sm save-btn"
+                                            title="Save Risk">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                    <button data-id="{{ i.risk_id }}"
+                                            type="reset"
+                                            class="btn btn-danger btn-sm cancel-btn"
+                                            title="Cancel">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -290,7 +398,77 @@ o    High – potentially high impact to milestones + path to avoidance is compl
         </div>
     </section>
 </main>
-<!-- Include the Quill library -->
+
+<!-- ======= Bootstrap Modal for 'Symbol' button ======= -->
+<div class="modal fade" id="riskModal" tabindex="-1" aria-labelledby="riskModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="riskModalLabel">Risk Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <form id="riskModalForm">
+            <!-- Hidden field to store the row ID -->
+            <input type="hidden" id="modalRiskId" name="risk_id" />
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="modalRiskSummary" class="form-label">Risk Summary</label>
+                    <textarea class="form-control" id="modalRiskSummary" name="risk_summary" rows="2" required disabled></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label for="modalOwner" class="form-label">Owner</label>
+                    <input type="text" class="form-control" id="modalOwner" name="owner" required disabled/>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="modalStatus" class="form-label">Status</label>
+                    <input type="text" class="form-control" id="modalStatus" name="status" required disabled/>
+                </div>
+                 <div class="col-md-6">
+                    <label for="modalTriggerDate" class="form-label">Trigger Date</label>
+                    <input type="text" class="form-control" id="modalTriggerDate" name="trigger_date" required disabled/>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="modalRiskInitiated" class="form-label">Risk Initiated </label>
+                    <input type="text" class="form-control" id="modalRiskInitiated" name="risk_initiated" required disabled/>
+                </div>
+                <div class="col-md-6">
+                    <label for="modalImpact" class="form-label">Impact</label>
+                    <input type="text" class="form-control" id="modalImpact" name="impact" required disabled />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="modalETA" class="form-label">ETA</label>
+                    <input type="text" class="form-control" id="modalETA" name="ETA" required />
+            </div>
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- Submit button inside the modal -->
+        <button type="button" class="btn btn-primary" id="saveModalBtn">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ======= End Modal ======= -->
+
+
+<!-- JS Libraries -->
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/quill.js' %}"></script>
 <script src="{% static 'intel_app/table/popper.min.js' %}"></script>
@@ -304,177 +482,335 @@ o    High – potentially high impact to milestones + path to avoidance is compl
 <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
 
 <script>
+    // This formatter adds a colored circle for the impact level
     function nameFormatter(value, row) {
-      var icon = row.impact === 'Low'  ? 'fa-circle fa-sm text-primary' :
-      row.impact === 'Medium'  ? 'fa-circle fa-sm text-warning' :
-      row.impact === 'High'  ? 'fa-circle fa-sm text-danger' : 'none'
-      return '<i class="fa ' + icon + '"></i> ' + value
+      var icon = row.impact === 'Low'    ? 'fa-circle fa-sm text-primary' :
+                 row.impact === 'Medium' ? 'fa-circle fa-sm text-warning' :
+                 row.impact === 'High'   ? 'fa-circle fa-sm text-danger'  : 'none';
+      return '<i class="fa ' + icon + '"></i> ' + value;
+    }
+</script>
+
+<script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
     }
 
-</script>
-<script>
     $('#example').bootstrapTable({
-        exportOptions: {
-            fileName: 'Risks'
-        },
-        exportTypes: ['excel'],
-    });
-
-    $(document).ready(function() {
-        $('.edit-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
-
-        $('.cancel-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
-
-        $('.save-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const risk = {
-                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-                risk_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="risk_summary"]')[0].value,
-                risk_area: $('tr[data-e-id="' + objectId + '"] select[data-prop="risk_area"]')[0].value,
-                status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-                owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-                consequence: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="consequence"]')[0].value,
-                mitigations: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="mitigations"]')[0].value,
-                trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
-                risk_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="risk_initiated"]')[0].value,
-                impact: $('tr[data-e-id="' + objectId + '"] select[data-prop="impact"]')[0].value
-            }
-
-            // Regular expression for validation
-            const regex = /^\d{4}(\.\d{1,2})?$/;
-
-            // Validate por_commit and por_trend formats
-            if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
-                alert("Invalid eta or trigger_date or risk_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
-                return; // Prevent submission
-            }
-
-
-            // Show the loader
-            $('#loader').css('display', 'flex');
-            $.ajax({
-                type: "POST",
-                url: "/risk_edit_table/" + objectId,
-                data: risk,
-                success: function(data) {
-                    window.location.reload()
-                }
-            })
-        });
-
-        $('.add-btn').on('click', function() {
-            $('tr[data-a-id="new"]').attr('data-add', true);
-        });
-
-        $('.add-save-btn').on('click', function() {
-            let objectId = "new";
-            // Extract values from the form
-            const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off";
-            const riskSummary = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]').val();
-            const riskArea = $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]').val();
-            const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').val();
-            const owner = $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]').val();
-            const consequence = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]').val();
-            const mitigations = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]').val();
-            const triggerDate = $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]').val();
-            const riskInitiated = $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]').val();
-            const impact = $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]').val();
-
-            // Create the risk object
-            const risk = {
-                switch_button: switchButton,
-                risk_summary: riskSummary,
-                risk_area: riskArea,
-                status: status,
-                owner: owner,
-                consequence: consequence,
-                mitigations: mitigations,
-                trigger_date: triggerDate,
-                risk_initiated: riskInitiated,
-                impact: impact,
-            };
-
-            // Regular expression for validation
-            const regex = /^\d{4}(\.\d{1,2})?$/;
-
-            // Validate por_commit and por_trend formats
-            if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
-                alert("Invalid eta or trigger_date or risk_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
-                return; // Prevent submission
-            }
-
-            // Validate required fields
-            if (!riskSummary || !riskArea || !status || !owner || !consequence || !mitigations || !triggerDate || !riskInitiated || !impact) {
-                alert("Please fill out all fields.");
-                // Highlight empty fields
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="risk_summary"]').toggleClass('highlight', !riskSummary);
-                $('tr[data-a-id="' + objectId + '"] select[data-prop="risk_area"]').toggleClass('highlight', !riskArea);
-                $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').toggleClass('highlight', !status);
-                $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]').toggleClass('highlight', !owner);
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="consequence"]').toggleClass('highlight', !consequence);
-                $('tr[data-a-id="' + objectId + '"] textarea[data-prop="mitigations"]').toggleClass('highlight', !mitigations);
-                $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]').toggleClass('highlight', !triggerDate);
-                $('tr[data-a-id="' + objectId + '"] input[data-prop="risk_initiated"]').toggleClass('highlight', !riskInitiated);
-                $('tr[data-a-id="' + objectId + '"] select[data-prop="impact"]').toggleClass('highlight', !impact);
-                return; // Prevent submission if validation fails
-            }
-
-            // Show the loader
-            $('#loader').css('display', 'flex');
-
-            // Perform the AJAX request
-            $.ajax({
-                type: "POST",
-                url: "/risk/",
-                data: risk,
-                success: function(data) {
-                    window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error: ", error);
-                    alert("An error occurred while saving the data. Please try again.");
-                }
-            });
-        });
-
-
-        $('.add-cancel-btn').click(function() {
-            $('tr[data-a-id="new"]').attr('data-add', false);
-        });
+        exportOptions: { fileName: 'Risks' },
+        exportTypes: ['excel']
     });
 </script>
+
 <script>
-    function confirmDelete() {
-    if (confirm("Delete Record?") == true) {
-        return true;
-    } else {
-        return false;
+$(document).ready(function() {
+
+    /********************************************************
+     * Disable/Enable row editing
+     ********************************************************/
+    function disableOtherRows() {
+        $('.edit-btn').prop('disabled', true);
+        $('.add-btn').prop('disabled', true);
     }
-}
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
+
+    function enableOtherRows() {
+        $('.edit-btn').prop('disabled', false);
+        $('.add-btn').prop('disabled', false);
+    }
+
+    /********************************************************
+     * Inline Edit Flow
+     ********************************************************/
+    // Edit button
+    $('.edit-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        disableOtherRows();
+
+        // Close any existing editing rows
+        $('tr[data-edit="true"]').attr('data-edit', false);
+        $('tr[data-non-edit="false"]').attr('data-non-edit', true);
+
+        // Enable editing for the clicked row
+        $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit', false);
+        $(`tr[data-e-id="${objectId}"]`).attr('data-edit', true);
     });
+
+    // Cancel button
+    $('.cancel-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        enableOtherRows();
+
+        // Reset row state
+        $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit', true);
+        $(`tr[data-e-id="${objectId}"]`).attr('data-edit', false);
+    });
+
+    // Save (inline) button
+    $('.save-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        enableOtherRows();
+
+        const projectData = $('#projectdata').val();
+        document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
+        // Gather fields from the editing row
+        const risk = {
+            switch_button: $(`tr[data-e-id="${objectId}"] input[data-prop="switch_button"]`).prop("checked") ? "On" : "Off",
+            risk_summary:  $(`tr[data-e-id="${objectId}"] textarea[data-prop="risk_summary"]`).val(),
+            risk_area:     $(`tr[data-e-id="${objectId}"] select[data-prop="risk_area"]`).val(),
+            status:        $(`tr[data-e-id="${objectId}"] select[data-prop="status"]`).val(),
+            owner:         $(`tr[data-e-id="${objectId}"] input[data-prop="owner"]`).val(),
+            consequence:   $(`tr[data-e-id="${objectId}"] textarea[data-prop="consequence"]`).val(),
+            mitigations:   $(`tr[data-e-id="${objectId}"] textarea[data-prop="mitigations"]`).val(),
+            trigger_date:  $(`tr[data-e-id="${objectId}"] input[data-prop="trigger_date"]`).val(),
+            risk_initiated:$(`tr[data-e-id="${objectId}"] input[data-prop="risk_initiated"]`).val(),
+            impact:        $(`tr[data-e-id="${objectId}"] select[data-prop="impact"]`).val(),
+            project_name:  projectData
+        };
+
+        // Regex validation for fields that you want in format yyyy, yyyy.w, or yyyy.ww
+        const regex = /^\d{4}(\.\d{1,2})?$/;
+        if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
+            alert("Invalid date format. Use yyyy, yyyy.w, or yyyy.ww");
+            return;
+        }
+
+        // Show loader
+        $('#loader').css('display', 'flex');
+        $.ajax({
+            type: "POST",
+            url: "/risk_edit_table/" + objectId,
+            data: risk,
+            success: function(data) {
+                // Hide loader
+                $('#loader').css('display', 'none');
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                $('#loader').css('display', 'none');
+                alert("Error saving data: " + error);
+            }
+        });
+    });
+
+    /********************************************************
+     * Add New Risk Flow
+     ********************************************************/
+    $('.add-btn').on('click', function() {
+        disableOtherRows();
+
+        // Close any currently editing rows
+        $('tr[data-edit="true"]').attr('data-edit', false);
+        $('tr[data-non-edit="false"]').attr('data-non-edit', true);
+
+        // Open the new row for adding
+        $('tr[data-a-id="new"]').attr('data-add', true);
+    });
+
+    $('.add-save-btn').on('click', function() {
+        let objectId = "new";
+        enableOtherRows();
+
+        const switchButton   = $(`tr[data-a-id="${objectId}"] input[data-prop="switch_button"]`).prop("checked") ? "On" : "Off";
+        const riskSummary    = $(`tr[data-a-id="${objectId}"] textarea[data-prop="risk_summary"]`).val();
+        const riskArea       = $(`tr[data-a-id="${objectId}"] select[data-prop="risk_area"]`).val();
+        const status         = $(`tr[data-a-id="${objectId}"] select[data-prop="status"]`).val();
+        const owner          = $(`tr[data-a-id="${objectId}"] input[data-prop="owner"]`).val();
+        const consequence    = $(`tr[data-a-id="${objectId}"] textarea[data-prop="consequence"]`).val();
+        const mitigations    = $(`tr[data-a-id="${objectId}"] textarea[data-prop="mitigations"]`).val();
+        const triggerDate    = $(`tr[data-a-id="${objectId}"] input[data-prop="trigger_date"]`).val();
+        const riskInitiated  = $(`tr[data-a-id="${objectId}"] input[data-prop="risk_initiated"]`).val();
+        const impact         = $(`tr[data-a-id="${objectId}"] select[data-prop="impact"]`).val();
+
+        const projectData = $('#projectdata').val();
+        document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
+        const risk = {
+            switch_button:  switchButton,
+            risk_summary:   riskSummary,
+            risk_area:      riskArea,
+            status:         status,
+            owner:          owner,
+            consequence:    consequence,
+            mitigations:    mitigations,
+            trigger_date:   triggerDate,
+            risk_initiated: riskInitiated,
+            impact:         impact,
+            project_name:   projectData
+        };
+
+        const regex = /^\d{4}(\.\d{1,2})?$/;
+        if (!regex.test(risk.trigger_date) || !regex.test(risk.risk_initiated)) {
+            alert("Invalid date format. Use yyyy, yyyy.w, or yyyy.ww");
+            return;
+        }
+
+        // Simple required fields check
+        if (!riskSummary || !riskArea || !status || !owner || !consequence ||
+            !mitigations || !triggerDate || !riskInitiated || !impact) {
+            alert("Please fill out all fields.");
+
+            // Highlight missing fields
+            const highlightSelector = (prop, val) => {
+                $(`tr[data-a-id="${objectId}"] [data-prop="${prop}"]`).toggleClass('highlight', !val);
+            };
+            highlightSelector("risk_summary", riskSummary);
+            highlightSelector("risk_area", riskArea);
+            highlightSelector("status", status);
+            highlightSelector("owner", owner);
+            highlightSelector("consequence", consequence);
+            highlightSelector("mitigations", mitigations);
+            highlightSelector("trigger_date", triggerDate);
+            highlightSelector("risk_initiated", riskInitiated);
+            highlightSelector("impact", impact);
+
+            return;
+        }
+
+        $('#loader').css('display', 'flex');
+        $.ajax({
+            type: "POST",
+            url: "/risk/",
+            data: risk,
+            success: function(data) {
+                $('#loader').css('display', 'none');
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                $('#loader').css('display', 'none');
+                console.error("AJAX Error: ", error);
+                alert("An error occurred while saving the data. Please try again.");
+            }
+        });
+    });
+
+    $('.add-cancel-btn').click(function() {
+        enableOtherRows();
+        // Close the add row
+        $('tr[data-a-id="new"]').attr('data-add', false);
+    });
+
+
+    /********************************************************
+     * "Symbol" / "Open Modal" Button Flow
+     ********************************************************/
+    // 1) Open the Modal and populate fields
+    $(document).on('click', '.open-modal-btn', function () {
+        const riskId = $(this).data('id');
+        // Find the row (non-edit row) to read existing data
+        const row = $(`tr[data-n-id="${riskId}"]`);
+
+        // Parse the text content. Adjust if you need any trimming or transformations
+        const riskSummary  = row.find('.risk_summary').text().trim();
+        const owner        = row.find('.owner').text().trim();
+        const status       = row.find('.status').text().trim();
+        const triggerDate  = row.find('.trigger_date').text().trim();
+        const riskInitiated= row.find('.risk_initiated').text().trim();
+        const impact       = row.find('.impact').text().trim();
+        const eta          = ''
+
+        // Set modal fields
+        $('#modalRiskId').val(riskId);
+        $('#modalRiskSummary').val(riskSummary);
+        $('#modalOwner').val(owner);
+        $('#modalStatus').val(status);
+        $('#modalTriggerDate').val(triggerDate);
+        $('#modalRiskInitiated').val(riskInitiated);
+        $('#modalImpact').val(impact);
+        $('#modalETA').val(eta);
+
+        // Show modal
+        $('#riskModal').modal('show');
+    });
+
+    // 2) Submit (Save) the modal data
+    $('#saveModalBtn').on('click', function() {
+        const riskId         = $('#modalRiskId').val();
+        const riskSummary    = $('#modalRiskSummary').val();
+        const owner          = $('#modalOwner').val();
+        const status         = $('#modalStatus').val();
+        const triggerDate    = $('#modalTriggerDate').val();
+        const riskInitiated  = $('#modalRiskInitiated').val();
+        const impact         = $('#modalImpact').val();
+        const eta            = $('#modalETA').val();
+
+        const projectData = $('#projectdata').val();
+        document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+
+        const formData = {
+            switch_button:  "On",
+            risk_summary:   riskSummary,
+            status:         status,
+            owner:          owner,
+            trigger_date:   triggerDate,
+            risk_initiated: riskInitiated,
+            impact:         impact,
+            project_name:   projectData,
+            eta         :   eta
+        };
+
+        // Validate date format
+        const regex = /^\d{4}(\.\d{1,2})?$/;
+        if (!regex.test(eta)) {
+            alert("Invalid date format. Use yyyy, yyyy.w, or yyyy.ww");
+            return;
+        }
+
+        // Minimal required check
+        if(!eta) {
+            alert("Please fill out all fields in the modal.");
+            return;
+        }
+
+        // Show loader
+        $('#loader').css('display', 'flex');
+        $.ajax({
+            type: "POST",
+            url: "/risk_to_issues_table/" + riskId,  // or the route you use for editing
+            data: formData,
+            success: function(response) {
+                if (response.status === 'error') {
+                    swal({
+                        title: "Alert!",
+                        text: response.messages,
+                        icon: "warning",
+                        showConfirmButton: true
+                    }, function() {
+                         window.location.reload();  // This will reload the page
+                    });
+                } else if (response.status === 'success') {
+                    swal({
+                        title: "Success",
+                        text: response.messages,
+                        icon: "success",
+                        showConfirmButton: true
+                    }, function() {
+                        $('#loader').css('display', 'none');
+                        // Close modal
+                        $('#riskModal').modal('hide');
+                        // Refresh the page or update row data
+                        window.location.reload();
+                    });
+                }
+            }
+        });
+    });
+
+});
 </script>
 <script>
-    tail.select("#projectdata", {
+    // Optional confirmation for any delete scenario
+    function confirmDelete() {
+        return confirm("Delete Record?");
+    }
+</script>
+<script>
+tail.select("#projectdata", {
     animate: true,
     deselect: false,
     disabled: false,
@@ -486,5 +822,4 @@ o    High – potentially high impact to milestones + path to avoidance is compl
 });
 </script>
 </body>
-</head>
 </html>

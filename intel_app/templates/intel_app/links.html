@@ -58,7 +58,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='links' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
                         <option value="" disabled >Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
@@ -207,6 +207,15 @@
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 
 <script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+</script>
+
+
+<script>
     $('#example').bootstrapTable({
         exportOptions: {
             fileName: 'Links'
@@ -236,6 +245,9 @@
             const switchButton = $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]');
             const linksUrl = $('tr[data-e-id="' + objectId + '"] input[data-prop="links_url"]')[0].value;
             const commentsLinks = $('tr[data-e-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value;
+            // Retrieve the selected project data value
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
 
             // Validate required fields
             if (!switchButton.length || !linksUrl || !commentsLinks) {
@@ -246,6 +258,7 @@
                 switch_button: switchButton.prop("checked") ? "On" : "Off",
                 links_url: linksUrl,
                 comments_links: commentsLinks,
+                project_name: projectData,
             };
 
             // Show the loader
@@ -256,7 +269,8 @@
                 url: "/links_edit_table/" + objectId,
                 data: links,
                 success: function (data) {
-                    // Reload the page after success
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload();
                 },
                 error: function (xhr, status, error) {
@@ -278,6 +292,9 @@
             const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]');
             const linksUrl = $('tr[data-a-id="' + objectId + '"] input[data-prop="links_url"]')[0].value;
             const commentsLinks = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="comments_links"]')[0].value;
+            // Retrieve the selected project data value
+            const projectData = $('#projectdata').val();
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
 
             // Validate required fields
             if (!switchButton.length || !linksUrl || !commentsLinks) {
@@ -289,6 +306,7 @@
                 switch_button: switchButton.prop("checked") ? "On" : "Off",
                 links_url: linksUrl,
                 comments_links: commentsLinks,
+                project_name: projectData
             };
 
             // Show the loader
@@ -299,7 +317,8 @@
                 url: "/links/",
                 data: links,
                 success: function (data) {
-                    // Reload the page after success
+                    // Save projectData as a cookie
+                    document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
                     window.location.reload();
                 },
                 error: function (xhr, status, error) {
@@ -324,13 +343,6 @@
         return false;
     }
 }
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
 </script>
 <script>
     tail.select("#projectdata", {

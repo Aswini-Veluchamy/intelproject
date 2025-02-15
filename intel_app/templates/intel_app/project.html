@@ -10,7 +10,7 @@
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
-
+    <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
 </head>
 <body style="background-color:#ffffff!important;">
 
@@ -93,7 +93,6 @@
                         </div>
                     </div>
                     <br>
-                    <p>{{error}}</p>
                     <button type="submit" id="submitButton" class="btn btn-primary">
                         <span>Submit</span>
                     </button>
@@ -103,9 +102,22 @@
     </div>
 </div>
 
+
 <!-- Include the Quill library -->
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
+{% if error %}
+<script>
+    swal({
+      title: "Alert!",
+      text: "{{error}}",
+      showConfirmButton: true
+    }, function(){
+          window.location.href = "{% url 'project_list' %}";
+    });
+</script>
+{% endif %}
 </body>
 </html>

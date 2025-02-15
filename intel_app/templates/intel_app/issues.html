@@ -2,442 +2,863 @@
 {% load static %}
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Issues</title>
-    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
-    <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/css/bootstrap-select.min.css' %}" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
-    <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
-    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+  <meta charset="utf-8">
+  <title>Issues</title>
+  <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
+  <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
+  <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/table/bootstrap-table.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/css/bootstrap-select.min.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
+  <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+  <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'intel_app/css/sweetalert.css' %}">
 
-    <style>
-        tr[data-non-edit="true"] {
-
-        }
-        tr[data-non-edit="false"] {
-            display : none;
-        }
-        tr[data-edit="true"] {
-
-        }
-        tr[data-edit="false"] {
-            display : none;
-        }
-
-        tr[data-add="false"] {
-            display : none;
-        }
-    </style>
-<body style="background-color:#ffffff!important;">
-
-<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
-    <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
-    </div>
-</div>
-<!-- Example Code -->
-<nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-        <a class="navbar-brand">
-            <span>Intel</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-md-auto gap-2">
-                <form method="POST" action="{% url 'project_change' func_name='issues' %}" id="projectForm">
-                    {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
-                        <option value="" disabled >Projects</option>
-                        {% for i in project %}
-                        <option value="{{i}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
-                    <p style="display:none;">{{error}}</p>
-                </form>
-                <li class="nav-item rounded">
-                    <a class="nav-link ho" href="{% url 'home' %}">
-                        <i class="fa fa-home"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-                <li class="nav-item dropdown rounded">
-                    <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-user"></i>
-                        <span>{{user}}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<br>
-<main>
-    <!-- Service 4 - Bootstrap Brain Component -->
-    <section>
-        <div class="container"><!--style="max-width:100%;"-->
-            <div class="card">
-                <div class="card-header">
-                    <b>Issues</b>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-sm add-btn"
-                            style="float:right;">
-                        Add Issues
-                    </button>
-                </div>
-                <div class="card-body">
-                    <form>
-                        <table class="table table-bordered table-striped" id="example"
-                               data-toggle="table"
-                               data-search="true"
-                               data-search-align="left"
-                               data-show-columns="true"
-                               data-show-toggle="false"
-                               data-show-columns-toggle-all="true"
-                               data-show-export="true"
-                               data-export-data-type="all"
-                               data-response-handler="responseHandler"
-                               data-show-fullscreen="true"
-                               data-buttons-class="primary btn-sm">
-                            <thead>
-                            <tr>
-                                <th scope="col" nowrap data-field="switch_button" class="w-50 p-3 switch_button">On/Off</th>
-                                <th scope="col" nowrap data-field="issues_summary" class="w-50 p-3 issues_summary">Issues Summary</th>
-                                <th scope="col" nowrap data-field="status" class="w-50 p-3 status">Status</th>
-                                <th scope="col" nowrap data-field="owner" class="w-50 p-3 owner">Owner</th>
-                                <th scope="col" nowrap data-field="eta" class="w-50 p-3 eta">Next Steps with ETA &nbsp;&nbsp;&nbsp;</th>
-                                <th scope="col" nowrap data-field="trigger_date" class="w-50 p-3 trigger_date">Trigger Date</th>
-                                <th scope="col" nowrap data-field="issues_initiated" class="w-50 p-3 issues_initiated">Issues Initiated</th>
-                                <th scope="col" nowrap data-field="severity" class="w-50 p-3 severity" data-formatter="nameFormatter">Severity</th>
-                                <th scope="col" nowrap data-field="action" class="w-50 p-3 action">Action</th>
-                            </tr>
-                            </thead>
-                            <tbody data-body="issues">
-                            <tr data-a-id="new" data-add="false">
-                                <td class="switch_button">
-                                    <input type="checkbox" class="form-control" name="switch_button" checked data-prop="switch_button" data-toggle="toggle" data-onstyle="primary" data-offstyle="danger" required="required">
-                                </td>
-                                <td class="issues_summary">
-                                    <textarea class="form-control" data-prop="issues_summary" name="issues_summary" placeholder="Enter Issues Summary" title="What’s the problem statement?" cols="3" maxlength="250" required="required"></textarea>
-                                </td>
-                                <td class="status">
-                                    <select class="form-select" data-prop="status" name="status" required="required">
-                                        <option value="" disabled="disabled" selected="selected">Select Status</option>
-                                        <option value="Open">Open</option>
-                                        <option value="Closed">Closed</option>
-                                    </select>
-                                </td>
-                                <td class="owner">
-                                    <input class="form-control" data-prop="owner" name="owner" type="text"
-                                           placeholder="Enter Owner" title="IDSID of owner" required="required" />
-                                </td>
-                                <td class="eta">
-                                    <input class="form-control" data-prop="eta" name="eta" type="text"
-                                           placeholder="Enter ETA" title="What’s being done to resolve the issue? Should have ETA for each step" required="required" />
-                                </td>
-                                <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" name="trigger_date" type="text"
-                                           placeholder="Enter Trigger Date" title="By when does the issue need to be resolved?" required="required" />
-                                </td>
-                                <td class="issues_initiated">
-                                    <input class="form-control" data-prop="issues_initiated" name="issues_initiated" type="text"
-                                           placeholder="Enter Issues Initiated" title="When did the issue first come to light and start to get tracked?" required="required" />
-                                </td>
-                                <td class="severity">
-                                    <select class="form-select" data-prop="severity" name="severity"
-                                            title="•Low – well under control, path to closure exists.
-•Medium – viable path to resolution is available and being pursued.
-•High – no path to resolution available or resolution path is complex. Urgent help required"
-                                            required="required">
-                                        <option value="" disabled="disabled" selected="selected">Select Severity</option>
-                                        <option value="High">High</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="Low">Low</option>
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <button data-id="new-save" type="button" class="btn btn-success btn-sm add-save-btn" title="Save Issues">
-                                        <i class="fa-solid fa-check"></i>
-                                    </button>
-                                    <button data-id="new-cancel" type="reset" class="btn btn-danger btn-sm add-cancel-btn" title="Edit Issues">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            {% for i in data %}
-                            <tr data-n-id="{{ i.issues_id }}" data-non-edit="true">
-                                <td nowrap class="switch_button">{{ i.display }}</td>
-                                <td nowrap class="issues_summary">{{ i.issues_summary }}</td>
-                                <td nowrap class="status">{{ i.status.0 }}</td>
-                                <td nowrap class="owner">{{ i.owner }}</td>
-                                <td nowrap class="eta">{{ i.eta }}</td>
-                                <td nowrap class="trigger_date">{{ i.trigger_date }}</td>
-                                <td nowrap class="issues_initiated">{{ i.issues_initiated }}</td>
-                                <td nowrap class="severity">{{ i.severity.0 }}</td>
-                                <td nowrap class="action">
-                                    <button data-id="{{ i.issues_id }}" type="button" class="btn btn-info btn-sm edit-btn"
-                                            title="Edit Issues"><i
-                                            class="fas fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm" title="Delete Issues">
-                                        <a style="text-decoration:none;color:#fff;" href="{% url 'delete_issues_data' pk=i.issues_id %}" onclick="return confirmDelete()">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr data-e-id="{{ i.issues_id }}" data-edit="false">
-                                <td class="switch_button">
-                                    <input class="form-control" type="checkbox" name="switch_button" data-prop="switch_button" value="1" data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="primary" data-offstyle="danger" required="required" {% if i.display == 'On' %} checked {% endif %} />
-                                </td>
-                                <td class="issues_summary">
-                                    <textarea class="form-control" data-prop="issues_summary" name="issues_summary" cols="3" maxlength="250" required="required">{{i.issues_summary}}</textarea>
-                                </td>
-                                <td class="status">
-                                    <select class="form-select" data-prop="status" name="status" required="required">
-                                        {% for i in i.status %}
-                                        <option value="{{i}}">{{i}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td class="owner">
-                                    <input class="form-control" data-prop="owner" id="owner" name="owner" type="text"
-                                           required="required" value="{{i.owner}}" />
-                                </td>
-                                <td class="eta">
-                                    <input class="form-control" data-prop="eta" id="eta" name="eta" type="text"
-                                           required="required" value="{{ i.eta }}" />
-                                </td>
-
-                                <td class="trigger_date">
-                                    <input class="form-control" data-prop="trigger_date" id="trigger_date" name="trigger_date" type="text"
-                                           required="required" value="{{ i.trigger_date }}" />
-                                </td>
-                                <td class="issues_initiated">
-                                    <input class="form-control" data-prop="issues_initiated" id="issues_initiated" name="issues_initiated" type="text"
-                                           required="required" value="{{ i.issues_initiated }}" />
-                                </td>
-                                <td class="severity">
-                                    <select class="form-select" data-prop="severity" name="severity" required="required">
-                                        {% for j in i.severity %}
-                                        <option value="{{j}}">{{j}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <div>
-                                    <td>
-                                        <button data-id="{{ i.issues_id }}" type="submit" class="btn btn-success btn-sm save-btn" title="Save Issues">
-                                            <i class="fa-solid fa-check"></i>
-                                        </button>
-                                        <button data-id="{{ i.issues_id }}" type="reset" class="btn btn-danger btn-sm cancel-btn" title="Cancel Issues">
-                                            <i class="fa-solid fa-xmark"></i>
-                                        </button>
-                                    </td>
-                                </div>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-<!-- Include the Quill library -->
-<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
-<script src="{% static 'intel_app/js/quill.js' %}"></script>
-<script src="{% static 'intel_app/table/popper.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
-<script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
-<script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
-<script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
-<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
-<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
-
-<script>
-    function nameFormatter(value, row) {
-      var icon = row.severity === 'Low'  ? 'fa-circle fa-sm text-primary' :
-      row.severity === 'Medium'  ? 'fa-circle fa-sm text-warning' :
-      row.severity === 'High'  ? 'fa-circle fa-sm text-danger' : 'none'
-      return '<i class="fa ' + icon + '"></i> ' + value
+  <style>
+    tr[data-non-edit="true"] { }
+    tr[data-non-edit="false"] {
+      display: none;
     }
 
-</script>
-<script>
-    $('#example').bootstrapTable({
-        exportOptions: {
-            fileName: 'Issues'
-        },
-        exportTypes: ['excel'],
-    });
-
-    $(document).ready(function() {
-        $('.edit-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
-
-        $('.cancel-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const non_Edit = $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit');
-            const edit = $('tr[data-e-id="' + objectId + '"]').attr('data-edit');
-            $('tr[data-n-id="' + objectId + '"]').attr('data-non-edit', (non_Edit === 'true' ? false : true));
-            $('tr[data-e-id="' + objectId + '"]').attr('data-edit', (edit === 'true' ? false : true));
-        });
-
-        $('.save-btn').on('click', function() {
-            let objectId = $(this).data('id');
-            const issues = {
-                switch_button: $('tr[data-e-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off",
-                issues_summary: $('tr[data-e-id="' + objectId + '"] textarea[data-prop="issues_summary"]')[0].value,
-                status: $('tr[data-e-id="' + objectId + '"] select[data-prop="status"]')[0].value,
-                owner: $('tr[data-e-id="' + objectId + '"] input[data-prop="owner"]')[0].value,
-                eta: $('tr[data-e-id="' + objectId + '"] input[data-prop="eta"]')[0].value,
-                trigger_date: $('tr[data-e-id="' + objectId + '"] input[data-prop="trigger_date"]')[0].value,
-                issues_initiated: $('tr[data-e-id="' + objectId + '"] input[data-prop="issues_initiated"]')[0].value,
-                severity: $('tr[data-e-id="' + objectId + '"] select[data-prop="severity"]')[0].value
-            }
-
-            // Regular expression for validation
-            const regex = /^\d{4}(\.\d{1,2})?$/;
-
-            // Validate por_commit and por_trend formats
-            if (!regex.test(issues.eta) || !regex.test(issues.trigger_date) || !regex.test(issues.issues_initiated)) {
-                alert("Invalid eta or trigger_date or issues_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
-                return; // Prevent submission
-            }
-
-            // Show the loader
-            $('#loader').css('display', 'flex');
-            $.ajax({
-                type: "POST",
-                url: "/issues_edit_table/" + objectId,
-                data: issues,
-                success: function(data) {
-                    window.location.reload()
-                }
-            })
-        });
-
-        $('.add-btn').on('click', function() {
-            $('tr[data-a-id="new"]').attr('data-add', true);
-        });
-
-        $('.add-save-btn').on('click', function() {
-            let objectId = "new";
-
-            // Extract values from the form
-            const switchButton = $('tr[data-a-id="' + objectId + '"] input[data-prop="switch_button"]').prop("checked") ? "On" : "Off";
-            const issuesSummary = $('tr[data-a-id="' + objectId + '"] textarea[data-prop="issues_summary"]').val();
-            const status = $('tr[data-a-id="' + objectId + '"] select[data-prop="status"]').val();
-            const owner = $('tr[data-a-id="' + objectId + '"] input[data-prop="owner"]').val();
-            const eta = $('tr[data-a-id="' + objectId + '"] input[data-prop="eta"]').val();
-            const triggerDate = $('tr[data-a-id="' + objectId + '"] input[data-prop="trigger_date"]').val();
-            const issuesInitiated = $('tr[data-a-id="' + objectId + '"] input[data-prop="issues_initiated"]').val();
-            const severity = $('tr[data-a-id="' + objectId + '"] select[data-prop="severity"]').val();
-
-            // Validate required fields
-            if (!issuesSummary || !status || !owner || !eta || !triggerDate || !issuesInitiated || !severity) {
-                alert("Please fill out all fields.");
-                return; // Prevent submission if validation fails
-            }
-
-            // Create the issues object
-            const issues = {
-                switch_button: switchButton,
-                issues_summary: issuesSummary,
-                status: status,
-                owner: owner,
-                eta: eta,
-                trigger_date: triggerDate,
-                issues_initiated: issuesInitiated,
-                severity: severity,
-            };
-
-            // Regular expression for validation
-            const regex = /^\d{4}(\.\d{1,2})?$/;
-
-            // Validate por_commit and por_trend formats
-            if (!regex.test(issues.eta) || !regex.test(issues.trigger_date) || !regex.test(issues.issues_initiated)) {
-                alert("Invalid eta or trigger_date or issues_initiated format. Use yyyy, yyyy.w, or yyyy.ww");
-                return; // Prevent submission
-            }
-
-            // Show the loader
-            $('#loader').css('display', 'flex');
-
-            // Perform the AJAX request
-            $.ajax({
-                type: "POST",
-                url: "/issues/",
-                data: issues,
-                success: function(data) {
-                    window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error: ", error);
-                    alert("An error occurred while saving the data. Please try again.");
-                }
-            });
-        });
-
-
-        $('.add-cancel-btn').click(function() {
-            $('tr[data-a-id="new"]').attr('data-add', false);
-        });
-    });
-</script>
-<script>
-    function confirmDelete() {
-    if (confirm("Delete Record?") == true) {
-        return true;
-    } else {
-        return false;
+    tr[data-edit="true"] { }
+    tr[data-edit="false"] {
+      display: none;
     }
-}
-</script>
-<script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
-</script>
-<script>
-    tail.select("#projectdata", {
-    animate: true,
-    deselect: false,
-    disabled: false,
-    height: 350,
-    multiple: false,
-    placeholder: "Projects",
-    search: false,
-    width: 170
-});
-</script>
-</body>
+
+    tr[data-add="false"] {
+      display: none;
+    }
+
+    .highlight {
+      border-color: red;
+    }
+
+    /* Force action buttons on one line */
+    td.action {
+      white-space: nowrap !important;
+    }
+  </style>
 </head>
+<body style="background-color:#ffffff!important;">
+  <!-- Loader -->
+  <div id="loader"
+       style="display: none; position: fixed; top: 0; left: 0; width: 100%;
+              height: 100%; background: rgba(255, 255, 255, 0.8);
+              z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand">
+        <span>Intel</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarNav" aria-controls="navbarNav"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-md-auto gap-2">
+          <form method="POST" action="{% url 'project_change' func_name='issues' %}" id="projectForm">
+            {% csrf_token %}
+            <select name="projectdata" id="projectdata"
+                    onchange="updateProjectCookie(this.value); this.form.submit();">
+              <option value="" disabled>Projects</option>
+              {% for i in project %}
+                <option value="{{ i }}">{{ i }}</option>
+              {% endfor %}
+            </select>
+            <p style="display:none;">{{ error }}</p>
+          </form>
+
+          <li class="nav-item rounded">
+            <a class="nav-link ho" href="{% url 'home' %}">
+              <i class="fa fa-home"></i>
+              <span>Home</span>
+            </a>
+          </li>
+
+          <li class="nav-item dropdown rounded">
+            <a class="nav-link ho dropdown-toggle" href="#"
+               id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+               aria-expanded="false">
+              <i class="fa fa-user"></i>
+              <span>{{ user }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <br>
+
+  <main>
+    <section>
+      <div class="container">
+        <div class="card">
+          <div class="card-header">
+            <b>Issues</b>
+            <button type="button" class="btn btn-primary btn-sm add-btn" style="float:right;">
+              Add Issues
+            </button>
+          </div>
+          <div class="card-body">
+            <form>
+              <table class="table table-bordered table-striped" id="example"
+                     data-toggle="table"
+                     data-search="true"
+                     data-search-align="left"
+                     data-show-columns="true"
+                     data-show-toggle="false"
+                     data-show-columns-toggle-all="true"
+                     data-show-export="true"
+                     data-export-data-type="all"
+                     data-response-handler="responseHandler"
+                     data-show-fullscreen="true"
+                     data-buttons-class="primary btn-sm">
+                <thead>
+                  <tr>
+                    <th scope="col" nowrap data-field="switch_button"
+                        class="w-50 p-3 switch_button">On/Off
+                    </th>
+                    <th scope="col" nowrap data-field="issues_summary"
+                        class="w-50 p-3 issues_summary">Issues Summary
+                    </th>
+                    <th scope="col" nowrap data-field="status"
+                        class="w-50 p-3 status">Status
+                    </th>
+                    <th scope="col" nowrap data-field="owner"
+                        class="w-50 p-3 owner">Owner
+                    </th>
+                    <th scope="col" nowrap data-field="eta"
+                        class="w-50 p-3 eta">Next Steps with ETA
+                    </th>
+                    <th scope="col" nowrap data-field="trigger_date"
+                        class="w-50 p-3 trigger_date">Trigger Date
+                    </th>
+                    <th scope="col" nowrap data-field="issues_initiated"
+                        class="w-50 p-3 issues_initiated">Issues Initiated
+                    </th>
+                    <th scope="col" nowrap data-field="severity"
+                        class="w-50 p-3 severity" data-formatter="nameFormatter">Severity
+                    </th>
+                    <th scope="col" nowrap data-field="action"
+                        class="w-50 p-3 action">Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody data-body="issues">
+
+                  <!-- Add Row (Hidden by default) -->
+                  <tr data-a-id="new" data-add="false">
+                    <td class="switch_button">
+                      <input type="checkbox"
+                             class="form-control"
+                             name="switch_button"
+                             checked
+                             data-prop="switch_button"
+                             data-toggle="toggle"
+                             data-onstyle="primary"
+                             data-offstyle="danger"
+                             required="required">
+                    </td>
+                    <td class="issues_summary">
+                      <textarea class="form-control"
+                                data-prop="issues_summary"
+                                name="issues_summary"
+                                placeholder="Enter Issues Summary"
+                                title="What’s the problem statement?"
+                                cols="3"
+                                maxlength="250"
+                                required="required"></textarea>
+                    </td>
+                    <td class="status">
+                      <select class="form-select"
+                              data-prop="status"
+                              name="status"
+                              required="required">
+                        <option value="" disabled selected>Select Status</option>
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                      </select>
+                    </td>
+                    <td class="owner">
+                      <input class="form-control"
+                             data-prop="owner"
+                             name="owner"
+                             type="text"
+                             placeholder="Enter Owner"
+                             title="IDSID of owner"
+                             required="required" />
+                    </td>
+                    <td class="eta">
+                      <input class="form-control"
+                             data-prop="eta"
+                             name="eta"
+                             type="text"
+                             placeholder="Enter ETA"
+                             title="What’s being done to resolve the issue?"
+                             required="required" />
+                    </td>
+                    <td class="trigger_date">
+                      <input class="form-control"
+                             data-prop="trigger_date"
+                             name="trigger_date"
+                             type="text"
+                             placeholder="Enter Trigger Date"
+                             required="required" />
+                    </td>
+                    <td class="issues_initiated">
+                      <input class="form-control"
+                             data-prop="issues_initiated"
+                             name="issues_initiated"
+                             type="text"
+                             placeholder="Enter Issues Initiated"
+                             required="required" />
+                    </td>
+                    <td class="severity">
+                      <select class="form-select"
+                              data-prop="severity"
+                              name="severity"
+                              required="required">
+                        <option value="" disabled selected>Select Severity</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                      </select>
+                    </td>
+                    <td class="text-center">
+                      <button data-id="new-save"
+                              type="button"
+                              class="btn btn-success btn-sm add-save-btn"
+                              title="Save Issues">
+                        <i class="fa-solid fa-check"></i>
+                      </button>
+                      <button data-id="new-cancel"
+                              type="reset"
+                              class="btn btn-danger btn-sm add-cancel-btn"
+                              title="Cancel Issues">
+                        <i class="fa-solid fa-xmark"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Existing Rows -->
+                  {% for i in data %}
+                    <!-- Non-edit row -->
+                    <tr data-n-id="{{ i.issues_id }}" data-non-edit="true">
+                      <td nowrap class="switch_button">{{ i.display }}</td>
+                      <td nowrap class="issues_summary">{{ i.issues_summary }}</td>
+                      <td nowrap class="status">{{ i.status.0 }}</td>
+                      <td nowrap class="owner">{{ i.owner }}</td>
+                      <td nowrap class="eta">{{ i.eta }}</td>
+                      <td nowrap class="trigger_date">{{ i.trigger_date }}</td>
+                      <td nowrap class="issues_initiated">{{ i.issues_initiated }}</td>
+                      <td nowrap class="severity">{{ i.severity.0 }}</td>
+                      <td nowrap class="action">
+                        <button data-id="{{ i.issues_id }}"
+                                type="button"
+                                class="btn btn-info btn-sm edit-btn"
+                                title="Edit Issues">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button data-id="{{ i.issues_id }}"
+                                type="button"
+                                class="btn btn-warning btn-sm detail-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#detailModal"
+                                title="View Details">
+                          <i class="fas fa-share-from-square"></i>
+                        </button>
+                        <button type="button"
+                                class="btn btn-danger btn-sm delete-btn"
+                                title="Delete Issues">
+                          <a style="text-decoration:none;color:#fff;"
+                             href="{% url 'delete_issues_data' pk=i.issues_id %}"
+                             onclick="return confirmDelete()">
+                            <i class="fas fa-trash"></i>
+                          </a>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Edit row (hidden by default) -->
+                    <tr data-e-id="{{ i.issues_id }}" data-edit="false">
+                      <td class="switch_button">
+                        <input class="form-control"
+                               type="checkbox"
+                               name="switch_button"
+                               data-prop="switch_button"
+                               value="1"
+                               data-toggle="toggle"
+                               data-on="On"
+                               data-off="Off"
+                               data-onstyle="primary"
+                               data-offstyle="danger"
+                               required="required"
+                               {% if i.display == 'On' %} checked {% endif %} />
+                      </td>
+                      <td class="issues_summary">
+                        <textarea class="form-control"
+                                  data-prop="issues_summary"
+                                  name="issues_summary"
+                                  cols="3"
+                                  maxlength="250"
+                                  required="required">{{ i.issues_summary }}</textarea>
+                      </td>
+                      <td class="status">
+                        <select class="form-select"
+                                data-prop="status"
+                                name="status"
+                                required="required">
+                          {% for st in i.status %}
+                            <option value="{{ st }}">{{ st }}</option>
+                          {% endfor %}
+                        </select>
+                      </td>
+                      <td class="owner">
+                        <input class="form-control"
+                               data-prop="owner"
+                               id="owner"
+                               name="owner"
+                               type="text"
+                               required="required"
+                               value="{{ i.owner }}" />
+                      </td>
+                      <td class="eta">
+                        <input class="form-control"
+                               data-prop="eta"
+                               id="eta"
+                               name="eta"
+                               type="text"
+                               required="required"
+                               value="{{ i.eta }}" />
+                      </td>
+                      <td class="trigger_date">
+                        <input class="form-control"
+                               data-prop="trigger_date"
+                               id="trigger_date"
+                               name="trigger_date"
+                               type="text"
+                               required="required"
+                               value="{{ i.trigger_date }}" />
+                      </td>
+                      <td class="issues_initiated">
+                        <input class="form-control"
+                               data-prop="issues_initiated"
+                               id="issues_initiated"
+                               name="issues_initiated"
+                               type="text"
+                               required="required"
+                               value="{{ i.issues_initiated }}" />
+                      </td>
+                      <td class="severity">
+                        <select class="form-select"
+                                data-prop="severity"
+                                name="severity"
+                                required="required">
+                          {% for sv in i.severity %}
+                            <option value="{{ sv }}">{{ sv }}</option>
+                          {% endfor %}
+                        </select>
+                      </td>
+                      <td>
+                        <button data-id="{{ i.issues_id }}"
+                                type="submit"
+                                class="btn btn-success btn-sm save-btn"
+                                title="Save Issues">
+                          <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button data-id="{{ i.issues_id }}"
+                                type="reset"
+                                class="btn btn-danger btn-sm cancel-btn"
+                                title="Cancel Issues">
+                          <i class="fa-solid fa-xmark"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL FOR DETAIL/VIEW -->
+  <div class="modal fade" id="detailModal" tabindex="-1"
+       aria-labelledby="detailModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailModalLabel">Risk Details</h5>
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <form id="detailForm">
+            <!-- Hidden field to hold the row’s Issue ID -->
+            <input type="hidden" name="issue_id" id="modalIssueId" />
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="modalIssuesSummary" class="form-label">Risk Summary</label>
+                <textarea class="form-control"
+                          id="modalIssuesSummary"
+                          name="Risk_summary"
+                          rows="2"
+                          disabled></textarea>
+              </div>
+              <div class="col-md-6">
+                <label for="modelArea" class="form-label">Risk Area</label>
+                <input class="form-control"
+                       id="modelArea"
+                       name="Risk_area"
+                       type="text" />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="modalStatus" class="form-label">Status</label>
+                <input class="form-control"
+                       id="modalStatus"
+                       name="status"
+                       type="text"
+                       disabled />
+              </div>
+              <div class="col-md-6">
+                <label for="modalOwner" class="form-label">Owner</label>
+                <input class="form-control"
+                       id="modalOwner"
+                       name="owner"
+                       type="text"
+                       disabled />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="modelConsequence" class="form-label">Consequence</label>
+                <input class="form-control"
+                       id="modelConsequence"
+                       name="Consequence"
+                       type="text" />
+              </div>
+              <div class="col-md-6">
+                <label for="modelMitigation" class="form-label">Mitigation</label>
+                <input class="form-control"
+                       id="modelMitigation"
+                       name="Mitigation"
+                       type="text" />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="modalIssuesInitiated" class="form-label">Risk Initiated</label>
+                <input class="form-control"
+                       id="modalIssuesInitiated"
+                       name="issues_initiated"
+                       type="text"
+                       disabled />
+              </div>
+              <div class="col-md-6">
+                <label for="modalTriggerDate" class="form-label">Trigger Date</label>
+                <input class="form-control"
+                       id="modalTriggerDate"
+                       name="trigger_date"
+                       type="text"
+                       disabled />
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="modalSeverity" class="form-label">Impact</label>
+                <input class="form-control"
+                       id="modalSeverity"
+                       name="severity"
+                       type="text"
+                       disabled />
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal">Close
+          </button>
+          <button type="button"
+                  class="btn btn-primary"
+                  id="detailSubmitBtn">Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/quill.js' %}"></script>
+  <script src="{% static 'intel_app/table/popper.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
+  <script src="{% static 'intel_app/table/bootstrap-table.js' %}"></script>
+  <script src="{% static 'intel_app/table/tableExport.min.js' %}"></script>
+  <script src="{% static 'intel_app/table/bootstrap-table-export.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/bootstrap-select.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
+  <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
+  <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
+
+  <script>
+    // Formatter for Severity to show colored circles:
+    function nameFormatter(value, row) {
+      var icon = row.severity === 'Low'    ? 'fa-circle fa-sm text-primary' :
+                row.severity === 'Medium' ? 'fa-circle fa-sm text-warning' :
+                row.severity === 'High'   ? 'fa-circle fa-sm text-danger'  : 'none';
+      return '<i class="fa ' + icon + '"></i> ' + value;
+    }
+  </script>
+
+  <script>
+    function updateProjectCookie(project) {
+      // Set the cookie with the project data
+      document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+  </script>
+
+  <script>
+    $('#example').bootstrapTable({
+      exportOptions: {
+        fileName: 'Issues'
+      },
+      exportTypes: ['excel']
+    });
+
+    function confirmDelete() {
+      if (confirm("Delete Record?") == true) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  </script>
+
+  <script>
+    // Tail select for project drop-down
+    tail.select("#projectdata", {
+      animate: true,
+      deselect: false,
+      disabled: false,
+      height: 350,
+      multiple: false,
+      placeholder: "Projects",
+      search: false,
+      width: 170
+    });
+  </script>
+
+  <script>
+    $(document).ready(function() {
+
+      /********************************************************
+       * Disable/Enable row editing
+       ********************************************************/
+      function disableOtherRows() {
+        $('.edit-btn').prop('disabled', true);
+        $('.add-btn').prop('disabled', true);
+
+        $('.detail-btn').prop('disabled', true);
+        $('.delete-btn').prop('disabled', true);
+      }
+
+      function enableOtherRows() {
+        $('.edit-btn').prop('disabled', false);
+        $('.add-btn').prop('disabled', false);
+
+        $('.detail-btn').prop('disabled', false);
+        $('.delete-btn').prop('disabled', false);
+      }
+
+      // Toggle between display row and edit row
+      $('.edit-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        disableOtherRows();
+
+        // Close any existing editing rows
+        $('tr[data-edit="true"]').attr('data-edit', false);
+        $('tr[data-non-edit="false"]').attr('data-non-edit', true);
+
+        // Enable editing for the clicked row
+        $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit', false);
+        $(`tr[data-e-id="${objectId}"]`).attr('data-edit', true);
+      });
+
+      // Cancel button
+      $('.cancel-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        enableOtherRows();
+
+        // Reset row state
+        $(`tr[data-n-id="${objectId}"]`).attr('data-non-edit', true);
+        $(`tr[data-e-id="${objectId}"]`).attr('data-edit', false);
+      });
+
+      // Save changes for Edit row
+      $('.save-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        enableOtherRows();
+
+        let projectData = $('#projectdata').val();
+
+        const issues = {
+          switch_button: $(`tr[data-e-id="${objectId}"] input[data-prop="switch_button"]`).prop("checked") ? "On" : "Off",
+          issues_summary: $(`tr[data-e-id="${objectId}"] textarea[data-prop="issues_summary"]`).val(),
+          status: $(`tr[data-e-id="${objectId}"] select[data-prop="status"]`).val(),
+          owner: $(`tr[data-e-id="${objectId}"] input[data-prop="owner"]`).val(),
+          eta: $(`tr[data-e-id="${objectId}"] input[data-prop="eta"]`).val(),
+          trigger_date: $(`tr[data-e-id="${objectId}"] input[data-prop="trigger_date"]`).val(),
+          issues_initiated: $(`tr[data-e-id="${objectId}"] input[data-prop="issues_initiated"]`).val(),
+          severity: $(`tr[data-e-id="${objectId}"] select[data-prop="severity"]`).val(),
+          project_name: projectData
+        };
+
+        const regex = /^\d{4}(\.\d{1,2})?$/;
+        if (!regex.test(issues.eta) ||
+            !regex.test(issues.trigger_date) ||
+            !regex.test(issues.issues_initiated)) {
+          alert("Invalid date format. Use yyyy, yyyy.w, or yyyy.ww");
+          return;
+        }
+
+        $('#loader').css('display', 'flex');
+        $.ajax({
+          type: "POST",
+          url: "/issues_edit_table/" + objectId,
+          data: issues,
+          success: function(data) {
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+            window.location.reload();
+          },
+          error: function(xhr, status, error) {
+            $('#loader').hide();
+            alert("An error occurred while saving. Please try again.");
+            console.error(error);
+          }
+        });
+      });
+
+      /********************************************************
+       * Add New Issues Flow
+       ********************************************************/
+      $('.add-btn').on('click', function() {
+        disableOtherRows();
+
+        // Close any currently editing rows
+        $('tr[data-edit="true"]').attr('data-edit', false);
+        $('tr[data-non-edit="false"]').attr('data-non-edit', true);
+
+        // Open the new row for adding
+        $('tr[data-a-id="new"]').attr('data-add', true);
+      });
+
+      $('.add-cancel-btn').click(function() {
+        enableOtherRows();
+        // Close the add row
+        $('tr[data-a-id="new"]').attr('data-add', false);
+      });
+
+      // Save new row
+      $('.add-save-btn').on('click', function() {
+        let objectId = "new";
+        enableOtherRows();
+        let projectData = $('#projectdata').val();
+
+        const switchButton    = $(`tr[data-a-id="${objectId}"] input[data-prop="switch_button"]`).prop("checked") ? "On" : "Off";
+        const issuesSummary   = $(`tr[data-a-id="${objectId}"] textarea[data-prop="issues_summary"]`).val();
+        const status          = $(`tr[data-a-id="${objectId}"] select[data-prop="status"]`).val();
+        const owner           = $(`tr[data-a-id="${objectId}"] input[data-prop="owner"]`).val();
+        const eta             = $(`tr[data-a-id="${objectId}"] input[data-prop="eta"]`).val();
+        const triggerDate     = $(`tr[data-a-id="${objectId}"] input[data-prop="trigger_date"]`).val();
+        const issuesInitiated = $(`tr[data-a-id="${objectId}"] input[data-prop="issues_initiated"]`).val();
+        const severity        = $(`tr[data-a-id="${objectId}"] select[data-prop="severity"]`).val();
+
+        // Basic validations
+        if (!issuesSummary || !status || !owner ||
+            !eta || !triggerDate || !issuesInitiated || !severity) {
+          alert("Please fill out all fields.");
+          return;
+        }
+
+        const issues = {
+          switch_button: switchButton,
+          issues_summary: issuesSummary,
+          status: status,
+          owner: owner,
+          eta: eta,
+          trigger_date: triggerDate,
+          issues_initiated: issuesInitiated,
+          severity: severity,
+          project_name: projectData
+        };
+
+        const regex = /^\d{4}(\.\d{1,2})?$/;
+        if (!regex.test(issues.eta) ||
+            !regex.test(issues.trigger_date) ||
+            !regex.test(issuesInitiated)) {
+          alert("Invalid date format. Use yyyy, yyyy.w, or yyyy.ww");
+          return;
+        }
+
+        $('#loader').css('display', 'flex');
+        $.ajax({
+          type: "POST",
+          url: "/issues/",
+          data: issues,
+          success: function(data) {
+            document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+            window.location.reload();
+          },
+          error: function(xhr, status, error) {
+            $('#loader').hide();
+            alert("An error occurred while saving. Please try again.");
+            console.error(error);
+          }
+        });
+      });
+
+      // DETAIL BUTTON: Open modal and populate data
+      $('.detail-btn').on('click', function() {
+        let objectId = $(this).data('id');
+        let rowSelector = `tr[data-n-id="${objectId}"]`;
+
+        let switchVal       = $(rowSelector).find('.switch_button').text().trim();
+        let issuesSummary   = $(rowSelector).find('.issues_summary').text().trim();
+        let statusVal       = $(rowSelector).find('.status').text().trim();
+        let ownerVal        = $(rowSelector).find('.owner').text().trim();
+        let etaVal          = $(rowSelector).find('.eta').text().trim();
+        let triggerDateVal  = $(rowSelector).find('.trigger_date').text().trim();
+        let issuesInitVal   = $(rowSelector).find('.issues_initiated').text().trim();
+        let severityVal     = $(rowSelector).find('.severity').text().trim();
+
+        $('#modalIssueId').val(objectId);
+
+        // On/Off
+        if (switchVal.toLowerCase() === 'on') {
+          $('#modalSwitchButton').prop('checked', true);
+        } else {
+          $('#modalSwitchButton').prop('checked', false);
+        }
+
+        // Fill form fields
+        $('#modalIssuesSummary').val(issuesSummary);
+        $('#modalStatus').val(statusVal);
+        $('#modalOwner').val(ownerVal);
+        $('#modalETA').val(etaVal);
+        $('#modalTriggerDate').val(triggerDateVal);
+        $('#modalIssuesInitiated').val(issuesInitVal);
+        $('#modalSeverity').val(severityVal);
+      });
+
+      // SUBMIT from the modal
+      $('#detailSubmitBtn').on('click', function() {
+        let issueId     = $('#modalIssueId').val();
+        let projectData = $('#projectdata').val();
+
+        let switchButtonVal = $('#modalSwitchButton').prop('checked') ? "On" : "Off";
+        let issuesSummary   = $('#modalIssuesSummary').val();
+        let statusVal       = $('#modalStatus').val();
+        let ownerVal        = $('#modalOwner').val();
+        let etaVal          = $('#modalETA').val();
+        let triggerDateVal  = $('#modalTriggerDate').val();
+        let issuesInitVal   = $('#modalIssuesInitiated').val();
+        let severityVal     = $('#modalSeverity').val();
+        let riskAreaVal     = $('#modelArea').val();
+        let consequenceVal  = $('#modelConsequence').val();
+        let mitigationVal   = $('#modelMitigation').val();
+
+        if (!riskAreaVal || !consequenceVal || !mitigationVal) {
+          alert("Please fill out all required fields in the modal.");
+          return;
+        }
+
+        const issues = {
+          switch_button: switchButtonVal,
+          issues_summary: issuesSummary,
+          status: statusVal,
+          owner: ownerVal,
+          eta: etaVal,
+          trigger_date: triggerDateVal,
+          issues_initiated: issuesInitVal,
+          severity: severityVal,
+          project_name: projectData,
+          risk_area: riskAreaVal,
+          consequence: consequenceVal,
+          mitigation: mitigationVal,
+          project_name: projectData
+        };
+
+        $('#loader').css('display', 'flex');
+        $.ajax({
+          type: "POST",
+          url: "/issues_to_risk_table/" + issueId,
+          data: issues,
+          success: function(response) {
+            if (response.status === 'error') {
+              swal({
+                title: "Alert!",
+                text: response.messages,
+                icon: "warning",
+                showConfirmButton: true
+              }, function() {
+                window.location.reload();
+              });
+            } else if (response.status === 'success') {
+              swal({
+                title: "Success",
+                text: response.messages,
+                icon: "success",
+                showConfirmButton: true
+              }, function() {
+                $('#loader').css('display', 'none');
+                // Close modal
+                $('#detailModal').modal('hide');
+                // Refresh the page
+                window.location.reload();
+              });
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
 </html>

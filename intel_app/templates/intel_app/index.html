@@ -49,6 +49,9 @@
           opacity: 1;
           right: 0;
         }
+        .form-select {
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -67,7 +70,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='home' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
                         <option value="" disabled >Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
@@ -99,10 +102,41 @@
 <main>
     <!-- Service 4 - Bootstrap Brain Component -->
     <section>
-        <div class="container" style="max-width:100%;">
-            <div class="alert alert-light alert-dismissible fade show" role="alert">
-                <strong>Welcome! {{user}}</strong> <a href="https://google.com" target="_blank">Readme.md</a>
-                <!--<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+        <div class="container" style="width:100%;">
+            <div class="alert alert-light alert-dismissible fade show d-flex align-items-center justify-content-between" role="alert" style="gap: 10px;">
+                <!-- Left Section: Welcome Message and Link -->
+                <div class="d-flex align-items-center" style="gap: 5px;">
+                    <strong>Welcome! {{user}}</strong>
+                    <a href="https://google.com" target="_blank">Readme.md</a>
+                </div>
+
+                <!-- Right Section: Dropdowns -->
+                <div class="dropdown-group d-flex gap-2" style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="Schedule">Schedule:</label>
+                        <select id="Schedule" class="form-select" aria-label="Dropdown 1" onchange="sendDropdownValue('Schedule')">
+                             {% for i in schedule_dropdown %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="BBOX">BBox:</label>
+                        <select id="BBOX" class="form-select" aria-label="Dropdown 2" onchange="sendDropdownValue('BBOX')">
+                            {% for i in bbox_dropdown %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label for="Quantity">Quantity:</label>
+                        <select id="Quantity" class="form-select" aria-label="Dropdown 3" onchange="sendDropdownValue('Quantity')">
+                            {% for i in quantity_dropdown %}
+                                <option value="{{i}}">{{i}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
         <br>
@@ -233,6 +267,30 @@
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
 <script src="{% static 'intel_app/ckeditor.js' %}"></script>
 <script>
+    function sendDropdownValue(dropdownId) {
+        const dropdownValue = document.getElementById(dropdownId).value;
+
+        if (dropdownValue) {
+            $.ajax({
+                url: "{% url 'ajax_handler' %}", // Update with your Django URL pattern
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    dropdown: dropdownId,
+                    value: dropdownValue
+                },
+                success: function(response) {
+                   window.location.reload();
+                },
+                error: function(error) {
+                    alert("Error submitting value: " + error.responseText);
+                }
+            });
+        }
+    }
+</script>
+
+<script>
     $("#filter").on("keyup", function() {
        var value = $(this).val().toLowerCase();
        $("#mycard > div").filter(function() {
@@ -241,11 +299,11 @@
     });
 </script>
 <script>
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            window.location.reload();
-        }
-    });
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
 </script>
 <script>
     tail.select("#projectdata", {
