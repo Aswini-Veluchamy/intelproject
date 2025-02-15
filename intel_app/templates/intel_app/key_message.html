@@ -55,7 +55,7 @@
             <ul class="navbar-nav ms-md-auto gap-2">
                 <form method="POST" action="{% url 'project_change' func_name='key_message' %}" id="projectForm">
                     {% csrf_token %}
-                    <select name="projectdata" id='projectdata' onchange="this.form.submit();">
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
                         <option value="" disabled >Projects</option>
                         {% for i in project %}
                         <option value="{{i}}">{{i}}</option>
@@ -84,29 +84,31 @@
     </div>
 </nav>
 <br>
+
 <main>
-    <!-- Service 4 - Bootstrap Brain Component -->
     <section>
-        <div class="container"><!--style="max-width:100%;"-->
+        <div class="container">
             <div class="card">
                 <div class="card-header">
                     <b>Key Message</b>
                 </div>
                 <div class="card-body">
-                    <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <div id="editor" style="height: 275px;">{{ key_mess_data.message|safe }}</div>
-                    <input type="hidden" name="hiddenInput" id="hiddenInput">
-                    <div id="counter_keymessage">Characters remaining: 375</div>
-                    <p>{{ error }}</p>
-                    <button type="submit" id="btn_keymessage" class="btn btn-primary">Submit</button>
-                    <button type="button" class="btn btn-secondary" id="btn_cancel">Cancel</button>
+                    <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}">
+                        {% csrf_token %}
+                        <textarea id="editor">{{ key_mess_data.message|escape }}</textarea>
+                        <input type="hidden" name="hiddenInput" id="hiddenInput">
+                        <div id="counter_keymessage">Characters remaining: 375</div>
+                        <p>{{ error }}</p>
+                        <button type="submit" id="btn_keymessage" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" id="btn_cancel">Cancel</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
 </main>
+
+
 <!-- Include the Quill library -->
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/quill.js' %}"></script>
@@ -117,7 +119,8 @@
 <script src="{% static 'intel_app/js/sweetalert-dev.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
-<script src="{% static 'intel_app/ckeditor.js' %}"></script>
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
 
 <script>
     function nameFormatter(value, row) {
@@ -125,6 +128,21 @@
       row.severity === 'Medium'  ? 'fa-circle fa-sm text-warning' :
       row.severity === 'High'  ? 'fa-circle fa-sm text-danger' : 'none'
       return '<i class="fa ' + icon + '"></i> ' + value
+    }
+
+</script>
+<script>
+    $('#projectdata').change(function(event){
+        var selectedcategory = $(this).children("option:selected").val();
+        sessionStorage.setItem("itemName",selectedcategory);
+    });
+
+    $('select').find('option[value='+sessionStorage.getItem('itemName')+']').attr('selected','selected');
+
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
     }
 
 </script>
@@ -140,76 +158,59 @@
     width: 170
 });
 </script>
+
 <script>
-$(document).ready(function () {
-    let originalContent = `{{ key_mess_data.message|safe }}`;  // Store the original content
+    document.addEventListener("DOMContentLoaded", function () {
+        const maxLength = 375;
 
-    ClassicEditor
-        .create(document.querySelector('#editor'))
-        .then(editor => {
-            const maxLength = 375;
-            let debounceTimer;
+        tinymce.init({
+            selector: '#editor',
+            height: 500,
+            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table emoticons wordcount',
+            toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | table image media link | code preview fullscreen emoticons',
+            branding: false,
+            menubar: true,
+            image_advtab: true,
+            file_picker_types: 'image',
 
-            // Set the initial content
-            editor.setData(originalContent);
+            setup: function (editor) {
+                editor.on('init', function () {
+                    // Set initial content from Django safely
+                    editor.setContent(`{{ key_mess_data.message|escape }}`);
+                    updateCharacterCount(editor);
+                });
 
-            function updateCharacterCount() {
-                let content = editor.getData();
-                let textContent = content.replace(/<[^>]*>/g, ''); // Get text content without HTML tags
-                let textLength = textContent.length;
+                editor.on('keyup change', function () {
+                    updateCharacterCount(editor);
+                });
 
-                const remaining = maxLength - textLength;
-                $('#counter_keymessage').text('Characters remaining: ' + remaining);
+                function updateCharacterCount(editor) {
+                    let text = editor.getContent({ format: 'text' }).trim();
+                    let remaining = maxLength - text.length;
 
-                if (remaining < 0) {
-                    $('#counter_keymessage').addClass('text-danger'); // Add red color for negative values
-                } else {
-                    $('#counter_keymessage').removeClass('text-danger'); // Reset color if within limits
+                    if (text.length > maxLength) {
+                        editor.setContent(text.substring(0, maxLength));
+                        remaining = 0;
+                    }
+
+                    document.getElementById('counter_keymessage').textContent = 'Characters remaining: ' + remaining;
                 }
+
+                // Save content to hidden input before submitting
+                document.getElementById('btn_keymessage').addEventListener('click', function (e) {
+                    document.getElementById('hiddenInput').value = editor.getContent();
+                });
+
+                // Reset content on Cancel
+                document.getElementById('btn_cancel').addEventListener('click', function () {
+                    editor.setContent(`{{ key_mess_data.message|escape }}`);
+                    window.location.href = '{% url "home" %}';
+                });
             }
-
-            function debounce(func, timeout = 300) {
-                return (...args) => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => { func.apply(this, args); }, timeout);
-                };
-            }
-
-            //Debounce the change event to prevent excessive processing
-            editor.model.document.on('change:data', debounce(updateCharacterCount));
-
-            $('#btn_keymessage').on('click', function (e) {
-                const html = editor.getData();
-                const textLength = html.replace(/<[^>]*>/g, '').length; // Calculate text length without HTML tags
-
-                if (textLength > maxLength) {
-                    alert('Content exceeds the maximum length of ' + maxLength + ' characters.');
-                    e.preventDefault();
-                } else {
-                    $('#hiddenInput').val(html);
-                    // Submit the form
-                    $('#myForm').submit();
-                }
-            });
-
-            // Initialize character count on page load
-            updateCharacterCount();
-
-            // Redirect to home when Cancel button is clicked
-            $('#btn_cancel').on('click', function () {
-                editor.setData(originalContent); // Revert to original content
-                window.location.href = '{% url 'home' %}';  // Change '/' to your home page URL
-            });
-
-            $('.btn-secondary').on('click', function () {
-                editor.setData(originalContent); // Revert to original content
-            });
-
-        })
-        .catch(error => {
-            console.error(error);
         });
-});
+    });
 </script>
+
 </body>
+</head>
 </html>
