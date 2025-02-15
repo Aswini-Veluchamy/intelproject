@@ -175,7 +175,7 @@ $(document).ready(function () {
                 };
             }
 
-            // Debounce the change event to prevent excessive processing
+            //Debounce the change event to prevent excessive processing
             editor.model.document.on('change:data', debounce(updateCharacterCount));
 
             $('#btn_keymessage').on('click', function (e) {
