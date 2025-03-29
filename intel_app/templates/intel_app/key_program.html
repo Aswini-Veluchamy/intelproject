@@ -65,7 +65,7 @@
           <ul class="navbar-nav ms-md-auto gap-2">
             <form method="POST" action="{% url 'project_change' func_name='key_program' %}" id="projectForm">
               {% csrf_token %}
-              <select name="projectdata" id="projectdata" onchange="this.form.submit();">
+              <select name="projectdata" id="projectdata" onchange="updateProjectCookie(this.value); this.form.submit();">
                 <option value="" disabled>Projects</option>
                 {% for i in project %}
                   <option value="{{ i }}">{{ i }}</option>
