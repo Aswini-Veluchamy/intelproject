@@ -18,7 +18,13 @@
   <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
   <!-- DataTables CSS -->
   <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css"/>
-  
+    <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+  <!-- DataTables Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+
   <style>
     /* Use Calibri font for table cells and force word breaks for long strings */
     table#example th,
@@ -31,6 +37,24 @@
       overflow-wrap: break-word;
       word-break: break-all;
     }
+/* Fix dropdown direction to open downward */
+.dt-buttons .btn-group.open .dropdown-menu {
+    top: 100% !important; /* Forces the dropdown to open below the button */
+    bottom: auto !important; /* Ensures it does not try to open upwards */
+    display: block !important; /* Makes sure it's displayed correctly */
+    position: absolute; /* Ensures correct positioning */
+    z-index: 9999; /* Makes sure the dropdown stays above other elements */
+}
+
+
+
+    .dt-buttons {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+
+}
+
 
     /* Inline editing: show .display-field by default; hide .edit-field */
     .edit-field { display: none; }
@@ -110,6 +134,7 @@
             <!-- "Add Risk" button -->
             <button type="button" class="btn btn-primary btn-sm" id="addRiskBtn" style="float:right;">Add Risk</button>
           </div>
+          <br><br>
           <div class="card-body">
             <!-- Responsive table wrapper -->
             <div class="table-responsive">
@@ -356,6 +381,21 @@
   <!-- DataTables JS -->
   <script type="text/javascript" src="//cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 
+  <!-- jQuery & DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+  <!-- Buttons Extension for Export -->
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
   <script>
     // Update project cookie
     function updateProjectCookie(project) {
@@ -363,14 +403,34 @@
       document.cookie = `projectData=${projectData}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
     }
 
-    $(document).ready(function() {
-      // Initialize DataTables
-      $('#example').DataTable({
-         paging: true,
-         ordering: true,
-         info: true,
-         searching: true
-      });
+$(document).ready(function () {
+    $('#example').DataTable({
+        paging: true,
+        ordering: true,
+        info: true,
+        searching: true,
+        order: [[0, 'asc']], // Sort by first column
+        dom: '<"row"<"col-md-6"l><"col-md-6"f>>' + // Length & Search
+             '<"row"<"col-md-12"B>>' + // Buttons container
+             '<"row"<"col-md-12"tr>>' + // Table
+             '<"row"<"col-md-6"i><"col-md-6"p>>', // Info & Pagination
+        buttons: [
+            {
+                extend: 'collection',
+                text: 'Download',
+                className: 'btn btn-info',
+                buttons: [
+                    { extend: 'copy', className: 'btn btn-secondary' },
+                    { extend: 'csv', className: 'btn btn-primary' },
+                    { extend: 'excel', className: 'btn btn-success' },
+                    { extend: 'pdf', className: 'btn btn-danger' },
+                    { extend: 'print', className: 'btn btn-warning' }
+                ]
+            }
+        ]
+    });
+
+
 
       // Inline Editing for Existing Rows
       $(document).on('click', '.edit-btn', function() {
