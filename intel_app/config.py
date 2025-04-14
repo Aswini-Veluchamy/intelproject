@@ -18,6 +18,7 @@ LINKS_TABLE = 'links_table'
 BBOX_TABLE = 'bbox'
 ISSUES_TABLE = 'issues_table'
 
+
 # backup tables
 LINKS_BKP_TABLE = 'links_bkp_table'
 ISSUES_BKP_TABLE = 'issues_bkp_table'

@@ -89,8 +89,9 @@
     <section>
         <div class="container">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header" style="display: flex; justify-content: space-between;">
                     <b>Key Message</b>
+                    <b>{{ ts }}</b>
                 </div>
                 <div class="card-body">
                     <form method="post" id="myForm" autocomplete="off" action="{% url 'key_message' %}">

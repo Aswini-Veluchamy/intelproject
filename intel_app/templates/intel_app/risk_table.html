@@ -37,25 +37,21 @@
       overflow-wrap: break-word;
       word-break: break-all;
     }
-/* Fix dropdown direction to open downward */
-.dt-buttons .btn-group.open .dropdown-menu {
-    top: 100% !important; /* Forces the dropdown to open below the button */
-    bottom: auto !important; /* Ensures it does not try to open upwards */
-    display: block !important; /* Makes sure it's displayed correctly */
-    position: absolute; /* Ensures correct positioning */
-    z-index: 9999; /* Makes sure the dropdown stays above other elements */
-}
-
-
+    /* Fix dropdown direction to open downward */
+    .dt-buttons .btn-group.open .dropdown-menu {
+        top: 100% !important; /* Forces the dropdown to open below the button */
+        bottom: auto !important; /* Ensures it does not try to open upwards */
+        display: block !important; /* Makes sure it's displayed correctly */
+        position: absolute; /* Ensures correct positioning */
+        z-index: 9999; /* Makes sure the dropdown stays above other elements */
+    }
 
     .dt-buttons {
     display: flex;
     justify-content: flex-end;
     width: 100%;
 
-}
-
-
+  }
     /* Inline editing: show .display-field by default; hide .edit-field */
     .edit-field { display: none; }
     .editing .display-field { display: none; }
