@@ -141,9 +141,9 @@ def delete_key_program_metric_data(metric_id):
     conn.close()
 
 
-def drop_table():
+def drop_table(table):
     conn, cursor = db_connection()
-    sql = f"DROP TABLE bbox"
+    sql = f"DROP TABLE {table}"
     cursor.execute(sql)
     print(f'data deleted ')
     conn.commit()
@@ -588,6 +588,24 @@ def update_project_status(project_name, quantity_type, status, modified_by):
     conn.commit()
     conn.close()
 
+def upload_image_data(name, image, project_name, user):
+    conn, cursor = db_connection()
+    cursor.execute(
+        "INSERT INTO image_table (name, image, project, user) VALUES (%s, %s, %s, %s)",
+        [name, image, project_name, user]
+    )
+    conn.commit()
+    conn.close()
 
+
+def get_latest_timestamp(table, project):
+    conn, cursor = db_connection()
+    dict_cursor = conn.cursor(dictionary=True)
+    sql = f"SELECT MAX(ts) as ts FROM `{table}` WHERE project = %s"
+    values = (project,)
+    dict_cursor.execute(sql, values)
+    record = dict_cursor.fetchone()
+    conn.close()
+    return record or {}
 
 

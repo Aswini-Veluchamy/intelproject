@@ -941,3 +941,17 @@ CREATE TABLE project_status (
     modified_by VARCHAR(255),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+------------------------------------------
+
+DROP TABLE IF EXISTS image_table;
+
+CREATE TABLE image_table (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    project VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    image LONGTEXT,
+    user VARCHAR(255) NOT NULL,
+    ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+

@@ -20,6 +20,7 @@ from .db_connection import get_data, get_key_msg_or_details_data, update_deleted
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
 from .db_connection import get_distinct_metric, update_user_projects, get_old_project
 from .db_connection import create_project_status, get_project_status, update_project_status
+from .db_connection import upload_image_data, drop_table, get_latest_timestamp
 
 import ast
 
@@ -202,10 +203,13 @@ def key_message(request):
                 key_mess_data = get_key_msg_or_details_data(KEY_MESSAGE_TABLE, project_data)
             except TypeError:
                 key_mess_data = None
+
+            record = get_latest_timestamp(KEY_MESSAGE_TABLE, project_data)
+            ts = record['ts'].strftime("%Y-%m-%d %H:%M:%S") if record.get('ts') else None
             # return the data to UI
             return render(request, 'intel_app/key_message.html', {'project': user_projects,
                                                             'key_mess_data': key_mess_data,
-                                                            'user': user})
+                                                            'user': user, 'ts': ts})
         except KeyError:
             return HttpResponseRedirect(reverse('login'))
 
@@ -518,8 +522,10 @@ def links(request):
                 user_project = update_queryset_values(user_project, project_name)
                 project_data = project_name
             result = get_data(user, LINKS_TABLE, project_data)
+            record = get_latest_timestamp(KEY_MESSAGE_TABLE, project_data)
+            ts = record['ts'].strftime("%Y-%m-%d %H:%M:%S") if record.get('ts') else None
             response = render(request, 'intel_app/links.html', {'project': user_project, 'data': result,
-                                                            'user': user})
+                                                            'user': user, 'ts': ts})
             response.set_cookie('project', user_project)
             response.set_cookie('primary_project', project_data)
             return response
@@ -891,3 +897,70 @@ def issues_to_risk_table(request, pk):
         messages = f'Issues data transferred to the Risk table'
         return JsonResponse({'messages': messages, 'status': 'success'}, status=200)
 
+
+import base64
+from PIL import Image
+from io import BytesIO
+import os
+
+def upload_image(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        image_file = request.FILES.get('image')
+        project_data = request.COOKIES.get('primary_project') or ''
+        project_name = request.COOKIES.get('projectData') or project_data
+        user = request.COOKIES.get('user_id')
+
+        try:
+            # Step 1: Save original image to C:/folder/ with the same name
+            save_path = os.path.join('D://', image_file.name)
+            with open(save_path, 'wb+') as destination:
+                for chunk in image_file.chunks():
+                    destination.write(chunk)
+
+            # Compress and encode image using Pillow
+            img = Image.open(image_file)
+            # Convert to RGB if the image has alpha channel (RGBA or LA)
+            if img.mode in ("RGBA", "LA"):
+                background = Image.new("RGB", img.size, (255, 255, 255))
+                background.paste(img, mask=img.split()[-1])  # Paste using alpha channel as mask
+                img = background
+            else:
+                img = img.convert("RGB")
+
+            buffer = BytesIO()
+            img.save(buffer, format='JPEG', optimize=True, quality=70)
+            image_data = buffer.getvalue()
+            image_base64 = base64.b64encode(image_data).decode('utf-8')
+
+            # Save to DB
+            upload_image_data(name, image_base64, project_name, user)
+            return JsonResponse({'status': 'success'})
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status': 'failed', 'message': str(e)}, status=500)
+
+    else:
+        user_projects = request.COOKIES.get('project')
+        user = request.COOKIES.get('user_id')
+        result = get_data(user, 'image_table', request.COOKIES['primary_project'])
+        if not user_projects or not user:
+            return JsonResponse({'status': 'failed', 'message': 'Missing cookies'}, status=400)
+
+        user_projects = ast.literal_eval(user_projects)
+        return render(request, 'intel_app/upload_image.html', {
+            'data': result,
+            'project': user_projects,
+            'user': user
+        })
+
+
+@csrf_exempt
+def delete_image(request, id):
+    if request.method == 'POST':
+        try:
+            delete_record('image_table', 'id', id)
+            return JsonResponse({'status': 'success'})
+        except Exception:
+            return JsonResponse({'status': 'error', 'message': 'Image id Not found'}, status=404)

@@ -92,14 +92,16 @@
     <section>
         <div class="container"><!--style="max-width:100%;"-->
             <div class="card">
-                <div class="card-header">
-                    <b>Links</b>
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-sm add-btn"
-                            style="float:right;">
-                        Add Links
-                    </button>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                <b>Links</b>
+                <div class="text-center flex-grow-1">
+                    <b>{{ ts }}</b>
                 </div>
+                <button type="button" class="btn btn-primary btn-sm add-btn">
+                    Add Links
+                </button>
+            </div>
+
                 <div class="card-body">
                     <form>
                         <table class="table table-bordered table-striped" id="example"

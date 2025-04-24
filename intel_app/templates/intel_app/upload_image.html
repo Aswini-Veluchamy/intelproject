@@ -1,0 +1,257 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Upload Image</title>
+    <link rel="shortcut icon" href="{% static 'intel_app/img/intel.ico' %}"/>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'intel_app/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/style.css' %}" rel="stylesheet"/>
+    <link href="{% static 'intel_app/css/quill.snow.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/bootstrap-icons-1.11.1/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/table/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+    <link href="{% static 'intel_app/css/tail.select-default.min.css' %}" rel="stylesheet">
+
+    <style>
+        tr[data-non-edit="false"], tr[data-edit="false"], tr[data-add="false"] {
+            display : none;
+        }
+    </style>
+</head>
+<body style="background-color:#ffffff!important;">
+<!-- Loader -->
+<div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+</div>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand"><span>Intel</span></a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-md-auto gap-2">
+                <form method="POST" action="{% url 'project_change' func_name='upload_image' %}" id="projectForm">
+                    {% csrf_token %}
+                    <select name="projectdata" id='projectdata' onchange="updateProjectCookie(this.value); this.form.submit();">
+                        <option value="" disabled>Projects</option>
+                        {% for i in project %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                    <p style="display:none;">{{error}}</p>
+                </form>
+                <li class="nav-item rounded">
+                    <a class="nav-link ho" href="{% url 'home' %}">
+                        <i class="fa fa-home"></i> <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown rounded">
+                    <a class="nav-link ho dropdown-toggle" href="#" id="navbarDropdown" data-bs-toggle="dropdown">
+                        <i class="fa fa-user"></i> <span>{{user}}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br>
+
+<main>
+    <section>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <b>Image Upload</b>
+                    <button type="button" class="btn btn-primary btn-sm" style="float:right;" data-bs-toggle="modal" data-bs-target="#addImageModal">
+                        Add
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped" id="example"
+                           data-toggle="table"
+                           data-search="true"
+                           data-search-align="left"
+                           data-show-columns="true"
+                           data-show-export="true"
+                           data-export-data-type="all"
+                           data-show-fullscreen="true"
+                           data-buttons-class="primary btn-sm">
+                        <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Name</th>
+                            <th>Image</th>
+                        </tr>
+                        </thead>
+                        <tbody data-body="links">
+                        {% for i in data %}
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteEntry({{ i.id }})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                            <td>{{ i.name }}</td>
+                            <td>
+                                {% if i.image %}
+                                <img src="data:image/jpeg;base64,{{ i.image }}" alt="Image" width="120"
+                                     style="cursor: pointer;"
+                                     onclick="showFullImage('{{ i.image }}')">
+                                {% else %}
+                                No image
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- MODAL for Add Image -->
+<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="addImageForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="addImageModalLabel">Image Upload </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="image_name" class="form-label">Name</label>
+                <input type="text" class="form-control" name="name" id="image_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="image_file" class="form-label">Image Upload</label>
+                <input type="file" class="form-control" name="image" id="image_file" accept="image/png, image/jpeg, image/jpg, image/gif" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for full-size image -->
+<div class="modal fade" id="fullImageModal" tabindex="-1" aria-labelledby="fullImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="fullImageModalLabel">Image Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="fullImage" src="" alt="Full Image" style="max-width: 100%; max-height: 80vh;">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Scripts -->
+<script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'intel_app/table/bootstrap-table.min.js' %}"></script>
+<script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
+<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+<script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+<script>
+    function showFullImage(imageBase64) {
+    const imgSrc = 'data:image/jpeg;base64,' + imageBase64;
+    document.getElementById('fullImage').src = imgSrc;
+    const modal = new bootstrap.Modal(document.getElementById('fullImageModal'));
+    modal.show();
+}
+</script>
+<script>
+    // Delete projectData cookie after loading
+    function updateProjectCookie(project) {
+        // Set the cookie with the project data
+        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+    }
+</script>
+<script>
+    function deleteEntry(id) {
+        if (!confirm("Are you sure you want to delete this entry?")) return;
+        $('#loader').css('display', 'flex');
+        $.ajax({
+            url: `/delete_image/${id}/`,  // Ensure this URL is handled in your Django views
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function () {
+                $('#loader').hide();
+                window.location.reload();  // Or dynamically remove the row
+            },
+            error: function () {
+                $('#loader').hide();
+                alert('Failed to delete entry.');
+            }
+        });
+    }
+</script>
+<script>
+    $('#addImageForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const fileInput = $('#image_file')[0];
+    const file = fileInput.files[0];
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+
+    if (!file || !validTypes.includes(file.type)) {
+        alert('Please upload a valid image file (PNG, JPEG, JPG, GIF).');
+        return;
+    }
+
+    var formData = new FormData(this);
+    $('#loader').css('display', 'flex');
+
+    $.ajax({
+        url: '/upload_image/',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            $('#loader').hide();
+            $('#addImageModal').modal('hide');
+            window.location.reload();
+        },
+        error: function (xhr, status, error) {
+            $('#loader').hide();
+            alert("Failed to save image. Try again.");
+            console.error("Upload error:", error);
+        }
+    });
+});
+
+
+</script>
+<script>
+    tail.select("#projectdata", {
+    animate: true,
+    deselect: false,
+    disabled: false,
+    height: 350,
+    multiple: false,
+    placeholder: "Projects",
+    search: false,
+    width: 170
+});
+</script>
+</body>
+</html>
