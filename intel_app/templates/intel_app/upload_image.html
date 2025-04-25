@@ -92,6 +92,9 @@
                         <tbody data-body="links">
                         {% for i in data %}
                             <td>
+                                <button class="btn btn-warning btn-sm me-2" onclick="editEntry({{ i.id }}, '{{ i.name }}')" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteEntry({{ i.id }})" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -145,6 +148,37 @@
   </div>
 </div>
 
+<!-- Modal for Edit Image -->
+<div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editImageForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="id" id="edit_image_id">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editImageModalLabel">Edit Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="edit_image_name" class="form-label">Name</label>
+                <input type="text" class="form-control" name="name" id="edit_image_name" required>
+            </div>
+            <div class="mb-3">
+                <label for="edit_image_file" class="form-label">Change Image (optional)</label>
+                <input type="file" class="form-control" name="image" id="edit_image_file" accept="image/*">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Update</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 <!-- Modal for full-size image -->
 <div class="modal fade" id="fullImageModal" tabindex="-1" aria-labelledby="fullImageModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -183,6 +217,40 @@
         document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
     }
 </script>
+<script>
+function editEntry(id, name) {
+    $('#edit_image_id').val(id);
+    $('#edit_image_name').val(name);
+    $('#editImageModal').modal('show');
+}
+</script>
+<script>
+$('#editImageForm').on('submit', function (e) {
+    e.preventDefault();
+    const id = $('#edit_image_id').val();
+    const formData = new FormData(this);
+
+    $('#loader').css('display', 'flex');
+
+    $.ajax({
+        url: `/edit_image/${id}/`,  // Django view must handle this URL
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function () {
+            $('#loader').hide();
+            $('#editImageModal').modal('hide');
+            window.location.reload();
+        },
+        error: function () {
+            $('#loader').hide();
+            alert('Failed to update entry.');
+        }
+    });
+});
+</script>
+
 <script>
     function deleteEntry(id) {
         if (!confirm("Are you sure you want to delete this entry?")) return;

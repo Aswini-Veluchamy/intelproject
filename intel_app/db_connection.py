@@ -597,6 +597,17 @@ def upload_image_data(name, image, project_name, user):
     conn.commit()
     conn.close()
 
+def update_image_data(id, name, image, project_name, user):
+    conn, cursor = db_connection()
+    sql = """
+            UPDATE image_table
+            SET name = %s, image = %s, project = %s, user = %s
+            WHERE id = %s
+        """
+    values = (name, image, project_name, user, id)
+    cursor.execute(sql, values)
+    conn.commit()
+    conn.close()
 
 def get_latest_timestamp(table, project):
     conn, cursor = db_connection()

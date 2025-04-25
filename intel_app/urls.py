@@ -40,4 +40,5 @@ urlpatterns = [
     path('issues_to_risk_table/<str:pk>', views.issues_to_risk_table, name='issues_to_risk_table'),
     path('upload_image/', views.upload_image, name='upload_image'),
     path('delete_image/<int:id>/', views.delete_image, name='delete_image'),
+    path('edit_image/<int:id>/', views.edit_image, name='edit_image')
 ]

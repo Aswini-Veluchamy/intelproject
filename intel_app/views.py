@@ -20,7 +20,7 @@ from .db_connection import get_data, get_key_msg_or_details_data, update_deleted
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
 from .db_connection import get_distinct_metric, update_user_projects, get_old_project
 from .db_connection import create_project_status, get_project_status, update_project_status
-from .db_connection import upload_image_data, drop_table, get_latest_timestamp
+from .db_connection import upload_image_data, drop_table, get_latest_timestamp, update_image_data
 
 import ast
 
@@ -912,11 +912,11 @@ def upload_image(request):
         user = request.COOKIES.get('user_id')
 
         try:
-            # Step 1: Save original image to C:/folder/ with the same name
-            save_path = os.path.join('D://', image_file.name)
-            with open(save_path, 'wb+') as destination:
-                for chunk in image_file.chunks():
-                    destination.write(chunk)
+            # # Step 1: Save original image to C:/folder/ with the same name
+            # save_path = os.path.join('D://', image_file.name)
+            # with open(save_path, 'wb+') as destination:
+            #     for chunk in image_file.chunks():
+            #         destination.write(chunk)
 
             # Compress and encode image using Pillow
             img = Image.open(image_file)
@@ -964,3 +964,39 @@ def delete_image(request, id):
             return JsonResponse({'status': 'success'})
         except Exception:
             return JsonResponse({'status': 'error', 'message': 'Image id Not found'}, status=404)
+
+
+@csrf_exempt
+def edit_image(request, id):
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name')
+            image_file = request.FILES.get('image')
+            user = request.COOKIES.get('user_id')
+            project_name = request.COOKIES.get('projectData') or request.COOKIES.get('primary_project')
+
+            # If a new image is uploaded
+            if image_file:
+                img = Image.open(image_file)
+                if img.mode in ("RGBA", "LA"):
+                    background = Image.new("RGB", img.size, (255, 255, 255))
+                    background.paste(img, mask=img.split()[-1])
+                    img = background
+                else:
+                    img = img.convert("RGB")
+
+                buffer = BytesIO()
+                img.save(buffer, format='JPEG', optimize=True, quality=70)
+                image_data = buffer.getvalue()
+                image_base64 = base64.b64encode(image_data).decode('utf-8')
+
+                # Save updated entry to DB
+                update_image_data(id, name, image_base64, project_name, user)
+
+            return JsonResponse({'status': 'success'})
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status': 'failed', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'failed', 'message': 'Invalid request method'}, status=405)
