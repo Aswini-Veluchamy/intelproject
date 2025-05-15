@@ -18,11 +18,12 @@
 
     <style>
         tr[data-non-edit="false"], tr[data-edit="false"], tr[data-add="false"] {
-            display : none;
+            display: none;
         }
     </style>
 </head>
 <body style="background-color:#ffffff!important;">
+
 <!-- Loader -->
 <div id="loader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center;">
     <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
@@ -73,60 +74,47 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered table-striped" id="example"
-                           data-toggle="table"
-                           data-search="true"
-                           data-search-align="left"
-                           data-show-columns="true"
-                           data-show-export="true"
-                           data-export-data-type="all"
-                           data-show-fullscreen="true"
-                           data-buttons-class="primary btn-sm">
-                        <thead>
-                        <tr>
-                            <th>Action</th>
-                            <th>Name</th>
-                            <th>Image</th>
-                        </tr>
-                        </thead>
-                        <tbody data-body="links">
-                        {% for i in data %}
-                            <td>
-                                <button class="btn btn-warning btn-sm me-2" onclick="editEntry({{ i.id }}, '{{ i.name }}')" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteEntry({{ i.id }})" title="Delete">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                            <td>{{ i.name }}</td>
-                            <td>
+                    <div class="row">
+                          {% for i in data %}
+                            <div class="col-md-3 col-sm-6 col-12 mb-4">
+                              <div class="card h-100 shadow-sm border-0"
+                                   style="min-height: 300px;"
+                                   draggable="true"
+                                   ondragstart="onDragStart(event, '{{ i.id }}')"
+                                   ondrop="onDrop(event, '{{ i.id }}')"
+                                   ondragover="onDragOver(event)">
                                 {% if i.image %}
-                                <img src="data:image/jpeg;base64,{{ i.image }}" alt="Image" width="120"
-                                     style="cursor: pointer;"
+                                <img src="data:image/jpeg;base64,{{ i.image }}"
+                                     class="card-img-top"
+                                     style="height: 200px; object-fit: cover; cursor: pointer;"
                                      onclick="showFullImage('{{ i.image }}')">
                                 {% else %}
-                                No image
+                                <div class="card-img-top d-flex align-items-center justify-content-center"
+                                     style="height:200px; background:#f8f9fa;">
+                                  <span>No Image</span>
+                                </div>
                                 {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                                <div class="card-body text-center">
+                                  <p class="mb-0 fw-bold text-truncate">{{ i.name }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 </main>
 
-<!-- MODAL for Add Image -->
+<!-- Add Image Modal -->
 <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <form id="addImageForm" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="modal-header">
-          <h5 class="modal-title" id="addImageModalLabel">Image Upload </h5>
+          <h5 class="modal-title" id="addImageModalLabel">Image Upload</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -136,7 +124,9 @@
             </div>
             <div class="mb-3">
                 <label for="image_file" class="form-label">Image Upload</label>
-                <input type="file" class="form-control" name="image" id="image_file" accept="image/png, image/jpeg, image/jpg, image/gif" required>
+                <input type="file" class="form-control" name="image" id="image_file"
+                       accept="image/*" onchange="previewImage(this)" required>
+                 <img id="preview" src="#" alt="Preview" style="display:none; margin-top:10px; max-height:200px;">
             </div>
         </div>
         <div class="modal-footer">
@@ -148,43 +138,12 @@
   </div>
 </div>
 
-<!-- Modal for Edit Image -->
-<div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="editImageForm" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="id" id="edit_image_id">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editImageModalLabel">Edit Image</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="edit_image_name" class="form-label">Name</label>
-                <input type="text" class="form-control" name="name" id="edit_image_name" required>
-            </div>
-            <div class="mb-3">
-                <label for="edit_image_file" class="form-label">Change Image (optional)</label>
-                <input type="file" class="form-control" name="image" id="edit_image_file" accept="image/*">
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Update</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-<!-- Modal for full-size image -->
+<!-- Full Image Modal -->
 <div class="modal fade" id="fullImageModal" tabindex="-1" aria-labelledby="fullImageModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="fullImageModalLabel">Image Preview</h5>
+        <h5 class="modal-title">Image Preview</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body text-center">
@@ -194,7 +153,6 @@
   </div>
 </div>
 
-
 <!-- Scripts -->
 <script src="{% static 'intel_app/js/jquery.min.js' %}"></script>
 <script src="{% static 'intel_app/js/bootstrap.bundle.min.js' %}"></script>
@@ -202,112 +160,87 @@
 <script src="{% static 'intel_app/js/bootstrap-toggle.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
 <script src="{% static 'intel_app/js/tail.select-full.min.js' %}"></script>
+
 <script>
-    function showFullImage(imageBase64) {
-    const imgSrc = 'data:image/jpeg;base64,' + imageBase64;
-    document.getElementById('fullImage').src = imgSrc;
-    const modal = new bootstrap.Modal(document.getElementById('fullImageModal'));
-    modal.show();
+function onDragStart(event, imageId) {
+    event.dataTransfer.setData('text/plain', imageId);
 }
-</script>
-<script>
-    // Delete projectData cookie after loading
-    function updateProjectCookie(project) {
-        // Set the cookie with the project data
-        document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
-    }
-</script>
-<script>
-function editEntry(id, name) {
-    $('#edit_image_id').val(id);
-    $('#edit_image_name').val(name);
-    $('#editImageModal').modal('show');
+
+function onDragOver(event) {
+    event.preventDefault();
 }
-</script>
-<script>
-$('#editImageForm').on('submit', function (e) {
-    e.preventDefault();
-    const id = $('#edit_image_id').val();
-    const formData = new FormData(this);
+
+function onDrop(event, targetImageId) {
+    event.preventDefault();
+    const sourceId = event.dataTransfer.getData('text/plain');
+    if (sourceId === targetImageId) return;
 
     $('#loader').css('display', 'flex');
-
     $.ajax({
-        url: `/edit_image/${id}/`,  // Django view must handle this URL
+        url: '/swap_image_positions/',
         type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
+        data: {
+            source_id: sourceId,
+            target_id: targetImageId,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
         success: function () {
             $('#loader').hide();
-            $('#editImageModal').modal('hide');
-            window.location.reload();
+            location.reload();
         },
         error: function () {
             $('#loader').hide();
-            alert('Failed to update entry.');
+            alert('Swap failed');
         }
     });
-});
-</script>
+}
 
-<script>
-    function deleteEntry(id) {
-        if (!confirm("Are you sure you want to delete this entry?")) return;
-        $('#loader').css('display', 'flex');
-        $.ajax({
-            url: `/delete_image/${id}/`,  // Ensure this URL is handled in your Django views
-            type: 'POST',
-            data: {
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function () {
-                $('#loader').hide();
-                window.location.reload();  // Or dynamically remove the row
-            },
-            error: function () {
-                $('#loader').hide();
-                alert('Failed to delete entry.');
-            }
-        });
+function showFullImage(imageBase64) {
+    const imgSrc = 'data:image/jpeg;base64,' + imageBase64;
+    document.getElementById('fullImage').src = imgSrc;
+    new bootstrap.Modal(document.getElementById('fullImageModal')).show();
+}
+
+function previewImage(input) {
+    const preview = document.getElementById('preview');
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
     }
-</script>
-<script>
-    $('#addImageForm').on('submit', function (e) {
+}
+
+$('#addImageForm').on('submit', function (e) {
     e.preventDefault();
-
-    const fileInput = $('#image_file')[0];
-    const file = fileInput.files[0];
-    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-
-    if (!file || !validTypes.includes(file.type)) {
-        alert('Please upload a valid image file (PNG, JPEG, JPG, GIF).');
-        return;
-    }
-
-    var formData = new FormData(this);
+    const formData = new FormData(this);
     $('#loader').css('display', 'flex');
-
     $.ajax({
         url: '/upload_image/',
         type: 'POST',
         data: formData,
         processData: false,
         contentType: false,
-        success: function (data) {
+        success: function () {
             $('#loader').hide();
             $('#addImageModal').modal('hide');
-            window.location.reload();
+            location.reload();
         },
-        error: function (xhr, status, error) {
+        error: function () {
             $('#loader').hide();
-            alert("Failed to save image. Try again.");
-            console.error("Upload error:", error);
+            alert('Upload failed');
         }
     });
 });
 
-
+function updateProjectCookie(project) {
+    document.cookie = `projectData=${project}; path=/; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;`;
+}
 </script>
 <script>
     tail.select("#projectdata", {
@@ -321,5 +254,6 @@ $('#editImageForm').on('submit', function (e) {
     width: 170
 });
 </script>
+
 </body>
 </html>

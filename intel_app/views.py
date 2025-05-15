@@ -20,7 +20,7 @@ from .db_connection import get_data, get_key_msg_or_details_data, update_deleted
 from .db_connection import get_record, delete_record, get_schedule_record, update_project, update_project_list, delete_project_from_db
 from .db_connection import get_distinct_metric, update_user_projects, get_old_project
 from .db_connection import create_project_status, get_project_status, update_project_status
-from .db_connection import upload_image_data, drop_table, get_latest_timestamp, update_image_data
+from .db_connection import upload_image_data, drop_table, get_latest_timestamp, update_image_data, get_risk_data
 
 import ast
 
@@ -288,7 +288,8 @@ def risks(request):
             if project_name:
                 user_projects = update_queryset_values(user_projects, project_name)
                 project_data = project_name
-            result = get_data(user, RISK_TABLE, project_data)
+            # result = get_data(user, RISK_TABLE, project_data)
+            result = get_risk_data(project_data)
             if result:
                 status = ['Open', 'Closed']
                 impact = ['Low', 'Medium', 'High']
@@ -1000,3 +1001,15 @@ def edit_image(request, id):
             return JsonResponse({'status': 'failed', 'message': str(e)}, status=500)
     else:
         return JsonResponse({'status': 'failed', 'message': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt
+def swap_image_positions(request):
+    if request.method == 'POST':
+        source_id = request.POST.get('source_id')
+        target_id = request.POST.get('target_id')
+        print(source_id, target_id)
+        try:
+            return JsonResponse({'status': 'success'})
+        except Exception:
+            return JsonResponse({'status': 'error', 'message': 'Invalid IDs'}, status=400)

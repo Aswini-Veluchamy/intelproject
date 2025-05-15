@@ -1,4 +1,6 @@
 import mysql.connector
+from sqlalchemy import values
+
 from .config import HOST, USER, PASSWORD
 from .config import KEY_MESSAGE_TABLE, RISK_TABLE, KEY_PROGRAM_METRIC_TABLE
 from .config import DETAILS_TABLE, SCHEDULE_TABLE, LINKS_TABLE, BBOX_TABLE, ISSUES_TABLE
@@ -619,4 +621,30 @@ def get_latest_timestamp(table, project):
     conn.close()
     return record or {}
 
+
+def get_risk_data(project_name):
+    conn, cursor = db_connection()
+    sql = """
+        SELECT *
+        FROM risk_table
+        WHERE project = %s
+          AND status IN ('Open', 'Closed')
+          AND display IN ('On', 'Off')
+        ORDER BY 
+          CASE 
+            WHEN display = 'On' AND status = 'Open' THEN 1
+            WHEN display = 'Off' AND status = 'Open' THEN 2
+            WHEN display = 'On' AND status = 'Closed' THEN 3
+            WHEN display = 'Off' AND status = 'Closed' THEN 4
+            ELSE 5
+          END,
+          trigger_date ASC;
+    """
+    val = (project_name,)
+    cursor.execute(sql, val)
+    records = cursor.fetchall()
+    columns = [col[0] for col in cursor.description]
+    result = [dict(zip(columns, record)) for record in records]
+    conn.close()
+    return result
 
