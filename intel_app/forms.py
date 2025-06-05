@@ -82,6 +82,42 @@ class ReadExcelLoad:
             return datetime.strptime(f'{year_full}-W{week_num:02d}-1', "%Y-W%W-%w").date()
         return None
 
+    def db_connection(self, final_data):
+        # Establish DB connection
+        conn = mysql.connector.connect(
+            host=HOST,
+            user=USER,
+            password=PASSWORD,
+            database="intel_project",
+            port=3306
+        )
+        cursor = conn.cursor()
+
+        sql = f"""
+            INSERT INTO {SCHEDULE_TABLE} (
+                display, milestone, por_commit, por_trend, status, comments, schedule_id,
+                user, project, deleted, deleted_by, deleted_on,
+                task_id, work_type, ww_psd, milestone_ent, task_group_ent
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+
+        # Convert final_data to list of tuples
+        values = final_data[[
+            'display', 'milestone', 'por_commit', 'por_trend', 'status', 'comments', 'schedule_id',
+            'user', 'project', 'deleted', 'deleted_by', 'deleted_on',
+            'task_id', 'work_type', 'ww_psd', 'milestone_ent', 'task_group_ent'
+        ]].values.tolist()
+
+        # Execute insert for all rows
+        cursor.executemany(sql, values)
+        conn.commit()
+
+        print(f"{cursor.rowcount} rows inserted into {SCHEDULE_TABLE}.")
+
+        cursor.close()
+        conn.close()
+
 
 # Usage
 reader = ReadExcelLoad('Book1.xlsx')
