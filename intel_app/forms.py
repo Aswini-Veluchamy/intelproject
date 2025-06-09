@@ -13,60 +13,42 @@ class ReadExcelLoad:
     @staticmethod
     def get_status(por_commit, por_trend):
         current_dt = datetime.now().date()
-        if pd.isna(por_commit) and pd.isna(por_trend):
+
+        # Convert to date
+        commit_date = ReadExcelLoad.ww_to_date(por_commit)
+        trend_date = ReadExcelLoad.ww_to_date(por_trend)
+
+        # Validate both dates
+        if not commit_date or not trend_date:
             return 'None'
-        elif pd.isna(por_commit) or pd.isna(por_trend):
-            return 'None'
-        elif por_trend and por_commit:
-            por_commit_one_week_later = por_commit + timedelta(days=7)
-            por_commit_two_week_later = por_commit + timedelta(days=14)
-            if por_trend < current_dt:
-                return 'Done'
-            elif (por_commit == por_trend) or (por_trend < por_commit):
-                return 'G'
-            elif por_trend > por_commit_two_week_later:
-                return 'R'
-            elif por_trend > por_commit_one_week_later:
-                return 'Y'
+
+        # Compare
+        if trend_date < current_dt:
+            return 'Done'
+        elif trend_date <= commit_date:
+            return 'G'
+        elif trend_date > commit_date + timedelta(days=14):
+            return 'R'
+        elif trend_date > commit_date + timedelta(days=7):
+            return 'Y'
         return 'None'
 
-    def extract_data(self):
-        data = self.read_execl_data()
-
-        # Find latest Trend WW column
-        trend_cols = [col for col in data.columns if col.startswith('Trend WW')]
-        latest_trend_col = max(trend_cols, key=lambda col: self.extract_week(col))
-
-        # Select necessary columns
-        base_cols = ['unique_id', 'task name', 'Drive To Date']
-        final_cols = base_cols + [latest_trend_col]
-        final_data = data[final_cols].copy()
-
-        # Rename latest trend col
-        final_data.rename(columns={latest_trend_col: 'trend date'}, inplace=True)
-
-        # Convert to datetime format
-        final_data['por_commit'] = final_data['Drive To Date'].apply(self.convert_ww_to_date)
-        final_data['por_trend'] = final_data['trend date'].apply(self.convert_ww_to_date)
-
-        # Calculate status for each row
-        final_data['status'] = final_data.apply(
-            lambda row: self.get_status(row['por_commit'], row['por_trend']), axis=1
-        )
-
-        # Print result
-        print("Final dataset:")
-        print(final_data)
+    @staticmethod
+    def ww_to_date(ww_string):
+        match = re.match(r"ww(\d+(?:\.\d+)?)[ ]*'(\d+)", str(ww_string))
+        if match:
+            week = match.group(1)
+            week = week if '.' in week else f"{week}.5"
+            week_number = int(float(week))
+            year_suffix = match.group(2)
+            year = int(f"20{year_suffix}")
+            return datetime.strptime(f"{year}-W{week_number:02d}-1", "%G-W%V-%u").date()
+        return None
 
     @staticmethod
-    def extract_week(col_name):
-        match = re.search(r"Trend WW (\d+)'", col_name)
-        return int(match.group(1)) if match else -1
-
-    @staticmethod
-    def convert_ww_to_date(value):
+    def convert_ww_to_str(value):
         """
-        Converts a string like ww12'25 or ww12.3'25 to a datetime.date object.
+        Converts strings like ww12'25 or ww12.3'25 to '202512.5' (string)
         """
         if pd.isna(value):
             return None
@@ -75,57 +57,59 @@ class ReadExcelLoad:
             week = match.group(1)
             if '.' not in week:
                 week = f"{week}.5"
-            week_num = int(float(week))
-            year_suffix = match.group(2)
-            year_full = int(f"20{year_suffix}")
-            # Approximate conversion: assume Monday of the week
-            return datetime.strptime(f'{year_full}-W{week_num:02d}-1', "%Y-W%W-%w").date()
+            year = f"20{match.group(2)}"
+            return f"{year}{week}"
         return None
 
-    def db_connection(self, final_data):
-        # Establish DB connection
-        conn = mysql.connector.connect(
-            host=HOST,
-            user=USER,
-            password=PASSWORD,
-            database="intel_project",
-            port=3306
+    def extract_data(self):
+        data = self.read_execl_data()
+
+        # Find latest Trend WW column
+        trend_cols = [col for col in data.columns if col.startswith('Trend WW')]
+        sorted_trend_cols = sorted(trend_cols, key=lambda col: self.extract_week(col), reverse=True)
+        print(sorted_trend_cols)
+
+        # Step 2: Pick the first column that has at least one non-empty and non-NaN cell
+        def has_valid_data(series):
+            return series.astype(str).str.strip().replace('nan', '').ne('').any()
+
+        latest_trend_col = None
+        for col in sorted_trend_cols:
+            if has_valid_data(data[col]):
+                latest_trend_col = col
+                break
+        print(latest_trend_col)
+        # Step 3: Fallback if no usable column found
+        if not latest_trend_col:
+            raise ValueError("No usable Trend WW column found with non-empty data.")
+
+        # Select necessary columns
+        base_cols = ['unique_id', 'task name', 'Drive To Date']
+        final_cols = base_cols + [latest_trend_col]
+        final_data = data[final_cols].copy()
+
+        # Rename for consistency
+        final_data.rename(columns={latest_trend_col: 'por_trend', 'Drive To Date': 'por_commit'}, inplace=True)
+
+        # Store formatted versions in new columns
+        final_data['por_commit_fmt'] = final_data['por_commit'].apply(self.convert_ww_to_str)
+        final_data['por_trend_fmt'] = final_data['por_trend'].apply(self.convert_ww_to_str)
+
+        # Calculate status using original 'ww' strings
+        final_data['status'] = final_data.apply(
+            lambda row: self.get_status(row['por_commit'], row['por_trend']), axis=1
         )
-        cursor = conn.cursor()
 
-        sql = f"""
-            INSERT INTO {SCHEDULE_TABLE} (
-                display, milestone, por_commit, por_trend, status, comments, schedule_id,
-                user, project, deleted, deleted_by, deleted_on,
-                task_id, work_type, ww_psd, milestone_ent, task_group_ent
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
+        # Print result
+        print("Final dataset:")
+        print(final_data[['task name', 'por_commit_fmt', 'por_trend_fmt', 'status']])
 
-        # Convert final_data to list of tuples
-        values = final_data[[
-            'display', 'milestone', 'por_commit', 'por_trend', 'status', 'comments', 'schedule_id',
-            'user', 'project', 'deleted', 'deleted_by', 'deleted_on',
-            'task_id', 'work_type', 'ww_psd', 'milestone_ent', 'task_group_ent'
-        ]].values.tolist()
-
-        # Execute insert for all rows
-        cursor.executemany(sql, values)
-        conn.commit()
-
-        print(f"{cursor.rowcount} rows inserted into {SCHEDULE_TABLE}.")
-
-        cursor.close()
-        conn.close()
+    @staticmethod
+    def extract_week(col_name):
+        match = re.search(r"Trend WW (\d+)'", col_name)
+        return int(match.group(1)) if match else -1
 
 
 # Usage
 reader = ReadExcelLoad('Book1.xlsx')
 reader.extract_data()
-
-#
-# sql = f"INSERT INTO {SCHEDULE_TABLE} (display, milestone, por_commit, por_trend, status, comments, schedule_id,\
-#             user, project, deleted, deleted_by, deleted_on, task_id, work_type, ww_psd, milestone_ent, task_group_ent) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-# val = (display, milestone, por_commit, por_trend, status, comments, schedule_id, user, proj, deleted, deleted_by,
-#        deleted_on, task_id, work_type, ww_psd, milestone_ent, task_group_ent)
-# cursor.execute(sql, val)
